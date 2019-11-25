@@ -1,0 +1,25 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+# * text=auto
+
+# Source and Header files should always have LF (unix) endings so that atmel
+# start does not freak out
+*.c text eol=lf
+*.h text eol=lf
+*.hpp text eol=lf
+*.atstart text eol=lf
+*.gpdsc text eol=lf
+*.ld text eol=lf
+*.cmake text eol=lf
+*.yml text eol=lf
+
+# Declare files that will always have CRLF (windows) line endings on checkout.
+*.sln text eol=crlf
+*.vcxproj* text eol=crlf
+*.ewp text eol=crlf
+*.ewt text eol=crlf
+*.eww text eol=crlf
+*.xcl  text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+*.png binary
+*.jpg binary

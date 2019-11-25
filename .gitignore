@@ -1,0 +1,27 @@
+#build results
+*[Dd]ebug*/
+*[Dd]ebugPublic*/
+*[Rr]elease*/
+*[Rr]eleases*/
+[nN]ON*/
+*[Bb]uild*/
+.*/
+
+# IDE and editor files
+.vs/
+.vscode/
+*.sublime-workspace
+
+#documentation files
+*.docx
+*.doc
+*.pdf
+*.xlsx
+*.xls
+*.pptx
+*.ppt
+
+# Windows/osx Fluff
+desktop.ini
+[tT]humbs.db
+.DS_Store
