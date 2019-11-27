@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-CLK (id I6073)
  * Clock System
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * CLK
- * Clock System
- * Size: 5 bytes
- */
-template <addressType BASE_ADDRESS>
-struct CLK_t {
+namespace CLK {
 
     // System Clock Selection
     enum class SCLKSELv : uint8_t {
@@ -76,35 +68,46 @@ struct CLK_t {
         RC32M = 0x01, // Internal 32 MHz RC Oscillator
     };
 
+}   // namespace CLK
+
+/**
+ * CLK
+ * Clock System
+ * Size: 5 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct CLK_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using SCLKSEL = reg_field_t<BASE_ADDRESS + 0x0000, 0x07, 0, SCLKSELv>;    //< System Clock Selection
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x07, 0, SCLKSELv> SCLKSEL = {};    //< System Clock Selection
+    } CTRL = {};
 
     /// Prescaler Control Register - 1 bytes
-    struct PSCTRL : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using PSADIV = reg_field_t<BASE_ADDRESS + 0x0001, 0x7C, 2, PSADIVv>;    //< Prescaler A Division Factor
-        using PSBCDIV = reg_field_t<BASE_ADDRESS + 0x0001, 0x03, 0, PSBCDIVv>;    //< Prescaler B and C Division factor
-    };
+    static constexpr struct PSCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<PSCTRL_t, 0x7C, 2, PSADIVv> PSADIV = {};    //< Prescaler A Division Factor
+        static constexpr bitfield_t<PSCTRL_t, 0x03, 0, PSBCDIVv> PSBCDIV = {};    //< Prescaler B and C Division factor
+    } PSCTRL = {};
 
     /// Lock register - 1 bytes
-    struct LOCK : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using LOCKf = reg_field_t<BASE_ADDRESS + 0x0002, 0x01, 0>;    //< Clock System Lock
-    };
+    static constexpr struct LOCK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<LOCK_t, 0x01, 0> LOCK = {};    //< Clock System Lock
+    } LOCK = {};
 
     /// RTC Control Register - 1 bytes
-    struct RTCCTRL : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using RTCSRC = reg_field_t<BASE_ADDRESS + 0x0003, 0x0E, 1, RTCSRCv>;    //< Clock Source
-        using RTCEN = reg_field_t<BASE_ADDRESS + 0x0003, 0x01, 0>;    //< Clock Source Enable
-    };
+    static constexpr struct RTCCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<RTCCTRL_t, 0x0E, 1, RTCSRCv> RTCSRC = {};    //< Clock Source
+        static constexpr bitfield_t<RTCCTRL_t, 0x01, 0> RTCEN = {};    //< Clock Source Enable
+    } RTCCTRL = {};
 
     /// USB Control Register - 1 bytes
-    struct USBCTRL : public reg8_t<BASE_ADDRESS + 0x0004> {
-        using USBPSDIV = reg_field_t<BASE_ADDRESS + 0x0004, 0x38, 3, USBPSDIVv>;    //< Prescaler Division Factor
-        using USBSRC = reg_field_t<BASE_ADDRESS + 0x0004, 0x06, 1, USBSRCv>;    //< Clock Source
-        using USBSEN = reg_field_t<BASE_ADDRESS + 0x0004, 0x01, 0>;    //< Clock Source Enable
-    };
+    static constexpr struct USBCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        static constexpr bitfield_t<USBCTRL_t, 0x38, 3, USBPSDIVv> USBPSDIV = {};    //< Prescaler Division Factor
+        static constexpr bitfield_t<USBCTRL_t, 0x06, 1, USBSRCv> USBSRC = {};    //< Clock Source
+        static constexpr bitfield_t<USBCTRL_t, 0x01, 0> USBSEN = {};    //< Clock Source Enable
+    } USBCTRL = {};
+
 };
 
 } // namespace device

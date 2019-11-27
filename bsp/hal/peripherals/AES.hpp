@@ -1,23 +1,15 @@
 /**
  * None-AES (id I6096)
  * AES Module
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * AES
- * AES Module
- * Size: 5 bytes
- */
-template <addressType BASE_ADDRESS>
-struct AES_t {
+namespace AES {
 
     // Interrupt level
     enum class INTLVLv : uint8_t {
@@ -31,34 +23,45 @@ struct AES_t {
     enum class INTERRUPTS {
         INT = 0, // AES Interrupt
     };
+}   // namespace AES
+
+/**
+ * AES
+ * AES Module
+ * Size: 5 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct AES_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// AES Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using START = reg_field_t<BASE_ADDRESS + 0x0000, 0x80, 7>;    //< Start/Run
-        using AUTO = reg_field_t<BASE_ADDRESS + 0x0000, 0x40, 6>;    //< Auto Start Trigger
-        using RESET = reg_field_t<BASE_ADDRESS + 0x0000, 0x20, 5>;    //< AES Software Reset
-        using DECRYPT = reg_field_t<BASE_ADDRESS + 0x0000, 0x10, 4>;    //< Decryption / Direction
-        using XOR = reg_field_t<BASE_ADDRESS + 0x0000, 0x04, 2>;    //< State XOR Load Enable
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x80, 7> START = {};    //< Start/Run
+        static constexpr bitfield_t<CTRL_t, 0x40, 6> AUTO = {};    //< Auto Start Trigger
+        static constexpr bitfield_t<CTRL_t, 0x20, 5> RESET = {};    //< AES Software Reset
+        static constexpr bitfield_t<CTRL_t, 0x10, 4> DECRYPT = {};    //< Decryption / Direction
+        static constexpr bitfield_t<CTRL_t, 0x04, 2> XOR = {};    //< State XOR Load Enable
+    } CTRL = {};
 
     /// AES Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using ERROR = reg_field_t<BASE_ADDRESS + 0x0001, 0x80, 7>;    //< AES Error
-        using SRIF = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< State Ready Interrupt Flag
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<STATUS_t, 0x80, 7> ERROR = {};    //< AES Error
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> SRIF = {};    //< State Ready Interrupt Flag
+    } STATUS = {};
 
     /// AES State Register - 1 bytes
-    struct STATE : public reg8_t<BASE_ADDRESS + 0x0002> {
-    };
+    static constexpr struct STATE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+    } STATE = {};
 
     /// AES Key Register - 1 bytes
-    struct KEY : public reg8_t<BASE_ADDRESS + 0x0003> {
-    };
+    static constexpr struct KEY_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+    } KEY = {};
 
     /// AES Interrupt Control Register - 1 bytes
-    struct INTCTRL : public reg8_t<BASE_ADDRESS + 0x0004> {
-        using INTLVL = reg_field_t<BASE_ADDRESS + 0x0004, 0x03, 0, INTLVLv>;    //< Interrupt level
-    };
+    static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, INTLVLv> INTLVL = {};    //< Interrupt level
+    } INTCTRL = {};
+
 };
 
 } // namespace device

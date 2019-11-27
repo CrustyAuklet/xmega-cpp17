@@ -1,23 +1,16 @@
 /**
  * None-EBI (id I3001)
  * External Bus Interface
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * EBI_CS
- * EBI Chip Select Module
- * Size: 4 bytes
- */
-template <addressType BASE_ADDRESS>
-struct EBI_CS_t {
+namespace EBI {
+
     // Chip Select adress size
     enum class CS_ASIZEv : uint8_t {
         _256B = 0x00, // 256 bytes
@@ -86,46 +79,19 @@ struct EBI_CS_t {
         LOAD = 0x01, // Load Mode Register command mode
     };
 
-    /// Chip Select Control Register A - 1 bytes
-    struct CTRLA : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using ASIZE = reg_field_t<BASE_ADDRESS + 0x0000, 0x7C, 2, CS_ASIZEv>;    //< Address Size
-        using ASPACE = reg_field_t<BASE_ADDRESS + 0x0000, 0x7C, 2, CS_ASPACEv>;    //< Legacy name: Address Space
-        using MODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x03, 0, CS_MODEv>;    //< Memory Mode
-    };
-
-    /// Chip Select Control Register B - 1 bytes
-    struct CTRLB : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using SRWS = reg_field_t<BASE_ADDRESS + 0x0001, 0x07, 0, CS_SRWSv>;    //< SRAM Wait State Cycles
-        using SDINITDONE = reg_field_t<BASE_ADDRESS + 0x0001, 0x80, 7>;    //< SDRAM Initialization Done
-        using SDSREN = reg_field_t<BASE_ADDRESS + 0x0001, 0x04, 2>;    //< SDRAM Self-refresh Enable
-        using SDMODE = reg_field_t<BASE_ADDRESS + 0x0001, 0x03, 0, CS_SDMODEv>;    //< SDRAM Mode
-    };
-
-    /// Chip Select Base Address - 2 bytes
-    struct BASEADDR : public reg16_t<BASE_ADDRESS + 0x0002> {
-    };
-};
-
-/**
- * EBI
- * External Bus Interface
- * Size: 32 bytes
- */
-template <addressType BASE_ADDRESS>
-struct EBI_t {
-    //
+    // 
     enum class SDDATAWv : uint8_t {
         _4BIT = 0x00, // 4-bit data bus
         _8BIT = 0x01, // 8-bit data bus
     };
 
-    //
+    // 
     enum class LPCMODEv : uint8_t {
         ALE1 = 0x00, // Data muxed with addr byte 0
         ALE12 = 0x02, // Data muxed with addr byte 0 and 1
     };
 
-    //
+    // 
     enum class SRMODEv : uint8_t {
         ALE1 = 0x00, // Addr byte 0 muxed with 1
         ALE2 = 0x01, // Addr byte 0 muxed with 2
@@ -133,7 +99,7 @@ struct EBI_t {
         NOALE = 0x03, // No addr muxing
     };
 
-    //
+    // 
     enum class IFMODEv : uint8_t {
         DISABLED = 0x00, // EBI Disabled
         _3PORT = 0x01, // 3-port mode
@@ -141,7 +107,7 @@ struct EBI_t {
         _2PORT = 0x03, // 2-port mode
     };
 
-    //
+    // 
     enum class SDCOLv : uint8_t {
         _8BIT = 0x00, // 8 column bits
         _9BIT = 0x01, // 9 column bits
@@ -213,55 +179,95 @@ struct EBI_t {
         _7CLK = 0x07, // 7 cycles
     };
 
+}   // namespace EBI
+
+/**
+ * EBI_CS
+ * EBI Chip Select Module
+ * Size: 4 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct EBI_CS_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
+
+    /// Chip Select Control Register A - 1 bytes
+    static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRLA_t, 0x7C, 2, CS_ASIZEv> ASIZE = {};    //< Address Size
+        static constexpr bitfield_t<CTRLA_t, 0x7C, 2, CS_ASPACEv> ASPACE = {};    //< Legacy name: Address Space
+        static constexpr bitfield_t<CTRLA_t, 0x03, 0, CS_MODEv> MODE = {};    //< Memory Mode
+    } CTRLA = {};
+
+    /// Chip Select Control Register B - 1 bytes
+    static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<CTRLB_t, 0x07, 0, CS_SRWSv> SRWS = {};    //< SRAM Wait State Cycles
+        static constexpr bitfield_t<CTRLB_t, 0x80, 7> SDINITDONE = {};    //< SDRAM Initialization Done
+        static constexpr bitfield_t<CTRLB_t, 0x04, 2> SDSREN = {};    //< SDRAM Self-refresh Enable
+        static constexpr bitfield_t<CTRLB_t, 0x03, 0, CS_SDMODEv> SDMODE = {};    //< SDRAM Mode
+    } CTRLB = {};
+
+    /// Chip Select Base Address - 2 bytes
+    static constexpr struct BASEADDR_t : reg_t<uint16_t, BASE_ADDRESS + 0x0002> {
+    } BASEADDR = {};
+
+};
+
+/**
+ * EBI
+ * External Bus Interface
+ * Size: 32 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct EBI_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using SDDATAW = reg_field_t<BASE_ADDRESS + 0x0000, 0xC0, 6, SDDATAWv>;    //< SDRAM Data Width Setting
-        using LPCMODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x30, 4, LPCMODEv>;    //< SRAM LPC Mode
-        using SRMODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x0C, 2, SRMODEv>;    //< SRAM Mode
-        using IFMODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x03, 0, IFMODEv>;    //< Interface Mode
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0xC0, 6, SDDATAWv> SDDATAW = {};    //< SDRAM Data Width Setting
+        static constexpr bitfield_t<CTRL_t, 0x30, 4, LPCMODEv> LPCMODE = {};    //< SRAM LPC Mode
+        static constexpr bitfield_t<CTRL_t, 0x0C, 2, SRMODEv> SRMODE = {};    //< SRAM Mode
+        static constexpr bitfield_t<CTRL_t, 0x03, 0, IFMODEv> IFMODE = {};    //< Interface Mode
+    } CTRL = {};
 
     /// SDRAM Control Register A - 1 bytes
-    struct SDRAMCTRLA : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using SDCAS = reg_field_t<BASE_ADDRESS + 0x0001, 0x08, 3>;    //< SDRAM CAS Latency Setting
-        using SDROW = reg_field_t<BASE_ADDRESS + 0x0001, 0x04, 2>;    //< SDRAM ROW Bits Setting
-        using SDCOL = reg_field_t<BASE_ADDRESS + 0x0001, 0x03, 0, SDCOLv>;    //< SDRAM Column Bits Setting
-    };
+    static constexpr struct SDRAMCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<SDRAMCTRLA_t, 0x08, 3> SDCAS = {};    //< SDRAM CAS Latency Setting
+        static constexpr bitfield_t<SDRAMCTRLA_t, 0x04, 2> SDROW = {};    //< SDRAM ROW Bits Setting
+        static constexpr bitfield_t<SDRAMCTRLA_t, 0x03, 0, SDCOLv> SDCOL = {};    //< SDRAM Column Bits Setting
+    } SDRAMCTRLA = {};
 
     /// SDRAM Refresh Period - 2 bytes
-    struct REFRESH : public reg16_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct REFRESH_t : reg_t<uint16_t, BASE_ADDRESS + 0x0004> {
+    } REFRESH = {};
 
     /// SDRAM Initialization Delay - 2 bytes
-    struct INITDLY : public reg16_t<BASE_ADDRESS + 0x0006> {
-    };
+    static constexpr struct INITDLY_t : reg_t<uint16_t, BASE_ADDRESS + 0x0006> {
+    } INITDLY = {};
 
     /// SDRAM Control Register B - 1 bytes
-    struct SDRAMCTRLB : public reg8_t<BASE_ADDRESS + 0x0008> {
-        using MRDLY = reg_field_t<BASE_ADDRESS + 0x0008, 0xC0, 6, MRDLYv>;    //< SDRAM Mode Register Delay
-        using ROWCYCDLY = reg_field_t<BASE_ADDRESS + 0x0008, 0x38, 3, ROWCYCDLYv>;    //< SDRAM Row Cycle Delay
-        using RPDLY = reg_field_t<BASE_ADDRESS + 0x0008, 0x07, 0, RPDLYv>;    //< SDRAM Row-to-Precharge Delay
-    };
+    static constexpr struct SDRAMCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        static constexpr bitfield_t<SDRAMCTRLB_t, 0xC0, 6, MRDLYv> MRDLY = {};    //< SDRAM Mode Register Delay
+        static constexpr bitfield_t<SDRAMCTRLB_t, 0x38, 3, ROWCYCDLYv> ROWCYCDLY = {};    //< SDRAM Row Cycle Delay
+        static constexpr bitfield_t<SDRAMCTRLB_t, 0x07, 0, RPDLYv> RPDLY = {};    //< SDRAM Row-to-Precharge Delay
+    } SDRAMCTRLB = {};
 
     /// SDRAM Control Register C - 1 bytes
-    struct SDRAMCTRLC : public reg8_t<BASE_ADDRESS + 0x0009> {
-        using WRDLY = reg_field_t<BASE_ADDRESS + 0x0009, 0xC0, 6, WRDLYv>;    //< SDRAM Write Recovery Delay
-        using ESRDLY = reg_field_t<BASE_ADDRESS + 0x0009, 0x38, 3, ESRDLYv>;    //< SDRAM Exit-Self-refresh-to-Active Delay
-        using ROWCOLDLY = reg_field_t<BASE_ADDRESS + 0x0009, 0x07, 0, ROWCOLDLYv>;    //< SDRAM Row-to-Column Delay
-    };
+    static constexpr struct SDRAMCTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        static constexpr bitfield_t<SDRAMCTRLC_t, 0xC0, 6, WRDLYv> WRDLY = {};    //< SDRAM Write Recovery Delay
+        static constexpr bitfield_t<SDRAMCTRLC_t, 0x38, 3, ESRDLYv> ESRDLY = {};    //< SDRAM Exit-Self-refresh-to-Active Delay
+        static constexpr bitfield_t<SDRAMCTRLC_t, 0x07, 0, ROWCOLDLYv> ROWCOLDLY = {};    //< SDRAM Row-to-Column Delay
+    } SDRAMCTRLC = {};
 
     /// Chip Select 0
-    EBI_CS_t<BASE_ADDRESS + 0x0010> CS0;
+    static constexpr EBI_CS_t<BASE_ADDRESS + 0x0010> CS0 = {};
 
     /// Chip Select 1
-    EBI_CS_t<BASE_ADDRESS + 0x0014> CS1;
+    static constexpr EBI_CS_t<BASE_ADDRESS + 0x0014> CS1 = {};
 
     /// Chip Select 2
-    EBI_CS_t<BASE_ADDRESS + 0x0018> CS2;
+    static constexpr EBI_CS_t<BASE_ADDRESS + 0x0018> CS2 = {};
 
     /// Chip Select 3
-    EBI_CS_t<BASE_ADDRESS + 0x001C> CS3;
+    static constexpr EBI_CS_t<BASE_ADDRESS + 0x001C> CS3 = {};
 
 };
 

@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-SPI (id I6090)
  * Serial Peripheral Interface
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * SPI
- * Serial Peripheral Interface
- * Size: 4 bytes
- */
-template <addressType BASE_ADDRESS>
-struct SPI_t {
+namespace SPI {
 
     // SPI Mode
     enum class MODEv : uint8_t {
@@ -47,31 +39,42 @@ struct SPI_t {
     enum class INTERRUPTS {
         INT = 0, // SPI Interrupt
     };
+}   // namespace SPI
+
+/**
+ * SPI
+ * Serial Peripheral Interface
+ * Size: 4 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct SPI_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using CLK2X = reg_field_t<BASE_ADDRESS + 0x0000, 0x80, 7>;    //< Enable Double Speed
-        using ENABLE = reg_field_t<BASE_ADDRESS + 0x0000, 0x40, 6>;    //< Enable Module
-        using DORD = reg_field_t<BASE_ADDRESS + 0x0000, 0x20, 5>;    //< Data Order Setting
-        using MASTER = reg_field_t<BASE_ADDRESS + 0x0000, 0x10, 4>;    //< Master Operation Enable
-        using MODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x0C, 2, MODEv>;    //< SPI Mode
-        using PRESCALER = reg_field_t<BASE_ADDRESS + 0x0000, 0x03, 0, PRESCALERv>;    //< Prescaler
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x80, 7> CLK2X = {};    //< Enable Double Speed
+        static constexpr bitfield_t<CTRL_t, 0x40, 6> ENABLE = {};    //< Enable Module
+        static constexpr bitfield_t<CTRL_t, 0x20, 5> DORD = {};    //< Data Order Setting
+        static constexpr bitfield_t<CTRL_t, 0x10, 4> MASTER = {};    //< Master Operation Enable
+        static constexpr bitfield_t<CTRL_t, 0x0C, 2, MODEv> MODE = {};    //< SPI Mode
+        static constexpr bitfield_t<CTRL_t, 0x03, 0, PRESCALERv> PRESCALER = {};    //< Prescaler
+    } CTRL = {};
 
     /// Interrupt Control Register - 1 bytes
-    struct INTCTRL : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using INTLVL = reg_field_t<BASE_ADDRESS + 0x0001, 0x03, 0, INTLVLv>;    //< Interrupt level
-    };
+    static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, INTLVLv> INTLVL = {};    //< Interrupt level
+    } INTCTRL = {};
 
     /// Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using IF = reg_field_t<BASE_ADDRESS + 0x0002, 0x80, 7>;    //< Interrupt Flag
-        using WRCOL = reg_field_t<BASE_ADDRESS + 0x0002, 0x40, 6>;    //< Write Collision
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<STATUS_t, 0x80, 7> IF = {};    //< Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 0x40, 6> WRCOL = {};    //< Write Collision
+    } STATUS = {};
 
     /// Data Register - 1 bytes
-    struct DATA : public reg8_t<BASE_ADDRESS + 0x0003> {
-    };
+    static constexpr struct DATA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+    } DATA = {};
+
 };
 
 } // namespace device

@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-IRCOM (id I6090)
  * IR Communication Module
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * IRCOM
- * IR Communication Module
- * Size: 3 bytes
- */
-template <addressType BASE_ADDRESS>
-struct IRCOM_t {
+namespace IRCOM {
 
     // Event channel selection
     enum class EVSELv : uint8_t {
@@ -32,19 +24,30 @@ struct IRCOM_t {
         _7 = 0x0F, // Event Channel 7
     };
 
+}   // namespace IRCOM
+
+/**
+ * IRCOM
+ * IR Communication Module
+ * Size: 3 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct IRCOM_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using EVSEL = reg_field_t<BASE_ADDRESS + 0x0000, 0x0F, 0, EVSELv>;    //< Event Channel Select
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x0F, 0, EVSELv> EVSEL = {};    //< Event Channel Select
+    } CTRL = {};
 
     /// IrDA Transmitter Pulse Length Control Register - 1 bytes
-    struct TXPLCTRL : public reg8_t<BASE_ADDRESS + 0x0001> {
-    };
+    static constexpr struct TXPLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+    } TXPLCTRL = {};
 
     /// IrDA Receiver Pulse Length Control Register - 1 bytes
-    struct RXPLCTRL : public reg8_t<BASE_ADDRESS + 0x0002> {
-    };
+    static constexpr struct RXPLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+    } RXPLCTRL = {};
+
 };
 
 } // namespace device

@@ -1,84 +1,147 @@
-#ifndef CPP_REGISTER_ACCESS_TEMPALTES
-#define CPP_REGISTER_ACCESS_TEMPALTES
+#pragma once
 
 #include <stdint.h>
+using registerType = uint8_t;
+using addressType  = uint16_t;
 
-typedef uint8_t  registerType;
-typedef uint16_t addressType;
+namespace seal::registers {
 
-struct ro_reg8_t {
-    static unsigned read_reg(volatile registerType* reg) {
-        return *reg;
+template<typename reg_t, typename ...bitfield_t>
+void set(reg_t reg, bitfield_t... bitfields) {
+    // TODO find a way to set many fields at once
+    //static_assert((std::is_same_v<reg_t,decltype (bitfields)> & ...),"");
+}
+
+template <typename T>
+struct bitfield_value_t {
+    T value;
+    T mask;
+    friend inline constexpr auto operator|(const bitfield_value_t& lhs, const bitfield_value_t& rhs) {
+        return bitfield_value_t<T>{lhs.value | rhs.value, lhs.mask|rhs.mask};
+    }
+
+    friend inline constexpr auto operator|=(const bitfield_value_t& lhs, const bitfield_value_t& rhs) {
+        return bitfield_value_t<T>{lhs.value | rhs.value, lhs.mask|rhs.mask};
+    }
+
+    friend inline constexpr auto operator|(int lhs, const bitfield_value_t& rhs) {
+        return lhs | rhs.value;
     }
 };
 
-struct wo_reg8_t {
-    static void write_reg(volatile registerType* reg, const registerType value) {
-        *reg = value;
+template <typename T, const uint32_t address>
+struct reg_t {
+    using type = T;
+    static inline volatile T& value() noexcept {
+       return *reinterpret_cast<volatile T*>(address);
     }
+
+    inline constexpr reg_t operator=(const T& value) const noexcept {
+        reg_t::value() = value;
+        return reg_t<T,address>{};
+    }
+
+    template<typename U>
+    inline constexpr auto operator=(const U& bit_field_value) const noexcept -> decltype (std::declval<U>().value, std::declval<U>().mask, std::declval<reg_t<T,address>>()) {
+        reg_t::value() = bit_field_value.value;
+        return reg_t<T,address>{};
+    }
+
+    template<typename U>
+    inline constexpr auto operator|=(const U& bit_field_value) const noexcept -> decltype (std::declval<U>().value, std::declval<U>().mask, std::declval<reg_t<T,address>>()) {
+        reg_t::value() = (reg_t::value() & ~bit_field_value.mask) | bit_field_value.value;
+        return reg_t<T,address>{};
+    }
+
+    inline constexpr reg_t operator|=(const T& value) const noexcept {
+        reg_t::value() |= value;
+        return reg_t<T,address>{};
+    }
+
+    inline constexpr reg_t operator&=(const T& value) const noexcept {
+        reg_t::value() &= value;
+        return reg_t<T,address>{};
+    }
+
+    constexpr operator volatile T&() noexcept { return value(); }
+    constexpr operator const volatile T&() const noexcept { return *reinterpret_cast<volatile T*>(address); }
 };
 
-// for writing a whole word reading and writing are just combined. Class provided for consistancy.
-struct rw_reg8_t : public ro_reg8_t, public wo_reg8_t { };
+namespace details {
+    template<typename T,int start, int stop>
+    constexpr T compute_mask() {
+        constexpr unsigned long long all_one = ~0ull;
+        if constexpr(start == stop) {
+                return static_cast<T>(1<<stop);
+        }
+        else {
+            return static_cast<T>((all_one<<(stop+1)) xor (all_one<<start));
+        }
+    }
+}  // namespace details
 
-template<addressType address, class mutability_policy = rw_reg8_t>
-struct reg8_t{
-    static constexpr addressType ADDRESS = address;
-    static void write(registerType value) {
-        mutability_policy::write_reg(reinterpret_cast<volatile registerType*>(address),value);
+template <typename reg_type, int start_index, int stop_index=start_index, typename value_t=int>
+struct bitfield_t {
+    using reg_t = reg_type;
+    using type = typename reg_t::type;
+    static constexpr const int start = std::min(start_index, stop_index);
+    static constexpr const int stop = std::max(start_index, stop_index);
+    static constexpr const typename reg_t::type mask = details::compute_mask<typename reg_t::type, start, stop>();
+
+    static constexpr bitfield_value_t<type> shift(const value_t value) noexcept {
+        return {(static_cast<type>(value)<<start) & mask, mask};
     }
-    static registerType read() {
-        return mutability_policy::read_reg(reinterpret_cast<volatile registerType*>(address));
+
+    inline constexpr bitfield_t operator=(const value_t& value) const noexcept {
+        typename reg_t::type tmp = shift(value).value;
+        reg_t::value() = (reg_t::value() &  ~mask)|tmp;
+        return bitfield_t<reg_t,start_index,stop_index,value_t>{};
     }
+
+    constexpr operator value_t() noexcept { return value_t((int(reg_t::value())& mask)>>start); }
+    constexpr operator value_t() const noexcept { return value_t((int(reg_t::value())& mask)>>start); }
 };
 
-/// AVR requires 16-bit registers to be read and written and two 8-bit accesses in specific order
-template<addressType address, class mutability_policy = rw_reg8_t>
-struct reg16_t{
-    using LB = reg8_t<address, mutability_policy>;
-    using HB = reg8_t<address+1, mutability_policy>;
-    static void write(const addressType value) {
-        LB::write(value);
-        HB::write(value>>8);
+namespace  {
+    template <int N>
+    inline unsigned long long bitfield_cat(unsigned long long value, unsigned int width) {
+        return (value<<(N*width)) | bitfield_cat<N-1>(value, width);
     }
-    static addressType read() {
-        const registerType lb = LB::read();
-        return lb | (HB::read() << 8);
+
+    template <>
+    inline unsigned long long bitfield_cat<0>(unsigned long long value, unsigned int width) {
+        return value;
     }
-    // TODO: need field access for 16 bit registers, that spans the bytes (counter in USB has 10 bit field and then other stuff in the rest of HB)
+}  // namespace anonymous
+
+template <std::size_t start_index, std::size_t width, typename reg_t, std::size_t count, typename value_t=int>
+struct bitfield_array_t {
+    static constexpr const typename reg_t::type field_mask = details::compute_mask<typename reg_t::type, start_index, start_index + width-1>();
+    static constexpr const typename reg_t::type mask = details::compute_mask<typename reg_t::type, start_index, start_index + (width*count)-1>();
+
+    template<std::size_t i>
+    using field_t = bitfield_t<reg_t, (i*width)+start_index, ((i+1)*width)+start_index-1, value_t>;
+
+    template<std::size_t i>
+    static constexpr auto get() noexcept {
+        static_assert ((i>=0)and(i<count), "Bitfield index is out of bounds");
+        return field_t<i>{};
+    }
+
+    template<typename T>
+    inline constexpr bitfield_array_t operator=(const T& value) const noexcept {
+        if constexpr(std::is_integral_v<T>) {
+            reg_t::value() = mask & (value << start_index);
+        }
+        else if constexpr(std::conjunction_v<std::is_enum<T>, std::is_same<T,value_t>>) {
+            auto v = bitfield_cat<count-1>(static_cast<unsigned long long>(value), width);
+            reg_t::value() = mask & (v << start_index);
+        }
+        return bitfield_array_t<start_index,width,reg_t,count,value_t>{};
+    }
+
+    constexpr operator typename reg_t::type() noexcept { return typename reg_t::type((int(reg_t::value())& mask)>>start_index); }
+    constexpr operator typename reg_t::type() const noexcept { return typename reg_t::type((int(reg_t::value())& mask)>>start_index); }
 };
 
-/*** Structures for accessing bitfields within 8-bit registers ***/
-
-struct ro_field_t {
-    static unsigned read_field(volatile registerType* reg, const registerType valMask, const registerType offset) {
-        return (*reg >> offset) & valMask;
-    }
-};
-
-struct wo_field_t {
-    static void write_field(volatile registerType* reg, const registerType valMask, const registerType offset, const registerType value) {
-        *reg = (value & valMask) << offset;
-    }
-};
-
-struct rw_field_t : public ro_field_t {
-    static void write_field(volatile registerType* reg, const registerType valMask, const registerType offset, const registerType value) {
-        *reg = (*reg & ~(valMask << offset))|((value & valMask) << offset);
-    }
-};
-
-template<addressType address, registerType mask, registerType offset, typename FieldType = registerType, class mutability_policy = rw_field_t>
-struct reg_field_t{
-    static constexpr registerType VAL_MASK = mask >> offset;
-    static constexpr registerType BIT_MASK = mask;
-    static constexpr registerType SHIFT    = offset;
-    static void write(FieldType value) {
-        mutability_policy::write_field(reinterpret_cast<volatile registerType*>(address),VAL_MASK,offset,static_cast<registerType>(value));
-    }
-    static FieldType read() {
-        return static_cast<FieldType>(mutability_policy::read_field(reinterpret_cast<volatile registerType*>(address),VAL_MASK,offset));
-    }
-};
-
-#endif // CPP_REGISTER_ACCESS_TEMPALTES
+}   // namespace seal::registers

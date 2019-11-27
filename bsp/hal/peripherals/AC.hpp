@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-AC (id I6077)
  * Analog Comparator
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * AC
- * Analog Comparator
- * Size: 8 bytes
- */
-template <addressType BASE_ADDRESS>
-struct AC_t {
+namespace AC {
 
     // Interrupt mode
     enum class INTMODEv : uint8_t {
@@ -94,77 +86,88 @@ struct AC_t {
         AC1 = 1, // AC1 Interrupt
         ACW = 2, // ACW Window Mode Interrupt
     };
+}   // namespace AC
+
+/**
+ * AC
+ * Analog Comparator
+ * Size: 8 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct AC_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Analog Comparator 0 Control - 1 bytes
-    struct AC0CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using INTMODE = reg_field_t<BASE_ADDRESS + 0x0000, 0xC0, 6, INTMODEv>;    //< Interrupt Mode
-        using INTLVL = reg_field_t<BASE_ADDRESS + 0x0000, 0x30, 4, INTLVLv>;    //< Interrupt Level
-        using HSMODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x08, 3>;    //< High-speed Mode
-        using HYSMODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x06, 1, HYSMODEv>;    //< Hysteresis Mode
-        using ENABLE = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< Enable
-    };
+    static constexpr struct AC0CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<AC0CTRL_t, 0xC0, 6, INTMODEv> INTMODE = {};    //< Interrupt Mode
+        static constexpr bitfield_t<AC0CTRL_t, 0x30, 4, INTLVLv> INTLVL = {};    //< Interrupt Level
+        static constexpr bitfield_t<AC0CTRL_t, 0x08, 3> HSMODE = {};    //< High-speed Mode
+        static constexpr bitfield_t<AC0CTRL_t, 0x06, 1, HYSMODEv> HYSMODE = {};    //< Hysteresis Mode
+        static constexpr bitfield_t<AC0CTRL_t, 0x01, 0> ENABLE = {};    //< Enable
+    } AC0CTRL = {};
 
     /// Analog Comparator 1 Control - 1 bytes
-    struct AC1CTRL : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using INTMODE = reg_field_t<BASE_ADDRESS + 0x0001, 0xC0, 6, INTMODEv>;    //< Interrupt Mode
-        using INTLVL = reg_field_t<BASE_ADDRESS + 0x0001, 0x30, 4, INTLVLv>;    //< Interrupt Level
-        using HSMODE = reg_field_t<BASE_ADDRESS + 0x0001, 0x08, 3>;    //< High-speed Mode
-        using HYSMODE = reg_field_t<BASE_ADDRESS + 0x0001, 0x06, 1, HYSMODEv>;    //< Hysteresis Mode
-        using ENABLE = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Enable
-    };
+    static constexpr struct AC1CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<AC1CTRL_t, 0xC0, 6, INTMODEv> INTMODE = {};    //< Interrupt Mode
+        static constexpr bitfield_t<AC1CTRL_t, 0x30, 4, INTLVLv> INTLVL = {};    //< Interrupt Level
+        static constexpr bitfield_t<AC1CTRL_t, 0x08, 3> HSMODE = {};    //< High-speed Mode
+        static constexpr bitfield_t<AC1CTRL_t, 0x06, 1, HYSMODEv> HYSMODE = {};    //< Hysteresis Mode
+        static constexpr bitfield_t<AC1CTRL_t, 0x01, 0> ENABLE = {};    //< Enable
+    } AC1CTRL = {};
 
     /// Analog Comparator 0 MUX Control - 1 bytes
-    struct AC0MUXCTRL : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using MUXPOS = reg_field_t<BASE_ADDRESS + 0x0002, 0x38, 3, MUXPOSv>;    //< MUX Positive Input
-        using MUXNEG = reg_field_t<BASE_ADDRESS + 0x0002, 0x07, 0, MUXNEGv>;    //< MUX Negative Input
-    };
+    static constexpr struct AC0MUXCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<AC0MUXCTRL_t, 0x38, 3, MUXPOSv> MUXPOS = {};    //< MUX Positive Input
+        static constexpr bitfield_t<AC0MUXCTRL_t, 0x07, 0, MUXNEGv> MUXNEG = {};    //< MUX Negative Input
+    } AC0MUXCTRL = {};
 
     /// Analog Comparator 1 MUX Control - 1 bytes
-    struct AC1MUXCTRL : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using MUXPOS = reg_field_t<BASE_ADDRESS + 0x0003, 0x38, 3, MUXPOSv>;    //< MUX Positive Input
-        using MUXNEG = reg_field_t<BASE_ADDRESS + 0x0003, 0x07, 0, MUXNEGv>;    //< MUX Negative Input
-    };
+    static constexpr struct AC1MUXCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<AC1MUXCTRL_t, 0x38, 3, MUXPOSv> MUXPOS = {};    //< MUX Positive Input
+        static constexpr bitfield_t<AC1MUXCTRL_t, 0x07, 0, MUXNEGv> MUXNEG = {};    //< MUX Negative Input
+    } AC1MUXCTRL = {};
 
     /// Control Register A - 1 bytes
-    struct CTRLA : public reg8_t<BASE_ADDRESS + 0x0004> {
-        using AC1OUT = reg_field_t<BASE_ADDRESS + 0x0004, 0x02, 1>;    //< Analog Comparator 1 Output Enable
-        using AC0OUT = reg_field_t<BASE_ADDRESS + 0x0004, 0x01, 0>;    //< Analog Comparator 0 Output Enable
-    };
+    static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        static constexpr bitfield_t<CTRLA_t, 0x02, 1> AC1OUT = {};    //< Analog Comparator 1 Output Enable
+        static constexpr bitfield_t<CTRLA_t, 0x01, 0> AC0OUT = {};    //< Analog Comparator 0 Output Enable
+    } CTRLA = {};
 
     /// Control Register B - 1 bytes
-    struct CTRLB : public reg8_t<BASE_ADDRESS + 0x0005> {
-        using SCALEFAC = reg_field_t<BASE_ADDRESS + 0x0005, 0x3F, 0>;    //< VCC Voltage Scaler Factor
-    };
+    static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        static constexpr bitfield_t<CTRLB_t, 0x3F, 0> SCALEFAC = {};    //< VCC Voltage Scaler Factor
+    } CTRLB = {};
 
     /// Window Mode Control - 1 bytes
-    struct WINCTRL : public reg8_t<BASE_ADDRESS + 0x0006> {
-        using WEN = reg_field_t<BASE_ADDRESS + 0x0006, 0x10, 4>;    //< Window Mode Enable
-        using WINTMODE = reg_field_t<BASE_ADDRESS + 0x0006, 0x0C, 2, WINTMODEv>;    //< Window Interrupt Mode
-        using WINTLVL = reg_field_t<BASE_ADDRESS + 0x0006, 0x03, 0, WINTLVLv>;    //< Window Interrupt Level
-    };
+    static constexpr struct WINCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        static constexpr bitfield_t<WINCTRL_t, 0x10, 4> WEN = {};    //< Window Mode Enable
+        static constexpr bitfield_t<WINCTRL_t, 0x0C, 2, WINTMODEv> WINTMODE = {};    //< Window Interrupt Mode
+        static constexpr bitfield_t<WINCTRL_t, 0x03, 0, WINTLVLv> WINTLVL = {};    //< Window Interrupt Level
+    } WINCTRL = {};
 
     /// Status - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0007> {
-        using WSTATE = reg_field_t<BASE_ADDRESS + 0x0007, 0xC0, 6, WSTATEv>;    //< Window Mode State
-        using AC1STATE = reg_field_t<BASE_ADDRESS + 0x0007, 0x20, 5>;    //< Analog Comparator 1 State
-        using AC0STATE = reg_field_t<BASE_ADDRESS + 0x0007, 0x10, 4>;    //< Analog Comparator 0 State
-        using WIF = reg_field_t<BASE_ADDRESS + 0x0007, 0x04, 2>;    //< Window Mode Interrupt Flag
-        using AC1IF = reg_field_t<BASE_ADDRESS + 0x0007, 0x02, 1>;    //< Analog Comparator 1 Interrupt Flag
-        using AC0IF = reg_field_t<BASE_ADDRESS + 0x0007, 0x01, 0>;    //< Analog Comparator 0 Interrupt Flag
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        static constexpr bitfield_t<STATUS_t, 0xC0, 6, WSTATEv> WSTATE = {};    //< Window Mode State
+        static constexpr bitfield_t<STATUS_t, 0x20, 5> AC1STATE = {};    //< Analog Comparator 1 State
+        static constexpr bitfield_t<STATUS_t, 0x10, 4> AC0STATE = {};    //< Analog Comparator 0 State
+        static constexpr bitfield_t<STATUS_t, 0x04, 2> WIF = {};    //< Window Mode Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 0x02, 1> AC1IF = {};    //< Analog Comparator 1 Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> AC0IF = {};    //< Analog Comparator 0 Interrupt Flag
+    } STATUS = {};
 
     /// Current Source Control - 1 bytes
-    struct CURRCTRL : public reg8_t<BASE_ADDRESS + 0x0008> {
-        using CURRENT = reg_field_t<BASE_ADDRESS + 0x0008, 0x80, 7>;    //< Current Source Enable
-        using CURRMODE = reg_field_t<BASE_ADDRESS + 0x0008, 0x40, 6>;    //< Current Mode
-        using AC1CURR = reg_field_t<BASE_ADDRESS + 0x0008, 0x02, 1>;    //< AC1 Current Source Output Enable
-        using AC0CURR = reg_field_t<BASE_ADDRESS + 0x0008, 0x01, 0>;    //< AC0 Current Source Output Enable
-    };
+    static constexpr struct CURRCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        static constexpr bitfield_t<CURRCTRL_t, 0x80, 7> CURRENT = {};    //< Current Source Enable
+        static constexpr bitfield_t<CURRCTRL_t, 0x40, 6> CURRMODE = {};    //< Current Mode
+        static constexpr bitfield_t<CURRCTRL_t, 0x02, 1> AC1CURR = {};    //< AC1 Current Source Output Enable
+        static constexpr bitfield_t<CURRCTRL_t, 0x01, 0> AC0CURR = {};    //< AC0 Current Source Output Enable
+    } CURRCTRL = {};
 
     /// Current Source Calibration - 1 bytes
-    struct CURRCALIB : public reg8_t<BASE_ADDRESS + 0x0009> {
-        using CALIB = reg_field_t<BASE_ADDRESS + 0x0009, 0x0F, 0>;    //< Current Source Calibration
-    };
+    static constexpr struct CURRCALIB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        static constexpr bitfield_t<CURRCALIB_t, 0x0F, 0> CALIB = {};    //< Current Source Calibration
+    } CURRCALIB = {};
+
 };
 
 } // namespace device

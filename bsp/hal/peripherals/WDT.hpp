@@ -1,23 +1,15 @@
 /**
  * None-WDT (id I6078)
  * Watch-Dog Timer
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * WDT
- * Watch-Dog Timer
- * Size: 3 bytes
- */
-template <addressType BASE_ADDRESS>
-struct WDT_t {
+namespace WDT {
 
     // Period setting
     enum class PERv : uint8_t {
@@ -49,25 +41,36 @@ struct WDT_t {
         _8KCLK = 0x0A, // 8K cycles (8s @ 3.3V)
     };
 
+}   // namespace WDT
+
+/**
+ * WDT
+ * Watch-Dog Timer
+ * Size: 3 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct WDT_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using PER = reg_field_t<BASE_ADDRESS + 0x0000, 0x3C, 2, PERv>;    //< Period
-        using ENABLE = reg_field_t<BASE_ADDRESS + 0x0000, 0x02, 1>;    //< Enable
-        using CEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< Change Enable
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x3C, 2, PERv> PER = {};    //< Period
+        static constexpr bitfield_t<CTRL_t, 0x02, 1> ENABLE = {};    //< Enable
+        static constexpr bitfield_t<CTRL_t, 0x01, 0> CEN = {};    //< Change Enable
+    } CTRL = {};
 
     /// Windowed Mode Control - 1 bytes
-    struct WINCTRL : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using WPER = reg_field_t<BASE_ADDRESS + 0x0001, 0x3C, 2, WPERv>;    //< Windowed Mode Period
-        using WEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x02, 1>;    //< Windowed Mode Enable
-        using WCEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Windowed Mode Change Enable
-    };
+    static constexpr struct WINCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<WINCTRL_t, 0x3C, 2, WPERv> WPER = {};    //< Windowed Mode Period
+        static constexpr bitfield_t<WINCTRL_t, 0x02, 1> WEN = {};    //< Windowed Mode Enable
+        static constexpr bitfield_t<WINCTRL_t, 0x01, 0> WCEN = {};    //< Windowed Mode Change Enable
+    } WINCTRL = {};
 
     /// Status - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using SYNCBUSY = reg_field_t<BASE_ADDRESS + 0x0002, 0x01, 0>;    //< Syncronization busy
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> SYNCBUSY = {};    //< Syncronization busy
+    } STATUS = {};
+
 };
 
 } // namespace device

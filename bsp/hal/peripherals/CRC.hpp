@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-CRC (id I6111)
  * Cyclic Redundancy Checker
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * CRC
- * Cyclic Redundancy Checker
- * Size: 8 bytes
- */
-template <addressType BASE_ADDRESS>
-struct CRC_t {
+namespace CRC {
 
     // Reset
     enum class RESETv : uint8_t {
@@ -37,39 +29,50 @@ struct CRC_t {
         DMAC3 = 0x07, // DMAC Channel 3
     };
 
+}   // namespace CRC
+
+/**
+ * CRC
+ * Cyclic Redundancy Checker
+ * Size: 8 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct CRC_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using RESET = reg_field_t<BASE_ADDRESS + 0x0000, 0xC0, 6, RESETv>;    //< Reset
-        using CRC32 = reg_field_t<BASE_ADDRESS + 0x0000, 0x20, 5>;    //< CRC Mode
-        using SOURCE = reg_field_t<BASE_ADDRESS + 0x0000, 0x0F, 0, SOURCEv>;    //< Input Source
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0xC0, 6, RESETv> RESET = {};    //< Reset
+        static constexpr bitfield_t<CTRL_t, 0x20, 5> CRC32 = {};    //< CRC Mode
+        static constexpr bitfield_t<CTRL_t, 0x0F, 0, SOURCEv> SOURCE = {};    //< Input Source
+    } CTRL = {};
 
     /// Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using ZERO = reg_field_t<BASE_ADDRESS + 0x0001, 0x02, 1>;    //< Zero detection
-        using BUSY = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Busy
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<STATUS_t, 0x02, 1> ZERO = {};    //< Zero detection
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> BUSY = {};    //< Busy
+    } STATUS = {};
 
     /// Data Input - 1 bytes
-    struct DATAIN : public reg8_t<BASE_ADDRESS + 0x0003> {
-    };
+    static constexpr struct DATAIN_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+    } DATAIN = {};
 
     /// Checksum byte 0 - 1 bytes
-    struct CHECKSUM0 : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct CHECKSUM0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } CHECKSUM0 = {};
 
     /// Checksum byte 1 - 1 bytes
-    struct CHECKSUM1 : public reg8_t<BASE_ADDRESS + 0x0005> {
-    };
+    static constexpr struct CHECKSUM1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+    } CHECKSUM1 = {};
 
     /// Checksum byte 2 - 1 bytes
-    struct CHECKSUM2 : public reg8_t<BASE_ADDRESS + 0x0006> {
-    };
+    static constexpr struct CHECKSUM2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+    } CHECKSUM2 = {};
 
     /// Checksum byte 3 - 1 bytes
-    struct CHECKSUM3 : public reg8_t<BASE_ADDRESS + 0x0007> {
-    };
+    static constexpr struct CHECKSUM3_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+    } CHECKSUM3 = {};
+
 };
 
 } // namespace device

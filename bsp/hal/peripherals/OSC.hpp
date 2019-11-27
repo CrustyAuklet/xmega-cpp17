@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-OSC (id I6079)
  * Oscillator
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * OSC
- * Oscillator
- * Size: 7 bytes
- */
-template <addressType BASE_ADDRESS>
-struct OSC_t {
+namespace OSC {
 
     // Oscillator Frequency Range
     enum class FRQRANGEv : uint8_t {
@@ -60,57 +52,68 @@ struct OSC_t {
     enum class INTERRUPTS {
         OSCF = 0, // Oscillator Failure Interrupt (NMI)
     };
+}   // namespace OSC
+
+/**
+ * OSC
+ * Oscillator
+ * Size: 7 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct OSC_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using PLLEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x10, 4>;    //< PLL Enable
-        using XOSCEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x08, 3>;    //< External Oscillator Enable
-        using RC32KEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x04, 2>;    //< Internal 32.768 kHz RC Oscillator Enable
-        using RC32MEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x02, 1>;    //< Internal 32 MHz RC Oscillator Enable
-        using RC2MEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< Internal 2 MHz RC Oscillator Enable
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x10, 4> PLLEN = {};    //< PLL Enable
+        static constexpr bitfield_t<CTRL_t, 0x08, 3> XOSCEN = {};    //< External Oscillator Enable
+        static constexpr bitfield_t<CTRL_t, 0x04, 2> RC32KEN = {};    //< Internal 32.768 kHz RC Oscillator Enable
+        static constexpr bitfield_t<CTRL_t, 0x02, 1> RC32MEN = {};    //< Internal 32 MHz RC Oscillator Enable
+        static constexpr bitfield_t<CTRL_t, 0x01, 0> RC2MEN = {};    //< Internal 2 MHz RC Oscillator Enable
+    } CTRL = {};
 
     /// Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using PLLRDY = reg_field_t<BASE_ADDRESS + 0x0001, 0x10, 4>;    //< PLL Ready
-        using XOSCRDY = reg_field_t<BASE_ADDRESS + 0x0001, 0x08, 3>;    //< External Oscillator Ready
-        using RC32KRDY = reg_field_t<BASE_ADDRESS + 0x0001, 0x04, 2>;    //< Internal 32.768 kHz RC Oscillator Ready
-        using RC32MRDY = reg_field_t<BASE_ADDRESS + 0x0001, 0x02, 1>;    //< Internal 32 MHz RC Oscillator Ready
-        using RC2MRDY = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Internal 2 MHz RC Oscillator Ready
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<STATUS_t, 0x10, 4> PLLRDY = {};    //< PLL Ready
+        static constexpr bitfield_t<STATUS_t, 0x08, 3> XOSCRDY = {};    //< External Oscillator Ready
+        static constexpr bitfield_t<STATUS_t, 0x04, 2> RC32KRDY = {};    //< Internal 32.768 kHz RC Oscillator Ready
+        static constexpr bitfield_t<STATUS_t, 0x02, 1> RC32MRDY = {};    //< Internal 32 MHz RC Oscillator Ready
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> RC2MRDY = {};    //< Internal 2 MHz RC Oscillator Ready
+    } STATUS = {};
 
     /// External Oscillator Control Register - 1 bytes
-    struct XOSCCTRL : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using FRQRANGE = reg_field_t<BASE_ADDRESS + 0x0002, 0xC0, 6, FRQRANGEv>;    //< Frequency Range
-        using X32KLPM = reg_field_t<BASE_ADDRESS + 0x0002, 0x20, 5>;    //< 32.768 kHz XTAL OSC Low-power Mode
-        using XOSCPWR = reg_field_t<BASE_ADDRESS + 0x0002, 0x10, 4>;    //< 16 MHz Crystal Oscillator High Power mode
-        using XOSCSEL = reg_field_t<BASE_ADDRESS + 0x0002, 0x0F, 0, XOSCSELv>;    //< External Oscillator Selection and Startup Time
-    };
+    static constexpr struct XOSCCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<XOSCCTRL_t, 0xC0, 6, FRQRANGEv> FRQRANGE = {};    //< Frequency Range
+        static constexpr bitfield_t<XOSCCTRL_t, 0x20, 5> X32KLPM = {};    //< 32.768 kHz XTAL OSC Low-power Mode
+        static constexpr bitfield_t<XOSCCTRL_t, 0x10, 4> XOSCPWR = {};    //< 16 MHz Crystal Oscillator High Power mode
+        static constexpr bitfield_t<XOSCCTRL_t, 0x0F, 0, XOSCSELv> XOSCSEL = {};    //< External Oscillator Selection and Startup Time
+    } XOSCCTRL = {};
 
     /// Oscillator Failure Detection Register - 1 bytes
-    struct XOSCFAIL : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using PLLFDIF = reg_field_t<BASE_ADDRESS + 0x0003, 0x08, 3>;    //< PLL Failure Detection Interrupt Flag
-        using PLLFDEN = reg_field_t<BASE_ADDRESS + 0x0003, 0x04, 2>;    //< PLL Failure Detection Enable
-        using XOSCFDIF = reg_field_t<BASE_ADDRESS + 0x0003, 0x02, 1>;    //< XOSC Failure Detection Interrupt Flag
-        using XOSCFDEN = reg_field_t<BASE_ADDRESS + 0x0003, 0x01, 0>;    //< XOSC Failure Detection Enable
-    };
+    static constexpr struct XOSCFAIL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<XOSCFAIL_t, 0x08, 3> PLLFDIF = {};    //< PLL Failure Detection Interrupt Flag
+        static constexpr bitfield_t<XOSCFAIL_t, 0x04, 2> PLLFDEN = {};    //< PLL Failure Detection Enable
+        static constexpr bitfield_t<XOSCFAIL_t, 0x02, 1> XOSCFDIF = {};    //< XOSC Failure Detection Interrupt Flag
+        static constexpr bitfield_t<XOSCFAIL_t, 0x01, 0> XOSCFDEN = {};    //< XOSC Failure Detection Enable
+    } XOSCFAIL = {};
 
     /// 32.768 kHz Internal Oscillator Calibration Register - 1 bytes
-    struct RC32KCAL : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct RC32KCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } RC32KCAL = {};
 
     /// PLL Control Register - 1 bytes
-    struct PLLCTRL : public reg8_t<BASE_ADDRESS + 0x0005> {
-        using PLLSRC = reg_field_t<BASE_ADDRESS + 0x0005, 0xC0, 6, PLLSRCv>;    //< Clock Source
-        using PLLDIV = reg_field_t<BASE_ADDRESS + 0x0005, 0x20, 5>;    //< Divide by 2
-        using PLLFAC = reg_field_t<BASE_ADDRESS + 0x0005, 0x1F, 0>;    //< Multiplication Factor
-    };
+    static constexpr struct PLLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        static constexpr bitfield_t<PLLCTRL_t, 0xC0, 6, PLLSRCv> PLLSRC = {};    //< Clock Source
+        static constexpr bitfield_t<PLLCTRL_t, 0x20, 5> PLLDIV = {};    //< Divide by 2
+        static constexpr bitfield_t<PLLCTRL_t, 0x1F, 0> PLLFAC = {};    //< Multiplication Factor
+    } PLLCTRL = {};
 
     /// DFLL Control Register - 1 bytes
-    struct DFLLCTRL : public reg8_t<BASE_ADDRESS + 0x0006> {
-        using RC32MCREF = reg_field_t<BASE_ADDRESS + 0x0006, 0x06, 1, RC32MCREFv>;    //< 32 MHz DFLL Calibration Reference
-        using RC2MCREF = reg_field_t<BASE_ADDRESS + 0x0006, 0x01, 0, RC2MCREFv>;    //< 2 MHz DFLL Calibration Reference
-    };
+    static constexpr struct DFLLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        static constexpr bitfield_t<DFLLCTRL_t, 0x06, 1, RC32MCREFv> RC32MCREF = {};    //< 32 MHz DFLL Calibration Reference
+        static constexpr bitfield_t<DFLLCTRL_t, 0x01, 0, RC2MCREFv> RC2MCREF = {};    //< 2 MHz DFLL Calibration Reference
+    } DFLLCTRL = {};
+
 };
 
 } // namespace device

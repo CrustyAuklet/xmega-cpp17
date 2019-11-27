@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-AWEX (id I6090)
  * Timer/Counter Advanced Waveform Extension
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * AWEX
- * Advanced Waveform Extension
- * Size: 13 bytes
- */
-template <addressType BASE_ADDRESS>
-struct AWEX_t {
+namespace AWEX {
 
     // Fault Detect Action
     enum class FDACTv : uint8_t {
@@ -26,69 +18,80 @@ struct AWEX_t {
         CLEARDIR = 0x03, // Clear I/O Port Direction Bits
     };
 
+}   // namespace AWEX
+
+/**
+ * AWEX
+ * Advanced Waveform Extension
+ * Size: 13 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct AWEX_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using PGM = reg_field_t<BASE_ADDRESS + 0x0000, 0x20, 5>;    //< Pattern Generation Mode
-        using CWCM = reg_field_t<BASE_ADDRESS + 0x0000, 0x10, 4>;    //< Common Waveform Channel Mode
-        using DTICCDEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x08, 3>;    //< Dead Time Insertion Compare Channel D Enable
-        using DTICCCEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x04, 2>;    //< Dead Time Insertion Compare Channel C Enable
-        using DTICCBEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x02, 1>;    //< Dead Time Insertion Compare Channel B Enable
-        using DTICCAEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< Dead Time Insertion Compare Channel A Enable
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x20, 5> PGM = {};    //< Pattern Generation Mode
+        static constexpr bitfield_t<CTRL_t, 0x10, 4> CWCM = {};    //< Common Waveform Channel Mode
+        static constexpr bitfield_t<CTRL_t, 0x08, 3> DTICCDEN = {};    //< Dead Time Insertion Compare Channel D Enable
+        static constexpr bitfield_t<CTRL_t, 0x04, 2> DTICCCEN = {};    //< Dead Time Insertion Compare Channel C Enable
+        static constexpr bitfield_t<CTRL_t, 0x02, 1> DTICCBEN = {};    //< Dead Time Insertion Compare Channel B Enable
+        static constexpr bitfield_t<CTRL_t, 0x01, 0> DTICCAEN = {};    //< Dead Time Insertion Compare Channel A Enable
+    } CTRL = {};
 
     /// Fault Detection Event Mask - 1 bytes
-    struct FDEMASK : public reg8_t<BASE_ADDRESS + 0x0002> {
-    };
+    static constexpr struct FDEMASK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+    } FDEMASK = {};
 
     /// Fault Detection Control Register - 1 bytes
-    struct FDCTRL : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using FDDBD = reg_field_t<BASE_ADDRESS + 0x0003, 0x10, 4>;    //< Fault Detect on Disable Break Disable
-        using FDMODE = reg_field_t<BASE_ADDRESS + 0x0003, 0x04, 2>;    //< Fault Detect Mode
-        using FDACT = reg_field_t<BASE_ADDRESS + 0x0003, 0x03, 0, FDACTv>;    //< Fault Detect Action
-    };
+    static constexpr struct FDCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<FDCTRL_t, 0x10, 4> FDDBD = {};    //< Fault Detect on Disable Break Disable
+        static constexpr bitfield_t<FDCTRL_t, 0x04, 2> FDMODE = {};    //< Fault Detect Mode
+        static constexpr bitfield_t<FDCTRL_t, 0x03, 0, FDACTv> FDACT = {};    //< Fault Detect Action
+    } FDCTRL = {};
 
     /// Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0004> {
-        using FDF = reg_field_t<BASE_ADDRESS + 0x0004, 0x04, 2>;    //< Fault Detect Flag
-        using DTHSBUFV = reg_field_t<BASE_ADDRESS + 0x0004, 0x02, 1>;    //< Dead Time High Side Buffer Valid
-        using DTLSBUFV = reg_field_t<BASE_ADDRESS + 0x0004, 0x01, 0>;    //< Dead Time Low Side Buffer Valid
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        static constexpr bitfield_t<STATUS_t, 0x04, 2> FDF = {};    //< Fault Detect Flag
+        static constexpr bitfield_t<STATUS_t, 0x02, 1> DTHSBUFV = {};    //< Dead Time High Side Buffer Valid
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> DTLSBUFV = {};    //< Dead Time Low Side Buffer Valid
+    } STATUS = {};
 
     /// Status Set Register - 1 bytes
-    struct STATUSSET : public reg8_t<BASE_ADDRESS + 0x0005> {
-        using FDF = reg_field_t<BASE_ADDRESS + 0x0005, 0x04, 2>;    //< Fault Detect Flag
-        using DTHSBUFV = reg_field_t<BASE_ADDRESS + 0x0005, 0x02, 1>;    //< Dead Time High Side Buffer Valid
-        using DTLSBUFV = reg_field_t<BASE_ADDRESS + 0x0005, 0x01, 0>;    //< Dead Time Low Side Buffer Valid
-    };
+    static constexpr struct STATUSSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        static constexpr bitfield_t<STATUSSET_t, 0x04, 2> FDF = {};    //< Fault Detect Flag
+        static constexpr bitfield_t<STATUSSET_t, 0x02, 1> DTHSBUFV = {};    //< Dead Time High Side Buffer Valid
+        static constexpr bitfield_t<STATUSSET_t, 0x01, 0> DTLSBUFV = {};    //< Dead Time Low Side Buffer Valid
+    } STATUSSET = {};
 
     /// Dead Time Both Sides - 1 bytes
-    struct DTBOTH : public reg8_t<BASE_ADDRESS + 0x0006> {
-    };
+    static constexpr struct DTBOTH_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+    } DTBOTH = {};
 
     /// Dead Time Both Sides Buffer - 1 bytes
-    struct DTBOTHBUF : public reg8_t<BASE_ADDRESS + 0x0007> {
-    };
+    static constexpr struct DTBOTHBUF_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+    } DTBOTHBUF = {};
 
     /// Dead Time Low Side - 1 bytes
-    struct DTLS : public reg8_t<BASE_ADDRESS + 0x0008> {
-    };
+    static constexpr struct DTLS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+    } DTLS = {};
 
     /// Dead Time High Side - 1 bytes
-    struct DTHS : public reg8_t<BASE_ADDRESS + 0x0009> {
-    };
+    static constexpr struct DTHS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+    } DTHS = {};
 
     /// Dead Time Low Side Buffer - 1 bytes
-    struct DTLSBUF : public reg8_t<BASE_ADDRESS + 0x000A> {
-    };
+    static constexpr struct DTLSBUF_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+    } DTLSBUF = {};
 
     /// Dead Time High Side Buffer - 1 bytes
-    struct DTHSBUF : public reg8_t<BASE_ADDRESS + 0x000B> {
-    };
+    static constexpr struct DTHSBUF_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
+    } DTHSBUF = {};
 
     /// Output Override Enable - 1 bytes
-    struct OUTOVEN : public reg8_t<BASE_ADDRESS + 0x000C> {
-    };
+    static constexpr struct OUTOVEN_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+    } OUTOVEN = {};
+
 };
 
 } // namespace device

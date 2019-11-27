@@ -1,15 +1,17 @@
 /**
  * XMEGAAU-PR (id I6073)
  * Power Reduction
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
+
+namespace PR {
+
+}   // namespace PR
 
 /**
  * PR
@@ -18,75 +20,76 @@ namespace device {
  */
 template <addressType BASE_ADDRESS>
 struct PR_t {
-
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// General Power Reduction - 1 bytes
-    struct PRGEN : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using USB = reg_field_t<BASE_ADDRESS + 0x0000, 0x40, 6>;    //< USB
-        using AES = reg_field_t<BASE_ADDRESS + 0x0000, 0x10, 4>;    //< AES
-        using EBI = reg_field_t<BASE_ADDRESS + 0x0000, 0x08, 3>;    //< External Bus Interface
-        using RTC = reg_field_t<BASE_ADDRESS + 0x0000, 0x04, 2>;    //< Real-time Counter
-        using EVSYS = reg_field_t<BASE_ADDRESS + 0x0000, 0x02, 1>;    //< Event System
-        using DMA = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< DMA-Controller
-    };
+    static constexpr struct PRGEN_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<PRGEN_t, 0x40, 6> USB = {};    //< USB
+        static constexpr bitfield_t<PRGEN_t, 0x10, 4> AES = {};    //< AES
+        static constexpr bitfield_t<PRGEN_t, 0x08, 3> EBI = {};    //< External Bus Interface
+        static constexpr bitfield_t<PRGEN_t, 0x04, 2> RTC = {};    //< Real-time Counter
+        static constexpr bitfield_t<PRGEN_t, 0x02, 1> EVSYS = {};    //< Event System
+        static constexpr bitfield_t<PRGEN_t, 0x01, 0> DMA = {};    //< DMA-Controller
+    } PRGEN = {};
 
     /// Power Reduction Port A - 1 bytes
-    struct PRPA : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using DAC = reg_field_t<BASE_ADDRESS + 0x0001, 0x04, 2>;    //< Port A DAC
-        using ADC = reg_field_t<BASE_ADDRESS + 0x0001, 0x02, 1>;    //< Port A ADC
-        using AC = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Port A Analog Comparator
-    };
+    static constexpr struct PRPA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<PRPA_t, 0x04, 2> DAC = {};    //< Port A DAC
+        static constexpr bitfield_t<PRPA_t, 0x02, 1> ADC = {};    //< Port A ADC
+        static constexpr bitfield_t<PRPA_t, 0x01, 0> AC = {};    //< Port A Analog Comparator
+    } PRPA = {};
 
     /// Power Reduction Port B - 1 bytes
-    struct PRPB : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using DAC = reg_field_t<BASE_ADDRESS + 0x0002, 0x04, 2>;    //< Port B DAC
-        using ADC = reg_field_t<BASE_ADDRESS + 0x0002, 0x02, 1>;    //< Port B ADC
-        using AC = reg_field_t<BASE_ADDRESS + 0x0002, 0x01, 0>;    //< Port B Analog Comparator
-    };
+    static constexpr struct PRPB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<PRPB_t, 0x04, 2> DAC = {};    //< Port B DAC
+        static constexpr bitfield_t<PRPB_t, 0x02, 1> ADC = {};    //< Port B ADC
+        static constexpr bitfield_t<PRPB_t, 0x01, 0> AC = {};    //< Port B Analog Comparator
+    } PRPB = {};
 
     /// Power Reduction Port C - 1 bytes
-    struct PRPC : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using TWI = reg_field_t<BASE_ADDRESS + 0x0003, 0x40, 6>;    //< Port C Two-wire Interface
-        using USART1 = reg_field_t<BASE_ADDRESS + 0x0003, 0x20, 5>;    //< Port C USART1
-        using USART0 = reg_field_t<BASE_ADDRESS + 0x0003, 0x10, 4>;    //< Port C USART0
-        using SPI = reg_field_t<BASE_ADDRESS + 0x0003, 0x08, 3>;    //< Port C SPI
-        using HIRES = reg_field_t<BASE_ADDRESS + 0x0003, 0x04, 2>;    //< Port C AWEX
-        using TC1 = reg_field_t<BASE_ADDRESS + 0x0003, 0x02, 1>;    //< Port C Timer/Counter1
-        using TC0 = reg_field_t<BASE_ADDRESS + 0x0003, 0x01, 0>;    //< Port C Timer/Counter0
-    };
+    static constexpr struct PRPC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<PRPC_t, 0x40, 6> TWI = {};    //< Port C Two-wire Interface
+        static constexpr bitfield_t<PRPC_t, 0x20, 5> USART1 = {};    //< Port C USART1
+        static constexpr bitfield_t<PRPC_t, 0x10, 4> USART0 = {};    //< Port C USART0
+        static constexpr bitfield_t<PRPC_t, 0x08, 3> SPI = {};    //< Port C SPI
+        static constexpr bitfield_t<PRPC_t, 0x04, 2> HIRES = {};    //< Port C AWEX
+        static constexpr bitfield_t<PRPC_t, 0x02, 1> TC1 = {};    //< Port C Timer/Counter1
+        static constexpr bitfield_t<PRPC_t, 0x01, 0> TC0 = {};    //< Port C Timer/Counter0
+    } PRPC = {};
 
     /// Power Reduction Port D - 1 bytes
-    struct PRPD : public reg8_t<BASE_ADDRESS + 0x0004> {
-        using TWI = reg_field_t<BASE_ADDRESS + 0x0004, 0x40, 6>;    //< Port D Two-wire Interface
-        using USART1 = reg_field_t<BASE_ADDRESS + 0x0004, 0x20, 5>;    //< Port D USART1
-        using USART0 = reg_field_t<BASE_ADDRESS + 0x0004, 0x10, 4>;    //< Port D USART0
-        using SPI = reg_field_t<BASE_ADDRESS + 0x0004, 0x08, 3>;    //< Port D SPI
-        using HIRES = reg_field_t<BASE_ADDRESS + 0x0004, 0x04, 2>;    //< Port D AWEX
-        using TC1 = reg_field_t<BASE_ADDRESS + 0x0004, 0x02, 1>;    //< Port D Timer/Counter1
-        using TC0 = reg_field_t<BASE_ADDRESS + 0x0004, 0x01, 0>;    //< Port D Timer/Counter0
-    };
+    static constexpr struct PRPD_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        static constexpr bitfield_t<PRPD_t, 0x40, 6> TWI = {};    //< Port D Two-wire Interface
+        static constexpr bitfield_t<PRPD_t, 0x20, 5> USART1 = {};    //< Port D USART1
+        static constexpr bitfield_t<PRPD_t, 0x10, 4> USART0 = {};    //< Port D USART0
+        static constexpr bitfield_t<PRPD_t, 0x08, 3> SPI = {};    //< Port D SPI
+        static constexpr bitfield_t<PRPD_t, 0x04, 2> HIRES = {};    //< Port D AWEX
+        static constexpr bitfield_t<PRPD_t, 0x02, 1> TC1 = {};    //< Port D Timer/Counter1
+        static constexpr bitfield_t<PRPD_t, 0x01, 0> TC0 = {};    //< Port D Timer/Counter0
+    } PRPD = {};
 
     /// Power Reduction Port E - 1 bytes
-    struct PRPE : public reg8_t<BASE_ADDRESS + 0x0005> {
-        using TWI = reg_field_t<BASE_ADDRESS + 0x0005, 0x40, 6>;    //< Port E Two-wire Interface
-        using USART1 = reg_field_t<BASE_ADDRESS + 0x0005, 0x20, 5>;    //< Port E USART1
-        using USART0 = reg_field_t<BASE_ADDRESS + 0x0005, 0x10, 4>;    //< Port E USART0
-        using SPI = reg_field_t<BASE_ADDRESS + 0x0005, 0x08, 3>;    //< Port E SPI
-        using HIRES = reg_field_t<BASE_ADDRESS + 0x0005, 0x04, 2>;    //< Port E AWEX
-        using TC1 = reg_field_t<BASE_ADDRESS + 0x0005, 0x02, 1>;    //< Port E Timer/Counter1
-        using TC0 = reg_field_t<BASE_ADDRESS + 0x0005, 0x01, 0>;    //< Port E Timer/Counter0
-    };
+    static constexpr struct PRPE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        static constexpr bitfield_t<PRPE_t, 0x40, 6> TWI = {};    //< Port E Two-wire Interface
+        static constexpr bitfield_t<PRPE_t, 0x20, 5> USART1 = {};    //< Port E USART1
+        static constexpr bitfield_t<PRPE_t, 0x10, 4> USART0 = {};    //< Port E USART0
+        static constexpr bitfield_t<PRPE_t, 0x08, 3> SPI = {};    //< Port E SPI
+        static constexpr bitfield_t<PRPE_t, 0x04, 2> HIRES = {};    //< Port E AWEX
+        static constexpr bitfield_t<PRPE_t, 0x02, 1> TC1 = {};    //< Port E Timer/Counter1
+        static constexpr bitfield_t<PRPE_t, 0x01, 0> TC0 = {};    //< Port E Timer/Counter0
+    } PRPE = {};
 
     /// Power Reduction Port F - 1 bytes
-    struct PRPF : public reg8_t<BASE_ADDRESS + 0x0006> {
-        using TWI = reg_field_t<BASE_ADDRESS + 0x0006, 0x40, 6>;    //< Port F Two-wire Interface
-        using USART1 = reg_field_t<BASE_ADDRESS + 0x0006, 0x20, 5>;    //< Port F USART1
-        using USART0 = reg_field_t<BASE_ADDRESS + 0x0006, 0x10, 4>;    //< Port F USART0
-        using SPI = reg_field_t<BASE_ADDRESS + 0x0006, 0x08, 3>;    //< Port F SPI
-        using HIRES = reg_field_t<BASE_ADDRESS + 0x0006, 0x04, 2>;    //< Port F AWEX
-        using TC1 = reg_field_t<BASE_ADDRESS + 0x0006, 0x02, 1>;    //< Port F Timer/Counter1
-        using TC0 = reg_field_t<BASE_ADDRESS + 0x0006, 0x01, 0>;    //< Port F Timer/Counter0
-    };
+    static constexpr struct PRPF_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        static constexpr bitfield_t<PRPF_t, 0x40, 6> TWI = {};    //< Port F Two-wire Interface
+        static constexpr bitfield_t<PRPF_t, 0x20, 5> USART1 = {};    //< Port F USART1
+        static constexpr bitfield_t<PRPF_t, 0x10, 4> USART0 = {};    //< Port F USART0
+        static constexpr bitfield_t<PRPF_t, 0x08, 3> SPI = {};    //< Port F SPI
+        static constexpr bitfield_t<PRPF_t, 0x04, 2> HIRES = {};    //< Port F AWEX
+        static constexpr bitfield_t<PRPF_t, 0x02, 1> TC1 = {};    //< Port F Timer/Counter1
+        static constexpr bitfield_t<PRPF_t, 0x01, 0> TC0 = {};    //< Port F Timer/Counter0
+    } PRPF = {};
+
 };
 
 } // namespace device

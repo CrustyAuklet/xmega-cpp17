@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-SLEEP (id I6081)
  * Sleep Controller
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * SLEEP
- * Sleep Controller
- * Size: 1 bytes
- */
-template <addressType BASE_ADDRESS>
-struct SLEEP_t {
+namespace SLEEP {
 
     // Sleep Mode
     enum class SMODEv : uint8_t {
@@ -28,12 +20,23 @@ struct SLEEP_t {
         ESTDBY = 0x07, // Extended Standby Mode
     };
 
+}   // namespace SLEEP
+
+/**
+ * SLEEP
+ * Sleep Controller
+ * Size: 1 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct SLEEP_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using SMODE = reg_field_t<BASE_ADDRESS + 0x0000, 0x0E, 1, SMODEv>;    //< Sleep Mode
-        using SEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< Sleep Enable
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x0E, 1, SMODEv> SMODE = {};    //< Sleep Mode
+        static constexpr bitfield_t<CTRL_t, 0x01, 0> SEN = {};    //< Sleep Enable
+    } CTRL = {};
+
 };
 
 } // namespace device

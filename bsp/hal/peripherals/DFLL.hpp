@@ -1,15 +1,17 @@
 /**
  * XMEGAAU-DFLL (id I6055)
  * DFLL
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
+
+namespace DFLL {
+
+}   // namespace DFLL
 
 /**
  * DFLL
@@ -18,34 +20,35 @@ namespace device {
  */
 template <addressType BASE_ADDRESS>
 struct DFLL_t {
-
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using ENABLE = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< DFLL Enable
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x01, 0> ENABLE = {};    //< DFLL Enable
+    } CTRL = {};
 
     /// Calibration Register A - 1 bytes
-    struct CALA : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using CALL = reg_field_t<BASE_ADDRESS + 0x0002, 0x7F, 0>;    //< DFLL Calibration Value A
-    };
+    static constexpr struct CALA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<CALA_t, 0x7F, 0> CALL = {};    //< DFLL Calibration Value A
+    } CALA = {};
 
     /// Calibration Register B - 1 bytes
-    struct CALB : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using CALH = reg_field_t<BASE_ADDRESS + 0x0003, 0x3F, 0>;    //< DFLL Calibration Value B
-    };
+    static constexpr struct CALB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<CALB_t, 0x3F, 0> CALH = {};    //< DFLL Calibration Value B
+    } CALB = {};
 
     /// Oscillator Compare Register 0 - 1 bytes
-    struct COMP0 : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct COMP0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } COMP0 = {};
 
     /// Oscillator Compare Register 1 - 1 bytes
-    struct COMP1 : public reg8_t<BASE_ADDRESS + 0x0005> {
-    };
+    static constexpr struct COMP1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+    } COMP1 = {};
 
     /// Oscillator Compare Register 2 - 1 bytes
-    struct COMP2 : public reg8_t<BASE_ADDRESS + 0x0006> {
-    };
+    static constexpr struct COMP2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+    } COMP2 = {};
+
 };
 
 } // namespace device

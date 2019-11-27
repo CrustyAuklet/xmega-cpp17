@@ -1,15 +1,17 @@
 /**
  * XMEGAAU-SIGROW (id I6570)
  * Signature Row
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
+
+namespace SIGROW {
+
+}   // namespace SIGROW
 
 /**
  * NVM_PROD_SIGNATURES
@@ -18,143 +20,144 @@ namespace device {
  */
 template <addressType BASE_ADDRESS>
 struct NVM_PROD_SIGNATURES_t {
-
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// RCOSC 2 MHz Calibration Value B - 1 bytes
-    struct RCOSC2M : public reg8_t<BASE_ADDRESS + 0x0000> {
-    };
+    static constexpr struct RCOSC2M_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+    } RCOSC2M = {};
 
     /// RCOSC 2 MHz Calibration Value A - 1 bytes
-    struct RCOSC2MA : public reg8_t<BASE_ADDRESS + 0x0001> {
-    };
+    static constexpr struct RCOSC2MA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+    } RCOSC2MA = {};
 
     /// RCOSC 32.768 kHz Calibration Value - 1 bytes
-    struct RCOSC32K : public reg8_t<BASE_ADDRESS + 0x0002> {
-    };
+    static constexpr struct RCOSC32K_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+    } RCOSC32K = {};
 
     /// RCOSC 32 MHz Calibration Value B - 1 bytes
-    struct RCOSC32M : public reg8_t<BASE_ADDRESS + 0x0003> {
-    };
+    static constexpr struct RCOSC32M_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+    } RCOSC32M = {};
 
     /// RCOSC 32 MHz Calibration Value A - 1 bytes
-    struct RCOSC32MA : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct RCOSC32MA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } RCOSC32MA = {};
 
     /// Lot Number Byte 0, ASCII - 1 bytes
-    struct LOTNUM0 : public reg8_t<BASE_ADDRESS + 0x0008> {
-    };
+    static constexpr struct LOTNUM0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+    } LOTNUM0 = {};
 
     /// Lot Number Byte 1, ASCII - 1 bytes
-    struct LOTNUM1 : public reg8_t<BASE_ADDRESS + 0x0009> {
-    };
+    static constexpr struct LOTNUM1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+    } LOTNUM1 = {};
 
     /// Lot Number Byte 2, ASCII - 1 bytes
-    struct LOTNUM2 : public reg8_t<BASE_ADDRESS + 0x000A> {
-    };
+    static constexpr struct LOTNUM2_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+    } LOTNUM2 = {};
 
     /// Lot Number Byte 3, ASCII - 1 bytes
-    struct LOTNUM3 : public reg8_t<BASE_ADDRESS + 0x000B> {
-    };
+    static constexpr struct LOTNUM3_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
+    } LOTNUM3 = {};
 
     /// Lot Number Byte 4, ASCII - 1 bytes
-    struct LOTNUM4 : public reg8_t<BASE_ADDRESS + 0x000C> {
-    };
+    static constexpr struct LOTNUM4_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+    } LOTNUM4 = {};
 
     /// Lot Number Byte 5, ASCII - 1 bytes
-    struct LOTNUM5 : public reg8_t<BASE_ADDRESS + 0x000D> {
-    };
+    static constexpr struct LOTNUM5_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
+    } LOTNUM5 = {};
 
     /// Wafer Number - 1 bytes
-    struct WAFNUM : public reg8_t<BASE_ADDRESS + 0x0010> {
-    };
+    static constexpr struct WAFNUM_t : reg_t<uint8_t, BASE_ADDRESS + 0x0010> {
+    } WAFNUM = {};
 
     /// Wafer Coordinate X Byte 0 - 1 bytes
-    struct COORDX0 : public reg8_t<BASE_ADDRESS + 0x0012> {
-    };
+    static constexpr struct COORDX0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0012> {
+    } COORDX0 = {};
 
     /// Wafer Coordinate X Byte 1 - 1 bytes
-    struct COORDX1 : public reg8_t<BASE_ADDRESS + 0x0013> {
-    };
+    static constexpr struct COORDX1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0013> {
+    } COORDX1 = {};
 
     /// Wafer Coordinate Y Byte 0 - 1 bytes
-    struct COORDY0 : public reg8_t<BASE_ADDRESS + 0x0014> {
-    };
+    static constexpr struct COORDY0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0014> {
+    } COORDY0 = {};
 
     /// Wafer Coordinate Y Byte 1 - 1 bytes
-    struct COORDY1 : public reg8_t<BASE_ADDRESS + 0x0015> {
-    };
+    static constexpr struct COORDY1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0015> {
+    } COORDY1 = {};
 
     /// USB Calibration Byte 0 - 1 bytes
-    struct USBCAL0 : public reg8_t<BASE_ADDRESS + 0x001A> {
-    };
+    static constexpr struct USBCAL0_t : reg_t<uint8_t, BASE_ADDRESS + 0x001A> {
+    } USBCAL0 = {};
 
     /// USB Calibration Byte 1 - 1 bytes
-    struct USBCAL1 : public reg8_t<BASE_ADDRESS + 0x001B> {
-    };
+    static constexpr struct USBCAL1_t : reg_t<uint8_t, BASE_ADDRESS + 0x001B> {
+    } USBCAL1 = {};
 
     /// USB RCOSC Calibration Value B - 1 bytes
-    struct USBRCOSC : public reg8_t<BASE_ADDRESS + 0x001C> {
-    };
+    static constexpr struct USBRCOSC_t : reg_t<uint8_t, BASE_ADDRESS + 0x001C> {
+    } USBRCOSC = {};
 
     /// USB RCOSC Calibration Value A - 1 bytes
-    struct USBRCOSCA : public reg8_t<BASE_ADDRESS + 0x001D> {
-    };
+    static constexpr struct USBRCOSCA_t : reg_t<uint8_t, BASE_ADDRESS + 0x001D> {
+    } USBRCOSCA = {};
 
     /// ADCA Calibration Byte 0 - 1 bytes
-    struct ADCACAL0 : public reg8_t<BASE_ADDRESS + 0x0020> {
-    };
+    static constexpr struct ADCACAL0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0020> {
+    } ADCACAL0 = {};
 
     /// ADCA Calibration Byte 1 - 1 bytes
-    struct ADCACAL1 : public reg8_t<BASE_ADDRESS + 0x0021> {
-    };
+    static constexpr struct ADCACAL1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0021> {
+    } ADCACAL1 = {};
 
     /// ADCB Calibration Byte 0 - 1 bytes
-    struct ADCBCAL0 : public reg8_t<BASE_ADDRESS + 0x0024> {
-    };
+    static constexpr struct ADCBCAL0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0024> {
+    } ADCBCAL0 = {};
 
     /// ADCB Calibration Byte 1 - 1 bytes
-    struct ADCBCAL1 : public reg8_t<BASE_ADDRESS + 0x0025> {
-    };
+    static constexpr struct ADCBCAL1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0025> {
+    } ADCBCAL1 = {};
 
     /// Temperature Sensor Calibration Byte 0 - 1 bytes
-    struct TEMPSENSE0 : public reg8_t<BASE_ADDRESS + 0x002E> {
-    };
+    static constexpr struct TEMPSENSE0_t : reg_t<uint8_t, BASE_ADDRESS + 0x002E> {
+    } TEMPSENSE0 = {};
 
     /// Temperature Sensor Calibration Byte 1 - 1 bytes
-    struct TEMPSENSE1 : public reg8_t<BASE_ADDRESS + 0x002F> {
-    };
+    static constexpr struct TEMPSENSE1_t : reg_t<uint8_t, BASE_ADDRESS + 0x002F> {
+    } TEMPSENSE1 = {};
 
     /// DACA0 Calibration Byte 0 - 1 bytes
-    struct DACA0OFFCAL : public reg8_t<BASE_ADDRESS + 0x0030> {
-    };
+    static constexpr struct DACA0OFFCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0030> {
+    } DACA0OFFCAL = {};
 
     /// DACA0 Calibration Byte 1 - 1 bytes
-    struct DACA0GAINCAL : public reg8_t<BASE_ADDRESS + 0x0031> {
-    };
+    static constexpr struct DACA0GAINCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0031> {
+    } DACA0GAINCAL = {};
 
     /// DACB0 Calibration Byte 0 - 1 bytes
-    struct DACB0OFFCAL : public reg8_t<BASE_ADDRESS + 0x0032> {
-    };
+    static constexpr struct DACB0OFFCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0032> {
+    } DACB0OFFCAL = {};
 
     /// DACB0 Calibration Byte 1 - 1 bytes
-    struct DACB0GAINCAL : public reg8_t<BASE_ADDRESS + 0x0033> {
-    };
+    static constexpr struct DACB0GAINCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0033> {
+    } DACB0GAINCAL = {};
 
     /// DACA1 Calibration Byte 0 - 1 bytes
-    struct DACA1OFFCAL : public reg8_t<BASE_ADDRESS + 0x0034> {
-    };
+    static constexpr struct DACA1OFFCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0034> {
+    } DACA1OFFCAL = {};
 
     /// DACA1 Calibration Byte 1 - 1 bytes
-    struct DACA1GAINCAL : public reg8_t<BASE_ADDRESS + 0x0035> {
-    };
+    static constexpr struct DACA1GAINCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0035> {
+    } DACA1GAINCAL = {};
 
     /// DACB1 Calibration Byte 0 - 1 bytes
-    struct DACB1OFFCAL : public reg8_t<BASE_ADDRESS + 0x0036> {
-    };
+    static constexpr struct DACB1OFFCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0036> {
+    } DACB1OFFCAL = {};
 
     /// DACB1 Calibration Byte 1 - 1 bytes
-    struct DACB1GAINCAL : public reg8_t<BASE_ADDRESS + 0x0037> {
-    };
+    static constexpr struct DACB1GAINCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0037> {
+    } DACB1GAINCAL = {};
+
 };
 
 } // namespace device

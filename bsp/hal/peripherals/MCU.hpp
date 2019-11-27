@@ -1,15 +1,17 @@
 /**
  * XMEGAAU-MCU (id I6091)
  * MCU Control
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
+
+namespace MCU {
+
+}   // namespace MCU
 
 /**
  * MCU
@@ -18,52 +20,53 @@ namespace device {
  */
 template <addressType BASE_ADDRESS>
 struct MCU_t {
-
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Device ID byte 0 - 1 bytes
-    struct DEVID0 : public reg8_t<BASE_ADDRESS + 0x0000> {
-    };
+    static constexpr struct DEVID0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+    } DEVID0 = {};
 
     /// Device ID byte 1 - 1 bytes
-    struct DEVID1 : public reg8_t<BASE_ADDRESS + 0x0001> {
-    };
+    static constexpr struct DEVID1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+    } DEVID1 = {};
 
     /// Device ID byte 2 - 1 bytes
-    struct DEVID2 : public reg8_t<BASE_ADDRESS + 0x0002> {
-    };
+    static constexpr struct DEVID2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+    } DEVID2 = {};
 
     /// Revision ID - 1 bytes
-    struct REVID : public reg8_t<BASE_ADDRESS + 0x0003> {
-    };
+    static constexpr struct REVID_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+    } REVID = {};
 
     /// JTAG User ID - 1 bytes
-    struct JTAGUID : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct JTAGUID_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } JTAGUID = {};
 
     /// MCU Control - 1 bytes
-    struct MCUCR : public reg8_t<BASE_ADDRESS + 0x0006> {
-        using JTAGD = reg_field_t<BASE_ADDRESS + 0x0006, 0x01, 0>;    //< JTAG Disable
-    };
+    static constexpr struct MCUCR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        static constexpr bitfield_t<MCUCR_t, 0x01, 0> JTAGD = {};    //< JTAG Disable
+    } MCUCR = {};
 
     /// Analog Startup Delay - 1 bytes
-    struct ANAINIT : public reg8_t<BASE_ADDRESS + 0x0007> {
-        using STARTUPDLYB = reg_field_t<BASE_ADDRESS + 0x0007, 0x0C, 2>;    //< Analog startup delay Port B
-        using STARTUPDLYA = reg_field_t<BASE_ADDRESS + 0x0007, 0x03, 0>;    //< Analog startup delay Port A
-    };
+    static constexpr struct ANAINIT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        static constexpr bitfield_t<ANAINIT_t, 0x0C, 2> STARTUPDLYB = {};    //< Analog startup delay Port B
+        static constexpr bitfield_t<ANAINIT_t, 0x03, 0> STARTUPDLYA = {};    //< Analog startup delay Port A
+    } ANAINIT = {};
 
     /// Event System Lock - 1 bytes
-    struct EVSYSLOCK : public reg8_t<BASE_ADDRESS + 0x0008> {
-        using EVSYS1LOCK = reg_field_t<BASE_ADDRESS + 0x0008, 0x10, 4>;    //< Event Channel 4-7 Lock
-        using EVSYS0LOCK = reg_field_t<BASE_ADDRESS + 0x0008, 0x01, 0>;    //< Event Channel 0-3 Lock
-    };
+    static constexpr struct EVSYSLOCK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        static constexpr bitfield_t<EVSYSLOCK_t, 0x10, 4> EVSYS1LOCK = {};    //< Event Channel 4-7 Lock
+        static constexpr bitfield_t<EVSYSLOCK_t, 0x01, 0> EVSYS0LOCK = {};    //< Event Channel 0-3 Lock
+    } EVSYSLOCK = {};
 
     /// AWEX Lock - 1 bytes
-    struct AWEXLOCK : public reg8_t<BASE_ADDRESS + 0x0009> {
-        using AWEXFLOCK = reg_field_t<BASE_ADDRESS + 0x0009, 0x08, 3>;    //< AWeX on T/C F0 Lock
-        using AWEXELOCK = reg_field_t<BASE_ADDRESS + 0x0009, 0x04, 2>;    //< AWeX on T/C E0 Lock
-        using AWEXDLOCK = reg_field_t<BASE_ADDRESS + 0x0009, 0x02, 1>;    //< AWeX on T/C D0 Lock
-        using AWEXCLOCK = reg_field_t<BASE_ADDRESS + 0x0009, 0x01, 0>;    //< AWeX on T/C C0 Lock
-    };
+    static constexpr struct AWEXLOCK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        static constexpr bitfield_t<AWEXLOCK_t, 0x08, 3> AWEXFLOCK = {};    //< AWeX on T/C F0 Lock
+        static constexpr bitfield_t<AWEXLOCK_t, 0x04, 2> AWEXELOCK = {};    //< AWeX on T/C E0 Lock
+        static constexpr bitfield_t<AWEXLOCK_t, 0x02, 1> AWEXDLOCK = {};    //< AWeX on T/C D0 Lock
+        static constexpr bitfield_t<AWEXLOCK_t, 0x01, 0> AWEXCLOCK = {};    //< AWeX on T/C C0 Lock
+    } AWEXLOCK = {};
+
 };
 
 } // namespace device

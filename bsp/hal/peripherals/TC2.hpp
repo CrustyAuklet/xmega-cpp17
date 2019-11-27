@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-TC2 (id I6090)
  * 16-bit Timer/Counter type 2
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * TC2
- * 16-bit Timer/Counter type 2
- * Size: 48 bytes
- */
-template <addressType BASE_ADDRESS>
-struct TC2_t {
+namespace TC2 {
 
     // Clock Selection
     enum class CLKSELv : uint8_t {
@@ -117,118 +109,129 @@ struct TC2_t {
         LCMPC = 4, // Low Byte Compare C Interrupt
         LCMPD = 5, // Low Byte Compare D Interrupt
     };
+}   // namespace TC2
+
+/**
+ * TC2
+ * 16-bit Timer/Counter type 2
+ * Size: 48 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct TC2_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register A - 1 bytes
-    struct CTRLA : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using CLKSEL = reg_field_t<BASE_ADDRESS + 0x0000, 0x0F, 0, CLKSELv>;    //< Clock Selection
-    };
+    static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRLA_t, 0x0F, 0, CLKSELv> CLKSEL = {};    //< Clock Selection
+    } CTRLA = {};
 
     /// Control Register B - 1 bytes
-    struct CTRLB : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using HCMPDEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x80, 7>;    //< High Byte Compare D Enable
-        using HCMPCEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x40, 6>;    //< High Byte Compare C Enable
-        using HCMPBEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x20, 5>;    //< High Byte Compare B Enable
-        using HCMPAEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x10, 4>;    //< High Byte Compare A Enable
-        using LCMPDEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x08, 3>;    //< Low Byte Compare D Enable
-        using LCMPCEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x04, 2>;    //< Low Byte Compare C Enable
-        using LCMPBEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x02, 1>;    //< Low Byte Compare B Enable
-        using LCMPAEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Low Byte Compare A Enable
-    };
+    static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<CTRLB_t, 0x80, 7> HCMPDEN = {};    //< High Byte Compare D Enable
+        static constexpr bitfield_t<CTRLB_t, 0x40, 6> HCMPCEN = {};    //< High Byte Compare C Enable
+        static constexpr bitfield_t<CTRLB_t, 0x20, 5> HCMPBEN = {};    //< High Byte Compare B Enable
+        static constexpr bitfield_t<CTRLB_t, 0x10, 4> HCMPAEN = {};    //< High Byte Compare A Enable
+        static constexpr bitfield_t<CTRLB_t, 0x08, 3> LCMPDEN = {};    //< Low Byte Compare D Enable
+        static constexpr bitfield_t<CTRLB_t, 0x04, 2> LCMPCEN = {};    //< Low Byte Compare C Enable
+        static constexpr bitfield_t<CTRLB_t, 0x02, 1> LCMPBEN = {};    //< Low Byte Compare B Enable
+        static constexpr bitfield_t<CTRLB_t, 0x01, 0> LCMPAEN = {};    //< Low Byte Compare A Enable
+    } CTRLB = {};
 
     /// Control register C - 1 bytes
-    struct CTRLC : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using HCMPD = reg_field_t<BASE_ADDRESS + 0x0002, 0x80, 7>;    //< High Byte Compare D Output Value
-        using HCMPC = reg_field_t<BASE_ADDRESS + 0x0002, 0x40, 6>;    //< High Byte Compare C Output Value
-        using HCMPB = reg_field_t<BASE_ADDRESS + 0x0002, 0x20, 5>;    //< High Byte Compare B Output Value
-        using HCMPA = reg_field_t<BASE_ADDRESS + 0x0002, 0x10, 4>;    //< High Byte Compare A Output Value
-        using LCMPD = reg_field_t<BASE_ADDRESS + 0x0002, 0x08, 3>;    //< Low Byte Compare D Output Value
-        using LCMPC = reg_field_t<BASE_ADDRESS + 0x0002, 0x04, 2>;    //< Low Byte Compare C Output Value
-        using LCMPB = reg_field_t<BASE_ADDRESS + 0x0002, 0x02, 1>;    //< Low Byte Compare B Output Value
-        using LCMPA = reg_field_t<BASE_ADDRESS + 0x0002, 0x01, 0>;    //< Low Byte Compare A Output Value
-    };
+    static constexpr struct CTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<CTRLC_t, 0x80, 7> HCMPD = {};    //< High Byte Compare D Output Value
+        static constexpr bitfield_t<CTRLC_t, 0x40, 6> HCMPC = {};    //< High Byte Compare C Output Value
+        static constexpr bitfield_t<CTRLC_t, 0x20, 5> HCMPB = {};    //< High Byte Compare B Output Value
+        static constexpr bitfield_t<CTRLC_t, 0x10, 4> HCMPA = {};    //< High Byte Compare A Output Value
+        static constexpr bitfield_t<CTRLC_t, 0x08, 3> LCMPD = {};    //< Low Byte Compare D Output Value
+        static constexpr bitfield_t<CTRLC_t, 0x04, 2> LCMPC = {};    //< Low Byte Compare C Output Value
+        static constexpr bitfield_t<CTRLC_t, 0x02, 1> LCMPB = {};    //< Low Byte Compare B Output Value
+        static constexpr bitfield_t<CTRLC_t, 0x01, 0> LCMPA = {};    //< Low Byte Compare A Output Value
+    } CTRLC = {};
 
     /// Control Register E - 1 bytes
-    struct CTRLE : public reg8_t<BASE_ADDRESS + 0x0004> {
-        using BYTEM = reg_field_t<BASE_ADDRESS + 0x0004, 0x03, 0, BYTEMv>;    //< Byte Mode
-    };
+    static constexpr struct CTRLE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        static constexpr bitfield_t<CTRLE_t, 0x03, 0, BYTEMv> BYTEM = {};    //< Byte Mode
+    } CTRLE = {};
 
     /// Interrupt Control Register A - 1 bytes
-    struct INTCTRLA : public reg8_t<BASE_ADDRESS + 0x0006> {
-        using HUNFINTLVL = reg_field_t<BASE_ADDRESS + 0x0006, 0x0C, 2, HUNFINTLVLv>;    //< High Byte Underflow Interrupt Level
-        using LUNFINTLVL = reg_field_t<BASE_ADDRESS + 0x0006, 0x03, 0, LUNFINTLVLv>;    //< Low Byte Underflow interrupt level
-    };
+    static constexpr struct INTCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        static constexpr bitfield_t<INTCTRLA_t, 0x0C, 2, HUNFINTLVLv> HUNFINTLVL = {};    //< High Byte Underflow Interrupt Level
+        static constexpr bitfield_t<INTCTRLA_t, 0x03, 0, LUNFINTLVLv> LUNFINTLVL = {};    //< Low Byte Underflow interrupt level
+    } INTCTRLA = {};
 
     /// Interrupt Control Register B - 1 bytes
-    struct INTCTRLB : public reg8_t<BASE_ADDRESS + 0x0007> {
-        using LCMPDINTLVL = reg_field_t<BASE_ADDRESS + 0x0007, 0xC0, 6, LCMPDINTLVLv>;    //< Low Byte Compare D Interrupt Level
-        using LCMPCINTLVL = reg_field_t<BASE_ADDRESS + 0x0007, 0x30, 4, LCMPCINTLVLv>;    //< Low Byte Compare C Interrupt Level
-        using LCMPBINTLVL = reg_field_t<BASE_ADDRESS + 0x0007, 0x0C, 2, LCMPBINTLVLv>;    //< Low Byte Compare B Interrupt Level
-        using LCMPAINTLVL = reg_field_t<BASE_ADDRESS + 0x0007, 0x03, 0, LCMPAINTLVLv>;    //< Low Byte Compare A Interrupt Level
-    };
+    static constexpr struct INTCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        static constexpr bitfield_t<INTCTRLB_t, 0xC0, 6, LCMPDINTLVLv> LCMPDINTLVL = {};    //< Low Byte Compare D Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 0x30, 4, LCMPCINTLVLv> LCMPCINTLVL = {};    //< Low Byte Compare C Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 0x0C, 2, LCMPBINTLVLv> LCMPBINTLVL = {};    //< Low Byte Compare B Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 0x03, 0, LCMPAINTLVLv> LCMPAINTLVL = {};    //< Low Byte Compare A Interrupt Level
+    } INTCTRLB = {};
 
     /// Control Register F - 1 bytes
-    struct CTRLF : public reg8_t<BASE_ADDRESS + 0x0009> {
-        using CMD = reg_field_t<BASE_ADDRESS + 0x0009, 0x0C, 2, CMDv>;    //< Command
-        using CMDEN = reg_field_t<BASE_ADDRESS + 0x0009, 0x03, 0, CMDENv>;    //< Command Enable
-    };
+    static constexpr struct CTRLF_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        static constexpr bitfield_t<CTRLF_t, 0x0C, 2, CMDv> CMD = {};    //< Command
+        static constexpr bitfield_t<CTRLF_t, 0x03, 0, CMDENv> CMDEN = {};    //< Command Enable
+    } CTRLF = {};
 
     /// Interrupt Flag Register - 1 bytes
-    struct INTFLAGS : public reg8_t<BASE_ADDRESS + 0x000C> {
-        using LCMPDIF = reg_field_t<BASE_ADDRESS + 0x000C, 0x80, 7>;    //< Low Byte Compare D Interrupt Flag
-        using LCMPCIF = reg_field_t<BASE_ADDRESS + 0x000C, 0x40, 6>;    //< Low Byte Compare C Interrupt Flag
-        using LCMPBIF = reg_field_t<BASE_ADDRESS + 0x000C, 0x20, 5>;    //< Low Byte Compare B Interrupt Flag
-        using LCMPAIF = reg_field_t<BASE_ADDRESS + 0x000C, 0x10, 4>;    //< Low Byte Compare A Interrupt Flag
-        using HUNFIF = reg_field_t<BASE_ADDRESS + 0x000C, 0x02, 1>;    //< High Byte Underflow Interrupt Flag
-        using LUNFIF = reg_field_t<BASE_ADDRESS + 0x000C, 0x01, 0>;    //< Low Byte Underflow Interrupt Flag
-    };
+    static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+        static constexpr bitfield_t<INTFLAGS_t, 0x80, 7> LCMPDIF = {};    //< Low Byte Compare D Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0x40, 6> LCMPCIF = {};    //< Low Byte Compare C Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0x20, 5> LCMPBIF = {};    //< Low Byte Compare B Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0x10, 4> LCMPAIF = {};    //< Low Byte Compare A Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> HUNFIF = {};    //< High Byte Underflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> LUNFIF = {};    //< Low Byte Underflow Interrupt Flag
+    } INTFLAGS = {};
 
     /// Low Byte Count - 1 bytes
-    struct LCNT : public reg8_t<BASE_ADDRESS + 0x0020> {
-    };
+    static constexpr struct LCNT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0020> {
+    } LCNT = {};
 
     /// High Byte Count - 1 bytes
-    struct HCNT : public reg8_t<BASE_ADDRESS + 0x0021> {
-    };
+    static constexpr struct HCNT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0021> {
+    } HCNT = {};
 
     /// Low Byte Period - 1 bytes
-    struct LPER : public reg8_t<BASE_ADDRESS + 0x0026> {
-    };
+    static constexpr struct LPER_t : reg_t<uint8_t, BASE_ADDRESS + 0x0026> {
+    } LPER = {};
 
     /// High Byte Period - 1 bytes
-    struct HPER : public reg8_t<BASE_ADDRESS + 0x0027> {
-    };
+    static constexpr struct HPER_t : reg_t<uint8_t, BASE_ADDRESS + 0x0027> {
+    } HPER = {};
 
     /// Low Byte Compare A - 1 bytes
-    struct LCMPA : public reg8_t<BASE_ADDRESS + 0x0028> {
-    };
+    static constexpr struct LCMPA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0028> {
+    } LCMPA = {};
 
     /// High Byte Compare A - 1 bytes
-    struct HCMPA : public reg8_t<BASE_ADDRESS + 0x0029> {
-    };
+    static constexpr struct HCMPA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0029> {
+    } HCMPA = {};
 
     /// Low Byte Compare B - 1 bytes
-    struct LCMPB : public reg8_t<BASE_ADDRESS + 0x002A> {
-    };
+    static constexpr struct LCMPB_t : reg_t<uint8_t, BASE_ADDRESS + 0x002A> {
+    } LCMPB = {};
 
     /// High Byte Compare B - 1 bytes
-    struct HCMPB : public reg8_t<BASE_ADDRESS + 0x002B> {
-    };
+    static constexpr struct HCMPB_t : reg_t<uint8_t, BASE_ADDRESS + 0x002B> {
+    } HCMPB = {};
 
     /// Low Byte Compare C - 1 bytes
-    struct LCMPC : public reg8_t<BASE_ADDRESS + 0x002C> {
-    };
+    static constexpr struct LCMPC_t : reg_t<uint8_t, BASE_ADDRESS + 0x002C> {
+    } LCMPC = {};
 
     /// High Byte Compare C - 1 bytes
-    struct HCMPC : public reg8_t<BASE_ADDRESS + 0x002D> {
-    };
+    static constexpr struct HCMPC_t : reg_t<uint8_t, BASE_ADDRESS + 0x002D> {
+    } HCMPC = {};
 
     /// Low Byte Compare D - 1 bytes
-    struct LCMPD : public reg8_t<BASE_ADDRESS + 0x002E> {
-    };
+    static constexpr struct LCMPD_t : reg_t<uint8_t, BASE_ADDRESS + 0x002E> {
+    } LCMPD = {};
 
     /// High Byte Compare D - 1 bytes
-    struct HCMPD : public reg8_t<BASE_ADDRESS + 0x002F> {
-    };
+    static constexpr struct HCMPD_t : reg_t<uint8_t, BASE_ADDRESS + 0x002F> {
+    } HCMPD = {};
+
 };
 
 } // namespace device

@@ -1,23 +1,15 @@
 /**
  * None-RTC (id I6093)
  * Real-Time Counter
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * RTC
- * Real-Time Counter
- * Size: 14 bytes
- */
-template <addressType BASE_ADDRESS>
-struct RTC_t {
+namespace RTC {
 
     // Prescaler Factor
     enum class PRESCALERv : uint8_t {
@@ -52,44 +44,55 @@ struct RTC_t {
         OVF = 0, // Overflow Interrupt
         COMP = 1, // Compare Interrupt
     };
+}   // namespace RTC
+
+/**
+ * RTC
+ * Real-Time Counter
+ * Size: 14 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct RTC_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using PRESCALER = reg_field_t<BASE_ADDRESS + 0x0000, 0x07, 0, PRESCALERv>;    //< Prescaling Factor
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x07, 0, PRESCALERv> PRESCALER = {};    //< Prescaling Factor
+    } CTRL = {};
 
     /// Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using SYNCBUSY = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Synchronization Busy Flag
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> SYNCBUSY = {};    //< Synchronization Busy Flag
+    } STATUS = {};
 
     /// Interrupt Control Register - 1 bytes
-    struct INTCTRL : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using COMPINTLVL = reg_field_t<BASE_ADDRESS + 0x0002, 0x0C, 2, COMPINTLVLv>;    //< Compare Match Interrupt Level
-        using OVFINTLVL = reg_field_t<BASE_ADDRESS + 0x0002, 0x03, 0, OVFINTLVLv>;    //< Overflow Interrupt Level
-    };
+    static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<INTCTRL_t, 0x0C, 2, COMPINTLVLv> COMPINTLVL = {};    //< Compare Match Interrupt Level
+        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, OVFINTLVLv> OVFINTLVL = {};    //< Overflow Interrupt Level
+    } INTCTRL = {};
 
     /// Interrupt Flags - 1 bytes
-    struct INTFLAGS : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using COMPIF = reg_field_t<BASE_ADDRESS + 0x0003, 0x02, 1>;    //< Compare Match Interrupt Flag
-        using OVFIF = reg_field_t<BASE_ADDRESS + 0x0003, 0x01, 0>;    //< Overflow Interrupt Flag
-    };
+    static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> COMPIF = {};    //< Compare Match Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> OVFIF = {};    //< Overflow Interrupt Flag
+    } INTFLAGS = {};
 
     /// Temporary register - 1 bytes
-    struct TEMP : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct TEMP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } TEMP = {};
 
     /// Count Register - 2 bytes
-    struct CNT : public reg16_t<BASE_ADDRESS + 0x0008> {
-    };
+    static constexpr struct CNT_t : reg_t<uint16_t, BASE_ADDRESS + 0x0008> {
+    } CNT = {};
 
     /// Period Register - 2 bytes
-    struct PER : public reg16_t<BASE_ADDRESS + 0x000A> {
-    };
+    static constexpr struct PER_t : reg_t<uint16_t, BASE_ADDRESS + 0x000A> {
+    } PER = {};
 
     /// Compare Register - 2 bytes
-    struct COMP : public reg16_t<BASE_ADDRESS + 0x000C> {
-    };
+    static constexpr struct COMP_t : reg_t<uint16_t, BASE_ADDRESS + 0x000C> {
+    } COMP = {};
+
 };
 
 } // namespace device

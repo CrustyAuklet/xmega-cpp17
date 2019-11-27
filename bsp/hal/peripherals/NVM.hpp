@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-NVM (id I6076)
  * Non Volatile Memory Controller
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * NVM
- * Non-volatile Memory Controller
- * Size: 17 bytes
- */
-template <addressType BASE_ADDRESS>
-struct NVM_t {
+namespace NVM {
 
     // NVM Command
     enum class CMDv : uint8_t {
@@ -109,70 +101,81 @@ struct NVM_t {
         EE = 0, // EE Interrupt
         SPM = 1, // SPM Interrupt
     };
+}   // namespace NVM
+
+/**
+ * NVM
+ * Non-volatile Memory Controller
+ * Size: 17 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct NVM_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Address Register 0 - 1 bytes
-    struct ADDR0 : public reg8_t<BASE_ADDRESS + 0x0000> {
-    };
+    static constexpr struct ADDR0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+    } ADDR0 = {};
 
     /// Address Register 1 - 1 bytes
-    struct ADDR1 : public reg8_t<BASE_ADDRESS + 0x0001> {
-    };
+    static constexpr struct ADDR1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+    } ADDR1 = {};
 
     /// Address Register 2 - 1 bytes
-    struct ADDR2 : public reg8_t<BASE_ADDRESS + 0x0002> {
-    };
+    static constexpr struct ADDR2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+    } ADDR2 = {};
 
     /// Data Register 0 - 1 bytes
-    struct DATA0 : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct DATA0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } DATA0 = {};
 
     /// Data Register 1 - 1 bytes
-    struct DATA1 : public reg8_t<BASE_ADDRESS + 0x0005> {
-    };
+    static constexpr struct DATA1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+    } DATA1 = {};
 
     /// Data Register 2 - 1 bytes
-    struct DATA2 : public reg8_t<BASE_ADDRESS + 0x0006> {
-    };
+    static constexpr struct DATA2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+    } DATA2 = {};
 
     /// Command - 1 bytes
-    struct CMD : public reg8_t<BASE_ADDRESS + 0x000A> {
-        using CMDf = reg_field_t<BASE_ADDRESS + 0x000A, 0x7F, 0, CMDv>;    //< Command
-    };
+    static constexpr struct CMD_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+        static constexpr bitfield_t<CMD_t, 0x7F, 0, CMDv> CMD = {};    //< Command
+    } CMD = {};
 
     /// Control Register A - 1 bytes
-    struct CTRLA : public reg8_t<BASE_ADDRESS + 0x000B> {
-        using CMDEX = reg_field_t<BASE_ADDRESS + 0x000B, 0x01, 0>;    //< Command Execute
-    };
+    static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
+        static constexpr bitfield_t<CTRLA_t, 0x01, 0> CMDEX = {};    //< Command Execute
+    } CTRLA = {};
 
     /// Control Register B - 1 bytes
-    struct CTRLB : public reg8_t<BASE_ADDRESS + 0x000C> {
-        using EEMAPEN = reg_field_t<BASE_ADDRESS + 0x000C, 0x08, 3>;    //< EEPROM Mapping Enable
-        using FPRM = reg_field_t<BASE_ADDRESS + 0x000C, 0x04, 2>;    //< Flash Power Reduction Enable
-        using EPRM = reg_field_t<BASE_ADDRESS + 0x000C, 0x02, 1>;    //< EEPROM Power Reduction Enable
-        using SPMLOCK = reg_field_t<BASE_ADDRESS + 0x000C, 0x01, 0>;    //< SPM Lock
-    };
+    static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+        static constexpr bitfield_t<CTRLB_t, 0x08, 3> EEMAPEN = {};    //< EEPROM Mapping Enable
+        static constexpr bitfield_t<CTRLB_t, 0x04, 2> FPRM = {};    //< Flash Power Reduction Enable
+        static constexpr bitfield_t<CTRLB_t, 0x02, 1> EPRM = {};    //< EEPROM Power Reduction Enable
+        static constexpr bitfield_t<CTRLB_t, 0x01, 0> SPMLOCK = {};    //< SPM Lock
+    } CTRLB = {};
 
     /// Interrupt Control - 1 bytes
-    struct INTCTRL : public reg8_t<BASE_ADDRESS + 0x000D> {
-        using SPMLVL = reg_field_t<BASE_ADDRESS + 0x000D, 0x0C, 2, SPMLVLv>;    //< SPM Interrupt Level
-        using EELVL = reg_field_t<BASE_ADDRESS + 0x000D, 0x03, 0, EELVLv>;    //< EEPROM Interrupt Level
-    };
+    static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
+        static constexpr bitfield_t<INTCTRL_t, 0x0C, 2, SPMLVLv> SPMLVL = {};    //< SPM Interrupt Level
+        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, EELVLv> EELVL = {};    //< EEPROM Interrupt Level
+    } INTCTRL = {};
 
     /// Status - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x000F> {
-        using NVMBUSY = reg_field_t<BASE_ADDRESS + 0x000F, 0x80, 7>;    //< Non-volatile Memory Busy
-        using FBUSY = reg_field_t<BASE_ADDRESS + 0x000F, 0x40, 6>;    //< Flash Memory Busy
-        using EELOAD = reg_field_t<BASE_ADDRESS + 0x000F, 0x02, 1>;    //< EEPROM Page Buffer Active Loading
-        using FLOAD = reg_field_t<BASE_ADDRESS + 0x000F, 0x01, 0>;    //< Flash Page Buffer Active Loading
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x000F> {
+        static constexpr bitfield_t<STATUS_t, 0x80, 7> NVMBUSY = {};    //< Non-volatile Memory Busy
+        static constexpr bitfield_t<STATUS_t, 0x40, 6> FBUSY = {};    //< Flash Memory Busy
+        static constexpr bitfield_t<STATUS_t, 0x02, 1> EELOAD = {};    //< EEPROM Page Buffer Active Loading
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> FLOAD = {};    //< Flash Page Buffer Active Loading
+    } STATUS = {};
 
     /// Lock Bits - 1 bytes
-    struct LOCKBITS : public reg8_t<BASE_ADDRESS + 0x0010> {
-        using BLBB = reg_field_t<BASE_ADDRESS + 0x0010, 0xC0, 6, BLBBv>;    //< Boot Lock Bits - Boot Section
-        using BLBA = reg_field_t<BASE_ADDRESS + 0x0010, 0x30, 4, BLBAv>;    //< Boot Lock Bits - Application Section
-        using BLBAT = reg_field_t<BASE_ADDRESS + 0x0010, 0x0C, 2, BLBATv>;    //< Boot Lock Bits - Application Table
-        using LB = reg_field_t<BASE_ADDRESS + 0x0010, 0x03, 0, LBv>;    //< Lock Bits
-    };
+    static constexpr struct LOCKBITS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0010> {
+        static constexpr bitfield_t<LOCKBITS_t, 0xC0, 6, BLBBv> BLBB = {};    //< Boot Lock Bits - Boot Section
+        static constexpr bitfield_t<LOCKBITS_t, 0x30, 4, BLBAv> BLBA = {};    //< Boot Lock Bits - Application Section
+        static constexpr bitfield_t<LOCKBITS_t, 0x0C, 2, BLBATv> BLBAT = {};    //< Boot Lock Bits - Application Table
+        static constexpr bitfield_t<LOCKBITS_t, 0x03, 0, LBv> LB = {};    //< Lock Bits
+    } LOCKBITS = {};
+
 };
 
 } // namespace device

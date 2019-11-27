@@ -1,23 +1,24 @@
 /**
  * XMEGAAU-TWI (id I6089)
  * Two-Wire Interface
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * TWI_MASTER
- *
- * Size: 7 bytes
- */
-template <addressType BASE_ADDRESS>
-struct TWI_MASTER_t {
+namespace TWI {
+
+    // SDA Hold Time
+    enum class SDAHOLDv : uint8_t {
+        OFF = 0x00, // SDA Hold Time off
+        _50NS = 0x01, // SDA Hold Time 50 ns
+        _300NS = 0x02, // SDA Hold Time 300 ns
+        _400NS = 0x03, // SDA Hold Time 400 ns
+    };
+
     // Master Interrupt Level
     enum class MASTER_INTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -50,58 +51,6 @@ struct TWI_MASTER_t {
         BUSY = 0x03, // The Bus is Busy
     };
 
-    /// Control Register A - 1 bytes
-    struct CTRLA : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using INTLVL = reg_field_t<BASE_ADDRESS + 0x0000, 0xC0, 6, MASTER_INTLVLv>;    //< Interrupt Level
-        using RIEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x20, 5>;    //< Read Interrupt Enable
-        using WIEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x10, 4>;    //< Write Interrupt Enable
-        using ENABLE = reg_field_t<BASE_ADDRESS + 0x0000, 0x08, 3>;    //< Enable TWI Master
-    };
-
-    /// Control Register B - 1 bytes
-    struct CTRLB : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using TIMEOUT = reg_field_t<BASE_ADDRESS + 0x0001, 0x0C, 2, MASTER_TIMEOUTv>;    //< Inactive Bus Timeout
-        using QCEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x02, 1>;    //< Quick Command Enable
-        using SMEN = reg_field_t<BASE_ADDRESS + 0x0001, 0x01, 0>;    //< Smart Mode Enable
-    };
-
-    /// Control Register C - 1 bytes
-    struct CTRLC : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using ACKACT = reg_field_t<BASE_ADDRESS + 0x0002, 0x04, 2>;    //< Acknowledge Action
-        using CMD = reg_field_t<BASE_ADDRESS + 0x0002, 0x03, 0, MASTER_CMDv>;    //< Command
-    };
-
-    /// Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using RIF = reg_field_t<BASE_ADDRESS + 0x0003, 0x80, 7>;    //< Read Interrupt Flag
-        using WIF = reg_field_t<BASE_ADDRESS + 0x0003, 0x40, 6>;    //< Write Interrupt Flag
-        using CLKHOLD = reg_field_t<BASE_ADDRESS + 0x0003, 0x20, 5>;    //< Clock Hold
-        using RXACK = reg_field_t<BASE_ADDRESS + 0x0003, 0x10, 4>;    //< Received Acknowledge
-        using ARBLOST = reg_field_t<BASE_ADDRESS + 0x0003, 0x08, 3>;    //< Arbitration Lost
-        using BUSERR = reg_field_t<BASE_ADDRESS + 0x0003, 0x04, 2>;    //< Bus Error
-        using BUSSTATE = reg_field_t<BASE_ADDRESS + 0x0003, 0x03, 0, MASTER_BUSSTATEv>;    //< Bus State
-    };
-
-    /// Baurd Rate Control Register - 1 bytes
-    struct BAUD : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
-
-    /// Address Register - 1 bytes
-    struct ADDR : public reg8_t<BASE_ADDRESS + 0x0005> {
-    };
-
-    /// Data Register - 1 bytes
-    struct DATA : public reg8_t<BASE_ADDRESS + 0x0006> {
-    };
-};
-
-/**
- * TWI_SLAVE
- *
- * Size: 6 bytes
- */
-template <addressType BASE_ADDRESS>
-struct TWI_SLAVE_t {
     // Slave Interrupt Level
     enum class SLAVE_INTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -117,48 +66,120 @@ struct TWI_SLAVE_t {
         RESPONSE = 0x03, // Used in Response to Address/Data Interrupt
     };
 
-    /// Control Register A - 1 bytes
-    struct CTRLA : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using INTLVL = reg_field_t<BASE_ADDRESS + 0x0000, 0xC0, 6, SLAVE_INTLVLv>;    //< Interrupt Level
-        using DIEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x20, 5>;    //< Data Interrupt Enable
-        using APIEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x10, 4>;    //< Address/Stop Interrupt Enable
-        using ENABLE = reg_field_t<BASE_ADDRESS + 0x0000, 0x08, 3>;    //< Enable TWI Slave
-        using PIEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x04, 2>;    //< Stop Interrupt Enable
-        using PMEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x02, 1>;    //< Promiscuous Mode Enable
-        using SMEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< Smart Mode Enable
+    // TWI ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        TWIS = 0, // TWI Slave Interrupt
+        TWIM = 1, // TWI Master Interrupt
     };
+}   // namespace TWI
+
+/**
+ * TWI_MASTER
+ * 
+ * Size: 7 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct TWI_MASTER_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
+
+    /// Control Register A - 1 bytes
+    static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRLA_t, 0xC0, 6, MASTER_INTLVLv> INTLVL = {};    //< Interrupt Level
+        static constexpr bitfield_t<CTRLA_t, 0x20, 5> RIEN = {};    //< Read Interrupt Enable
+        static constexpr bitfield_t<CTRLA_t, 0x10, 4> WIEN = {};    //< Write Interrupt Enable
+        static constexpr bitfield_t<CTRLA_t, 0x08, 3> ENABLE = {};    //< Enable TWI Master
+    } CTRLA = {};
 
     /// Control Register B - 1 bytes
-    struct CTRLB : public reg8_t<BASE_ADDRESS + 0x0001> {
-        using ACKACT = reg_field_t<BASE_ADDRESS + 0x0001, 0x04, 2>;    //< Acknowledge Action
-        using CMD = reg_field_t<BASE_ADDRESS + 0x0001, 0x03, 0, SLAVE_CMDv>;    //< Command
-    };
+    static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<CTRLB_t, 0x0C, 2, MASTER_TIMEOUTv> TIMEOUT = {};    //< Inactive Bus Timeout
+        static constexpr bitfield_t<CTRLB_t, 0x02, 1> QCEN = {};    //< Quick Command Enable
+        static constexpr bitfield_t<CTRLB_t, 0x01, 0> SMEN = {};    //< Smart Mode Enable
+    } CTRLB = {};
+
+    /// Control Register C - 1 bytes
+    static constexpr struct CTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<CTRLC_t, 0x04, 2> ACKACT = {};    //< Acknowledge Action
+        static constexpr bitfield_t<CTRLC_t, 0x03, 0, MASTER_CMDv> CMD = {};    //< Command
+    } CTRLC = {};
 
     /// Status Register - 1 bytes
-    struct STATUS : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using DIF = reg_field_t<BASE_ADDRESS + 0x0002, 0x80, 7>;    //< Data Interrupt Flag
-        using APIF = reg_field_t<BASE_ADDRESS + 0x0002, 0x40, 6>;    //< Address/Stop Interrupt Flag
-        using CLKHOLD = reg_field_t<BASE_ADDRESS + 0x0002, 0x20, 5>;    //< Clock Hold
-        using RXACK = reg_field_t<BASE_ADDRESS + 0x0002, 0x10, 4>;    //< Received Acknowledge
-        using COLL = reg_field_t<BASE_ADDRESS + 0x0002, 0x08, 3>;    //< Collision
-        using BUSERR = reg_field_t<BASE_ADDRESS + 0x0002, 0x04, 2>;    //< Bus Error
-        using DIR = reg_field_t<BASE_ADDRESS + 0x0002, 0x02, 1>;    //< Read/Write Direction
-        using AP = reg_field_t<BASE_ADDRESS + 0x0002, 0x01, 0>;    //< Slave Address or Stop
-    };
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<STATUS_t, 0x80, 7> RIF = {};    //< Read Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 0x40, 6> WIF = {};    //< Write Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 0x20, 5> CLKHOLD = {};    //< Clock Hold
+        static constexpr bitfield_t<STATUS_t, 0x10, 4> RXACK = {};    //< Received Acknowledge
+        static constexpr bitfield_t<STATUS_t, 0x08, 3> ARBLOST = {};    //< Arbitration Lost
+        static constexpr bitfield_t<STATUS_t, 0x04, 2> BUSERR = {};    //< Bus Error
+        static constexpr bitfield_t<STATUS_t, 0x03, 0, MASTER_BUSSTATEv> BUSSTATE = {};    //< Bus State
+    } STATUS = {};
+
+    /// Baurd Rate Control Register - 1 bytes
+    static constexpr struct BAUD_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } BAUD = {};
 
     /// Address Register - 1 bytes
-    struct ADDR : public reg8_t<BASE_ADDRESS + 0x0003> {
-    };
+    static constexpr struct ADDR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+    } ADDR = {};
 
     /// Data Register - 1 bytes
-    struct DATA : public reg8_t<BASE_ADDRESS + 0x0004> {
-    };
+    static constexpr struct DATA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+    } DATA = {};
+
+};
+
+/**
+ * TWI_SLAVE
+ * 
+ * Size: 6 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct TWI_SLAVE_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
+
+    /// Control Register A - 1 bytes
+    static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRLA_t, 0xC0, 6, SLAVE_INTLVLv> INTLVL = {};    //< Interrupt Level
+        static constexpr bitfield_t<CTRLA_t, 0x20, 5> DIEN = {};    //< Data Interrupt Enable
+        static constexpr bitfield_t<CTRLA_t, 0x10, 4> APIEN = {};    //< Address/Stop Interrupt Enable
+        static constexpr bitfield_t<CTRLA_t, 0x08, 3> ENABLE = {};    //< Enable TWI Slave
+        static constexpr bitfield_t<CTRLA_t, 0x04, 2> PIEN = {};    //< Stop Interrupt Enable
+        static constexpr bitfield_t<CTRLA_t, 0x02, 1> PMEN = {};    //< Promiscuous Mode Enable
+        static constexpr bitfield_t<CTRLA_t, 0x01, 0> SMEN = {};    //< Smart Mode Enable
+    } CTRLA = {};
+
+    /// Control Register B - 1 bytes
+    static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        static constexpr bitfield_t<CTRLB_t, 0x04, 2> ACKACT = {};    //< Acknowledge Action
+        static constexpr bitfield_t<CTRLB_t, 0x03, 0, SLAVE_CMDv> CMD = {};    //< Command
+    } CTRLB = {};
+
+    /// Status Register - 1 bytes
+    static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<STATUS_t, 0x80, 7> DIF = {};    //< Data Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 0x40, 6> APIF = {};    //< Address/Stop Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 0x20, 5> CLKHOLD = {};    //< Clock Hold
+        static constexpr bitfield_t<STATUS_t, 0x10, 4> RXACK = {};    //< Received Acknowledge
+        static constexpr bitfield_t<STATUS_t, 0x08, 3> COLL = {};    //< Collision
+        static constexpr bitfield_t<STATUS_t, 0x04, 2> BUSERR = {};    //< Bus Error
+        static constexpr bitfield_t<STATUS_t, 0x02, 1> DIR = {};    //< Read/Write Direction
+        static constexpr bitfield_t<STATUS_t, 0x01, 0> AP = {};    //< Slave Address or Stop
+    } STATUS = {};
+
+    /// Address Register - 1 bytes
+    static constexpr struct ADDR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+    } ADDR = {};
+
+    /// Data Register - 1 bytes
+    static constexpr struct DATA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+    } DATA = {};
 
     /// Address Mask Register - 1 bytes
-    struct ADDRMASK : public reg8_t<BASE_ADDRESS + 0x0005> {
-        using ADDRMASKf = reg_field_t<BASE_ADDRESS + 0x0005, 0xFE, 1>;    //< Address Mask
-        using ADDREN = reg_field_t<BASE_ADDRESS + 0x0005, 0x01, 0>;    //< Address Enable
-    };
+    static constexpr struct ADDRMASK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        static constexpr bitfield_t<ADDRMASK_t, 0xFE, 1> ADDRMASK = {};    //< Address Mask
+        static constexpr bitfield_t<ADDRMASK_t, 0x01, 0> ADDREN = {};    //< Address Enable
+    } ADDRMASK = {};
+
 };
 
 /**
@@ -168,31 +189,19 @@ struct TWI_SLAVE_t {
  */
 template <addressType BASE_ADDRESS>
 struct TWI_t {
-
-    // SDA Hold Time
-    enum class SDAHOLDv : uint8_t {
-        OFF = 0x00, // SDA Hold Time off
-        _50NS = 0x01, // SDA Hold Time 50 ns
-        _300NS = 0x02, // SDA Hold Time 300 ns
-        _400NS = 0x03, // SDA Hold Time 400 ns
-    };
-
-    // TWI ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        TWIS = 0, // TWI Slave Interrupt
-        TWIM = 1, // TWI Master Interrupt
-    };
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// TWI Common Control Register - 1 bytes
-    struct CTRL : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using SDAHOLD = reg_field_t<BASE_ADDRESS + 0x0000, 0x06, 1, SDAHOLDv>;    //< SDA Hold Time Enable
-        using EDIEN = reg_field_t<BASE_ADDRESS + 0x0000, 0x01, 0>;    //< External Driver Interface Enable
-    };
+    static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRL_t, 0x06, 1, SDAHOLDv> SDAHOLD = {};    //< SDA Hold Time Enable
+        static constexpr bitfield_t<CTRL_t, 0x01, 0> EDIEN = {};    //< External Driver Interface Enable
+    } CTRL = {};
+
     /// TWI master module
-    TWI_MASTER_t<BASE_ADDRESS + 0x0001> MASTER;
+    static constexpr TWI_MASTER_t<BASE_ADDRESS + 0x0001> MASTER = {};
 
     /// TWI slave module
-    TWI_SLAVE_t<BASE_ADDRESS + 0x0008> SLAVE;
+    static constexpr TWI_SLAVE_t<BASE_ADDRESS + 0x0008> SLAVE = {};
 
 };
 

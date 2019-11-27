@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-HIRES (id I6090)
  * Timer/Counter High-Resolution Extension
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * HIRES
- * High-Resolution Extension
- * Size: 1 bytes
- */
-template <addressType BASE_ADDRESS>
-struct HIRES_t {
+namespace HIRES {
 
     // High Resolution Enable
     enum class HRENv : uint8_t {
@@ -27,12 +19,23 @@ struct HIRES_t {
         BOTH = 0x03, // Enable High Resolution both Timer/Counters
     };
 
+}   // namespace HIRES
+
+/**
+ * HIRES
+ * High-Resolution Extension
+ * Size: 1 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct HIRES_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Control Register - 1 bytes
-    struct CTRLA : public reg8_t<BASE_ADDRESS + 0x0000> {
-        using HRPLUS = reg_field_t<BASE_ADDRESS + 0x0000, 0x04, 2>;    //< High Resolution Plus
-        using HREN = reg_field_t<BASE_ADDRESS + 0x0000, 0x03, 0, HRENv>;    //< High Resolution Enable
-    };
+    static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        static constexpr bitfield_t<CTRLA_t, 0x04, 2, HRPLUSv> HRPLUS = {};    //< High Resolution Plus
+        static constexpr bitfield_t<CTRLA_t, 0x03, 0, HRENv> HREN = {};    //< High Resolution Enable
+    } CTRLA = {};
+
 };
 
 } // namespace device

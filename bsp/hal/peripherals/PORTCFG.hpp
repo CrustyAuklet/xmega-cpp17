@@ -1,23 +1,15 @@
 /**
  * XMEGAAU-PORTCFG (id I6075)
  * Port Configuration
- *
- *
  */
 #pragma once
 
 #include "register.hpp"
-#include <cstdint>
+#include <stdint.h>
 
 namespace device {
 
-/**
- * PORTCFG
- * I/O port Configuration
- * Size: 7 bytes
- */
-template <addressType BASE_ADDRESS>
-struct PORTCFG_t {
+namespace PORTCFG {
 
     // Virtual Port Mapping
     enum class VP02MAPv : uint8_t {
@@ -116,42 +108,53 @@ struct PORTCFG_t {
         _7 = 0x07, // Event Channel 7 output to pin
     };
 
+}   // namespace PORTCFG
+
+/**
+ * PORTCFG
+ * I/O port Configuration
+ * Size: 7 bytes
+ */
+template <addressType BASE_ADDRESS>
+struct PORTCFG_t {
+    static constexpr addressType BaseAddress = BASE_ADDRESS;
 
     /// Multi-pin Configuration Mask - 1 bytes
-    struct MPCMASK : public reg8_t<BASE_ADDRESS + 0x0000> {
-    };
+    static constexpr struct MPCMASK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+    } MPCMASK = {};
 
     /// Virtual Port Control Register A - 1 bytes
-    struct VPCTRLA : public reg8_t<BASE_ADDRESS + 0x0002> {
-        using VP1MAP = reg_field_t<BASE_ADDRESS + 0x0002, 0xF0, 4, VP13MAPv>;    //< Virtual Port 1 Mapping
-        using VP0MAP = reg_field_t<BASE_ADDRESS + 0x0002, 0x0F, 0, VP02MAPv>;    //< Virtual Port 0 Mapping
-    };
+    static constexpr struct VPCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        static constexpr bitfield_t<VPCTRLA_t, 0xF0, 4, VP13MAPv> VP1MAP = {};    //< Virtual Port 1 Mapping
+        static constexpr bitfield_t<VPCTRLA_t, 0x0F, 0, VP02MAPv> VP0MAP = {};    //< Virtual Port 0 Mapping
+    } VPCTRLA = {};
 
     /// Virtual Port Control Register B - 1 bytes
-    struct VPCTRLB : public reg8_t<BASE_ADDRESS + 0x0003> {
-        using VP3MAP = reg_field_t<BASE_ADDRESS + 0x0003, 0xF0, 4, VP13MAPv>;    //< Virtual Port 3 Mapping
-        using VP2MAP = reg_field_t<BASE_ADDRESS + 0x0003, 0x0F, 0, VP02MAPv>;    //< Virtual Port 2 Mapping
-    };
+    static constexpr struct VPCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        static constexpr bitfield_t<VPCTRLB_t, 0xF0, 4, VP13MAPv> VP3MAP = {};    //< Virtual Port 3 Mapping
+        static constexpr bitfield_t<VPCTRLB_t, 0x0F, 0, VP02MAPv> VP2MAP = {};    //< Virtual Port 2 Mapping
+    } VPCTRLB = {};
 
     /// Clock and Event Out Register - 1 bytes
-    struct CLKEVOUT : public reg8_t<BASE_ADDRESS + 0x0004> {
-        using CLKOUT = reg_field_t<BASE_ADDRESS + 0x0004, 0x03, 0, CLKOUTv>;    //< Peripheral Clock Output Port
-        using CLKOUTSEL = reg_field_t<BASE_ADDRESS + 0x0004, 0x0C, 2, CLKOUTSELv>;    //< Peripheral Clock Output Select
-        using EVOUT = reg_field_t<BASE_ADDRESS + 0x0004, 0x30, 4, EVOUTv>;    //< Event Output Port
-        using RTCOUT = reg_field_t<BASE_ADDRESS + 0x0004, 0x40, 6>;    //< RTC Clock Output
-        using CLKEVPIN = reg_field_t<BASE_ADDRESS + 0x0004, 0x80, 7, CLKEVPINv>;    //< Peripheral Clock and Event Output pin Select
-    };
+    static constexpr struct CLKEVOUT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        static constexpr bitfield_t<CLKEVOUT_t, 0x03, 0, CLKOUTv> CLKOUT = {};    //< Peripheral Clock Output Port
+        static constexpr bitfield_t<CLKEVOUT_t, 0x0C, 2, CLKOUTSELv> CLKOUTSEL = {};    //< Peripheral Clock Output Select
+        static constexpr bitfield_t<CLKEVOUT_t, 0x30, 4, EVOUTv> EVOUT = {};    //< Event Output Port
+        static constexpr bitfield_t<CLKEVOUT_t, 0x40, 6> RTCOUT = {};    //< RTC Clock Output
+        static constexpr bitfield_t<CLKEVOUT_t, 0x80, 7, CLKEVPINv> CLKEVPIN = {};    //< Peripheral Clock and Event Output pin Select
+    } CLKEVOUT = {};
 
     /// EBI Output register - 1 bytes
-    struct EBIOUT : public reg8_t<BASE_ADDRESS + 0x0005> {
-        using EBICSOUT = reg_field_t<BASE_ADDRESS + 0x0005, 0x03, 0, EBICSOUTv>;    //< EBI Chip Select Output
-        using EBIADROUT = reg_field_t<BASE_ADDRESS + 0x0005, 0x0C, 2, EBIADROUTv>;    //< EBI Address Output
-    };
+    static constexpr struct EBIOUT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        static constexpr bitfield_t<EBIOUT_t, 0x03, 0, EBICSOUTv> EBICSOUT = {};    //< EBI Chip Select Output
+        static constexpr bitfield_t<EBIOUT_t, 0x0C, 2, EBIADROUTv> EBIADROUT = {};    //< EBI Address Output
+    } EBIOUT = {};
 
     /// Event Output Select - 1 bytes
-    struct EVOUTSEL : public reg8_t<BASE_ADDRESS + 0x0006> {
-        using EVOUTSELf = reg_field_t<BASE_ADDRESS + 0x0006, 0x07, 0, EVOUTSELv>;    //< Event Output Select
-    };
+    static constexpr struct EVOUTSEL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        static constexpr bitfield_t<EVOUTSEL_t, 0x07, 0, EVOUTSELv> EVOUTSEL = {};    //< Event Output Select
+    } EVOUTSEL = {};
+
 };
 
 } // namespace device
