@@ -87,6 +87,7 @@ struct AC_t {
 
     /// Analog Comparator 0 Control - 1 bytes
     static constexpr struct AC0CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<AC0CTRL_t, 7, 6, AC::INTMODEv> INTMODE = {};    //< Interrupt Mode
         static constexpr bitfield_t<AC0CTRL_t, 5, 4, AC::INTLVLv> INTLVL = {};    //< Interrupt Level
         static constexpr bitfield_t<AC0CTRL_t, 3, 3, bool> HSMODE = {};    //< High-speed Mode
@@ -96,6 +97,7 @@ struct AC_t {
 
     /// Analog Comparator 1 Control - 1 bytes
     static constexpr struct AC1CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<AC1CTRL_t, 7, 6, AC::INTMODEv> INTMODE = {};    //< Interrupt Mode
         static constexpr bitfield_t<AC1CTRL_t, 5, 4, AC::INTLVLv> INTLVL = {};    //< Interrupt Level
         static constexpr bitfield_t<AC1CTRL_t, 3, 3, bool> HSMODE = {};    //< High-speed Mode
@@ -105,29 +107,34 @@ struct AC_t {
 
     /// Analog Comparator 0 MUX Control - 1 bytes
     static constexpr struct AC0MUXCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<AC0MUXCTRL_t, 5, 3, AC::MUXPOSv> MUXPOS = {};    //< MUX Positive Input
         static constexpr bitfield_t<AC0MUXCTRL_t, 2, 0, AC::MUXNEGv> MUXNEG = {};    //< MUX Negative Input
     } AC0MUXCTRL = {};
 
     /// Analog Comparator 1 MUX Control - 1 bytes
     static constexpr struct AC1MUXCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<AC1MUXCTRL_t, 5, 3, AC::MUXPOSv> MUXPOS = {};    //< MUX Positive Input
         static constexpr bitfield_t<AC1MUXCTRL_t, 2, 0, AC::MUXNEGv> MUXNEG = {};    //< MUX Negative Input
     } AC1MUXCTRL = {};
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<CTRLA_t, 1, 1, bool> AC1OUT = {};    //< Analog Comparator 1 Output Enable
         static constexpr bitfield_t<CTRLA_t, 0, 0, bool> AC0OUT = {};    //< Analog Comparator 0 Output Enable
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<CTRLB_t, 5, 0> SCALEFAC = {};    //< VCC Voltage Scaler Factor
     } CTRLB = {};
 
     /// Window Mode Control - 1 bytes
     static constexpr struct WINCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
         static constexpr bitfield_t<WINCTRL_t, 4, 4, bool> WEN = {};    //< Window Mode Enable
         static constexpr bitfield_t<WINCTRL_t, 3, 2, AC::WINTMODEv> WINTMODE = {};    //< Window Interrupt Mode
         static constexpr bitfield_t<WINCTRL_t, 1, 0, AC::WINTLVLv> WINTLVL = {};    //< Window Interrupt Level
@@ -135,6 +142,7 @@ struct AC_t {
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0007>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 6, AC::WSTATEv> WSTATE = {};    //< Window Mode State
         static constexpr bitfield_t<STATUS_t, 5, 5, bool> AC1STATE = {};    //< Analog Comparator 1 State
         static constexpr bitfield_t<STATUS_t, 4, 4, bool> AC0STATE = {};    //< Analog Comparator 0 State
@@ -145,6 +153,7 @@ struct AC_t {
 
     /// Current Source Control - 1 bytes
     static constexpr struct CURRCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0008>::operator=;
         static constexpr bitfield_t<CURRCTRL_t, 7, 7, bool> CURRENT = {};    //< Current Source Enable
         static constexpr bitfield_t<CURRCTRL_t, 6, 6, bool> CURRMODE = {};    //< Current Mode
         static constexpr bitfield_t<CURRCTRL_t, 1, 1, bool> AC1CURR = {};    //< AC1 Current Source Output Enable
@@ -153,6 +162,7 @@ struct AC_t {
 
     /// Current Source Calibration - 1 bytes
     static constexpr struct CURRCALIB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0009>::operator=;
         static constexpr bitfield_t<CURRCALIB_t, 3, 0> CALIB = {};    //< Current Source Calibration
     } CURRCALIB = {};
 

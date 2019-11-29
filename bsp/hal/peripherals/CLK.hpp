@@ -77,28 +77,33 @@ struct CLK_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 2, 0, CLK::SCLKSELv> SCLKSEL = {};    //< System Clock Selection
     } CTRL = {};
 
     /// Prescaler Control Register - 1 bytes
     static constexpr struct PSCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<PSCTRL_t, 6, 2, CLK::PSADIVv> PSADIV = {};    //< Prescaler A Division Factor
         static constexpr bitfield_t<PSCTRL_t, 1, 0, CLK::PSBCDIVv> PSBCDIV = {};    //< Prescaler B and C Division factor
     } PSCTRL = {};
 
     /// Lock register - 1 bytes
     static constexpr struct LOCK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<LOCK_t, 0, 0, bool> LOCK = {};    //< Clock System Lock
     } LOCK = {};
 
     /// RTC Control Register - 1 bytes
     static constexpr struct RTCCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<RTCCTRL_t, 3, 1, CLK::RTCSRCv> RTCSRC = {};    //< Clock Source
         static constexpr bitfield_t<RTCCTRL_t, 0, 0, bool> RTCEN = {};    //< Clock Source Enable
     } RTCCTRL = {};
 
     /// USB Control Register - 1 bytes
     static constexpr struct USBCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<USBCTRL_t, 5, 3, CLK::USBPSDIVv> USBPSDIV = {};    //< Prescaler Division Factor
         static constexpr bitfield_t<USBCTRL_t, 2, 1, CLK::USBSRCv> USBSRC = {};    //< Clock Source
         static constexpr bitfield_t<USBCTRL_t, 0, 0, bool> USBSEN = {};    //< Clock Source Enable

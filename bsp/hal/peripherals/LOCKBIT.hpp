@@ -53,6 +53,7 @@ struct NVM_LOCKBITS_t {
 
     /// Lock Bits - 1 bytes
     static constexpr struct LOCKBITS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<LOCKBITS_t, 7, 6, LOCKBIT::BLBBv> BLBB = {};    //< Boot Lock Bits - Boot Section
         static constexpr bitfield_t<LOCKBITS_t, 5, 4, LOCKBIT::BLBAv> BLBA = {};    //< Boot Lock Bits - Application Section
         static constexpr bitfield_t<LOCKBITS_t, 3, 2, LOCKBIT::BLBATv> BLBAT = {};    //< Boot Lock Bits - Application Table

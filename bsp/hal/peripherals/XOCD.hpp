@@ -26,11 +26,13 @@ struct OCD_t {
 
     /// OCD Register 0 - 1 bytes
     static constexpr struct OCDR0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<OCDR0_t, 7, 0> OCDRD = {};    //< OCDR Dirty
     } OCDR0 = {};
 
     /// OCD Register 1 - 1 bytes
     static constexpr struct OCDR1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<OCDR1_t, 0, 0, bool> OCDRD = {};    //< OCDR Dirty
     } OCDR1 = {};
 

@@ -165,6 +165,7 @@ struct ADC_CH_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 7, 7, bool> START = {};    //< Channel Start Conversion
         static constexpr bitfield_t<CTRL_t, 4, 2, ADC::CH_GAINv> GAIN = {};    //< Gain Factor
         static constexpr bitfield_t<CTRL_t, 1, 0, ADC::CH_INPUTMODEv> INPUTMODE = {};    //< Input Mode Select
@@ -172,6 +173,7 @@ struct ADC_CH_t {
 
     /// MUX Control - 1 bytes
     static constexpr struct MUXCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<MUXCTRL_t, 6, 3, ADC::CH_MUXPOSv> MUXPOS = {};    //< MUX selection on Positive ADC input
         static constexpr bitfield_t<MUXCTRL_t, 6, 3, ADC::CH_MUXINTv> MUXINT = {};    //< MUX selection on Internal ADC input
         static constexpr bitfield_t<MUXCTRL_t, 2, 0, ADC::CH_MUXNEGv> MUXNEG = {};    //< MUX selection on Negative ADC input
@@ -179,21 +181,25 @@ struct ADC_CH_t {
 
     /// Channel Interrupt Control Register - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<INTCTRL_t, 3, 2, ADC::CH_INTMODEv> INTMODE = {};    //< Interrupt Mode
         static constexpr bitfield_t<INTCTRL_t, 1, 0, ADC::CH_INTLVLv> INTLVL = {};    //< Interrupt Level
     } INTCTRL = {};
 
     /// Interrupt Flags - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> CHIF = {};    //< Channel Interrupt Flag
     } INTFLAGS = {};
 
     /// Channel Result - 2 bytes
     static constexpr struct RES_t : reg_t<uint16_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0004>::operator=;
     } RES = {};
 
     /// Input Channel Scan - 1 bytes
     static constexpr struct SCAN_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
         static constexpr bitfield_t<SCAN_t, 7, 4> OFFSET = {};    //< Positive MUX setting offset
         static constexpr bitfield_t<SCAN_t, 3, 0> SCANNUM = {};    //< Number of Channels included in scan
     } SCAN = {};
@@ -211,6 +217,7 @@ struct ADC_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 7, 6, ADC::DMASELv> DMASEL = {};    //< DMA Selection
         static constexpr bitfield_t<CTRLA_t, 5, 5, bool> CH3START = {};    //< Channel 3 Start Conversion
         static constexpr bitfield_t<CTRLA_t, 4, 4, bool> CH2START = {};    //< Channel 2 Start Conversion
@@ -222,6 +229,7 @@ struct ADC_t {
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRLB_t, 7, 7, bool> IMPMODE = {};    //< Gain Stage Impedance Mode
         static constexpr bitfield_t<CTRLB_t, 6, 5, ADC::CURRLIMITv> CURRLIMIT = {};    //< Current Limitation
         static constexpr bitfield_t<CTRLB_t, 4, 4, bool> CONMODE = {};    //< Conversion Mode
@@ -231,6 +239,7 @@ struct ADC_t {
 
     /// Reference Control - 1 bytes
     static constexpr struct REFCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<REFCTRL_t, 6, 4, ADC::REFSELv> REFSEL = {};    //< Reference Selection
         static constexpr bitfield_t<REFCTRL_t, 1, 1, bool> BANDGAP = {};    //< Bandgap enable
         static constexpr bitfield_t<REFCTRL_t, 0, 0, bool> TEMPREF = {};    //< Temperature Reference Enable
@@ -238,6 +247,7 @@ struct ADC_t {
 
     /// Event Control - 1 bytes
     static constexpr struct EVCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<EVCTRL_t, 7, 6, ADC::SWEEPv> SWEEP = {};    //< Channel Sweep Selection
         static constexpr bitfield_t<EVCTRL_t, 5, 3, ADC::EVSELv> EVSEL = {};    //< Event Input Select
         static constexpr bitfield_t<EVCTRL_t, 2, 0, ADC::EVACTv> EVACT = {};    //< Event Action Select
@@ -245,11 +255,13 @@ struct ADC_t {
 
     /// Clock Prescaler - 1 bytes
     static constexpr struct PRESCALER_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<PRESCALER_t, 2, 0, ADC::PRESCALERv> PRESCALER = {};    //< Clock Prescaler Selection
     } PRESCALER = {};
 
     /// Interrupt Flags - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
         static constexpr bitfield_t<INTFLAGS_t, 3, 3, bool> CH3IF = {};    //< Channel 3 Interrupt Flag
         static constexpr bitfield_t<INTFLAGS_t, 2, 2, bool> CH2IF = {};    //< Channel 2 Interrupt Flag
         static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> CH1IF = {};    //< Channel 1 Interrupt Flag
@@ -258,30 +270,37 @@ struct ADC_t {
 
     /// Temporary Register - 1 bytes
     static constexpr struct TEMP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0007>::operator=;
     } TEMP = {};
 
     /// Calibration Value - 2 bytes
     static constexpr struct CAL_t : reg_t<uint16_t, BASE_ADDRESS + 0x000C> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x000C>::operator=;
     } CAL = {};
 
     /// Channel 0 Result - 2 bytes
     static constexpr struct CH0RES_t : reg_t<uint16_t, BASE_ADDRESS + 0x0010> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0010>::operator=;
     } CH0RES = {};
 
     /// Channel 1 Result - 2 bytes
     static constexpr struct CH1RES_t : reg_t<uint16_t, BASE_ADDRESS + 0x0012> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0012>::operator=;
     } CH1RES = {};
 
     /// Channel 2 Result - 2 bytes
     static constexpr struct CH2RES_t : reg_t<uint16_t, BASE_ADDRESS + 0x0014> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0014>::operator=;
     } CH2RES = {};
 
     /// Channel 3 Result - 2 bytes
     static constexpr struct CH3RES_t : reg_t<uint16_t, BASE_ADDRESS + 0x0016> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0016>::operator=;
     } CH3RES = {};
 
     /// Compare Value - 2 bytes
     static constexpr struct CMP_t : reg_t<uint16_t, BASE_ADDRESS + 0x0018> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0018>::operator=;
     } CMP = {};
 
     /// ADC Channel 0

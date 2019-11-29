@@ -42,6 +42,7 @@ struct CRC_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 7, 6, CRC::RESETv> RESET = {};    //< Reset
         static constexpr bitfield_t<CTRL_t, 5, 5, bool> CRC32 = {};    //< CRC Mode
         static constexpr bitfield_t<CTRL_t, 3, 0, CRC::SOURCEv> SOURCE = {};    //< Input Source
@@ -49,28 +50,34 @@ struct CRC_t {
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<STATUS_t, 1, 1, bool> ZERO = {};    //< Zero detection
         static constexpr bitfield_t<STATUS_t, 0, 0, bool> BUSY = {};    //< Busy
     } STATUS = {};
 
     /// Data Input - 1 bytes
     static constexpr struct DATAIN_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
     } DATAIN = {};
 
     /// Checksum byte 0 - 1 bytes
     static constexpr struct CHECKSUM0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
     } CHECKSUM0 = {};
 
     /// Checksum byte 1 - 1 bytes
     static constexpr struct CHECKSUM1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
     } CHECKSUM1 = {};
 
     /// Checksum byte 2 - 1 bytes
     static constexpr struct CHECKSUM2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
     } CHECKSUM2 = {};
 
     /// Checksum byte 3 - 1 bytes
     static constexpr struct CHECKSUM3_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0007>::operator=;
     } CHECKSUM3 = {};
 
 };

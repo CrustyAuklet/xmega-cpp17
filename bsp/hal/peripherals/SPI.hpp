@@ -47,6 +47,7 @@ struct SPI_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 7, 7, bool> CLK2X = {};    //< Enable Double Speed
         static constexpr bitfield_t<CTRL_t, 6, 6, bool> ENABLE = {};    //< Enable Module
         static constexpr bitfield_t<CTRL_t, 5, 5, bool> DORD = {};    //< Data Order Setting
@@ -57,17 +58,20 @@ struct SPI_t {
 
     /// Interrupt Control Register - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<INTCTRL_t, 1, 0, SPI::INTLVLv> INTLVL = {};    //< Interrupt level
     } INTCTRL = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> IF = {};    //< Interrupt Flag
         static constexpr bitfield_t<STATUS_t, 6, 6, bool> WRCOL = {};    //< Write Collision
     } STATUS = {};
 
     /// Data Register - 1 bytes
     static constexpr struct DATA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
     } DATA = {};
 
     // SPI ISR Vector Offsets (two bytes each)

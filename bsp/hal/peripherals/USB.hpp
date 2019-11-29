@@ -51,6 +51,7 @@ struct USB_EP_t {
 
     /// Endpoint Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> STALLF = {};    //< Endpoint Stall Flag
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> CRC = {};    //< CRC Error Flag
         static constexpr bitfield_t<STATUS_t, 6, 6, bool> UNF = {};    //< Underflow Enpoint FLag
@@ -66,6 +67,7 @@ struct USB_EP_t {
 
     /// Endpoint Control - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRL_t, 7, 6, USB::EP_TYPEv> TYPE = {};    //< Endpoint Type
         static constexpr bitfield_t<CTRL_t, 5, 5, bool> MULTIPKT = {};    //< Multi Packet Transfer Enable
         static constexpr bitfield_t<CTRL_t, 4, 4, bool> PINGPONG = {};    //< Ping-Pong Enable
@@ -76,15 +78,18 @@ struct USB_EP_t {
 
     /// USB Endpoint Counter - 2 bytes
     static constexpr struct CNT_t : reg_t<uint16_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<CNT_t, 15, 15, bool> ZLP = {};    //< Zero Length Packet
     } CNT = {};
 
     /// Data Pointer - 2 bytes
     static constexpr struct DATAPTR_t : reg_t<uint16_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0004>::operator=;
     } DATAPTR = {};
 
     /// Auxiliary Data - 2 bytes
     static constexpr struct AUXDATA_t : reg_t<uint16_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0006>::operator=;
     } AUXDATA = {};
 
 };
@@ -100,6 +105,7 @@ struct USB_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 7, 7, bool> ENABLE = {};    //< USB Enable
         static constexpr bitfield_t<CTRLA_t, 6, 6, bool> SPEED = {};    //< Speed Select
         static constexpr bitfield_t<CTRLA_t, 5, 5, bool> FIFOEN = {};    //< USB FIFO Enable
@@ -109,6 +115,7 @@ struct USB_t {
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRLB_t, 4, 4, bool> PULLRST = {};    //< Pull during Reset
         static constexpr bitfield_t<CTRLB_t, 2, 2, bool> RWAKEUP = {};    //< Remote Wake-up
         static constexpr bitfield_t<CTRLB_t, 1, 1, bool> GNACK = {};    //< Global NACK
@@ -117,6 +124,7 @@ struct USB_t {
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<STATUS_t, 3, 3, bool> URESUME = {};    //< Upstream Resume
         static constexpr bitfield_t<STATUS_t, 2, 2, bool> RESUME = {};    //< Resume
         static constexpr bitfield_t<STATUS_t, 1, 1, bool> SUSPEND = {};    //< Bus Suspended
@@ -125,25 +133,30 @@ struct USB_t {
 
     /// Address Register - 1 bytes
     static constexpr struct ADDR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<ADDR_t, 6, 0> ADDR = {};    //< Device Address
     } ADDR = {};
 
     /// FIFO Write Pointer Register - 1 bytes
     static constexpr struct FIFOWP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<FIFOWP_t, 4, 0> FIFOWP = {};    //< FIFO Write Pointer
     } FIFOWP = {};
 
     /// FIFO Read Pointer Register - 1 bytes
     static constexpr struct FIFORP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<FIFORP_t, 4, 0> FIFORP = {};    //< FIFO Read Pointer
     } FIFORP = {};
 
     /// Endpoint Configuration Table Pointer - 2 bytes
     static constexpr struct EPPTR_t : reg_t<uint16_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0006>::operator=;
     } EPPTR = {};
 
     /// Interrupt Control Register A - 1 bytes
     static constexpr struct INTCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0008>::operator=;
         static constexpr bitfield_t<INTCTRLA_t, 7, 7, bool> SOFIE = {};    //< Start Of Frame Interrupt Enable
         static constexpr bitfield_t<INTCTRLA_t, 6, 6, bool> BUSEVIE = {};    //< Bus Event Interrupt Enable
         static constexpr bitfield_t<INTCTRLA_t, 5, 5, bool> BUSERRIE = {};    //< Bus Error Interrupt Enable
@@ -153,12 +166,14 @@ struct USB_t {
 
     /// Interrupt Control Register B - 1 bytes
     static constexpr struct INTCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0009>::operator=;
         static constexpr bitfield_t<INTCTRLB_t, 1, 1, bool> TRNIE = {};    //< Transaction Complete Interrupt Enable
         static constexpr bitfield_t<INTCTRLB_t, 0, 0, bool> SETUPIE = {};    //< SETUP Transaction Complete Interrupt Enable
     } INTCTRLB = {};
 
     /// Clear Interrupt Flag Register A - 1 bytes
     static constexpr struct INTFLAGSACLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000A>::operator=;
         static constexpr bitfield_t<INTFLAGSACLR_t, 7, 7, bool> SOFIF = {};    //< Start Of Frame Interrupt Flag
         static constexpr bitfield_t<INTFLAGSACLR_t, 6, 6, bool> SUSPENDIF = {};    //< Suspend Interrupt Flag
         static constexpr bitfield_t<INTFLAGSACLR_t, 5, 5, bool> RESUMEIF = {};    //< Resume Interrupt Flag
@@ -171,6 +186,7 @@ struct USB_t {
 
     /// Set Interrupt Flag Register A - 1 bytes
     static constexpr struct INTFLAGSASET_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000B>::operator=;
         static constexpr bitfield_t<INTFLAGSASET_t, 7, 7, bool> SOFIF = {};    //< Start Of Frame Interrupt Flag
         static constexpr bitfield_t<INTFLAGSASET_t, 6, 6, bool> SUSPENDIF = {};    //< Suspend Interrupt Flag
         static constexpr bitfield_t<INTFLAGSASET_t, 5, 5, bool> RESUMEIF = {};    //< Resume Interrupt Flag
@@ -183,22 +199,26 @@ struct USB_t {
 
     /// Clear Interrupt Flag Register B - 1 bytes
     static constexpr struct INTFLAGSBCLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000C>::operator=;
         static constexpr bitfield_t<INTFLAGSBCLR_t, 1, 1, bool> TRNIF = {};    //< Transaction Complete Interrupt Flag
         static constexpr bitfield_t<INTFLAGSBCLR_t, 0, 0, bool> SETUPIF = {};    //< SETUP Transaction Complete Interrupt Flag
     } INTFLAGSBCLR = {};
 
     /// Set Interrupt Flag Register B - 1 bytes
     static constexpr struct INTFLAGSBSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000D>::operator=;
         static constexpr bitfield_t<INTFLAGSBSET_t, 1, 1, bool> TRNIF = {};    //< Transaction Complete Interrupt Flag
         static constexpr bitfield_t<INTFLAGSBSET_t, 0, 0, bool> SETUPIF = {};    //< SETUP Transaction Complete Interrupt Flag
     } INTFLAGSBSET = {};
 
     /// Calibration Byte 0 - 1 bytes
     static constexpr struct CAL0_t : reg_t<uint8_t, BASE_ADDRESS + 0x003A> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x003A>::operator=;
     } CAL0 = {};
 
     /// Calibration Byte 1 - 1 bytes
     static constexpr struct CAL1_t : reg_t<uint8_t, BASE_ADDRESS + 0x003B> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x003B>::operator=;
     } CAL1 = {};
 
     // USB ISR Vector Offsets (two bytes each)
@@ -219,10 +239,12 @@ struct USB_EP_TABLE_t {
 
     /// Frame Number Low Byte - 1 bytes
     static constexpr struct FRAMENUML_t : reg_t<uint8_t, BASE_ADDRESS + 0x0110> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0110>::operator=;
     } FRAMENUML = {};
 
     /// Frame Number High Byte - 1 bytes
     static constexpr struct FRAMENUMH_t : reg_t<uint8_t, BASE_ADDRESS + 0x0111> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0111>::operator=;
     } FRAMENUMH = {};
 
     /// Endpoint 0

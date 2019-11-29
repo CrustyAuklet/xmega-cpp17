@@ -51,40 +51,48 @@ struct RTC_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 2, 0, RTC::PRESCALERv> PRESCALER = {};    //< Prescaling Factor
     } CTRL = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<STATUS_t, 0, 0, bool> SYNCBUSY = {};    //< Synchronization Busy Flag
     } STATUS = {};
 
     /// Interrupt Control Register - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<INTCTRL_t, 3, 2, RTC::COMPINTLVLv> COMPINTLVL = {};    //< Compare Match Interrupt Level
         static constexpr bitfield_t<INTCTRL_t, 1, 0, RTC::OVFINTLVLv> OVFINTLVL = {};    //< Overflow Interrupt Level
     } INTCTRL = {};
 
     /// Interrupt Flags - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> COMPIF = {};    //< Compare Match Interrupt Flag
         static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> OVFIF = {};    //< Overflow Interrupt Flag
     } INTFLAGS = {};
 
     /// Temporary register - 1 bytes
     static constexpr struct TEMP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
     } TEMP = {};
 
     /// Count Register - 2 bytes
     static constexpr struct CNT_t : reg_t<uint16_t, BASE_ADDRESS + 0x0008> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0008>::operator=;
     } CNT = {};
 
     /// Period Register - 2 bytes
     static constexpr struct PER_t : reg_t<uint16_t, BASE_ADDRESS + 0x000A> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x000A>::operator=;
     } PER = {};
 
     /// Compare Register - 2 bytes
     static constexpr struct COMP_t : reg_t<uint16_t, BASE_ADDRESS + 0x000C> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x000C>::operator=;
     } COMP = {};
 
     // RTC ISR Vector Offsets (two bytes each)

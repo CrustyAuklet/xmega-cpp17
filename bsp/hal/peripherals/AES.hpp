@@ -33,6 +33,7 @@ struct AES_t {
 
     /// AES Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 7, 7, bool> START = {};    //< Start/Run
         static constexpr bitfield_t<CTRL_t, 6, 6, bool> AUTO = {};    //< Auto Start Trigger
         static constexpr bitfield_t<CTRL_t, 5, 5, bool> RESET = {};    //< AES Software Reset
@@ -42,20 +43,24 @@ struct AES_t {
 
     /// AES Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> ERROR = {};    //< AES Error
         static constexpr bitfield_t<STATUS_t, 0, 0, bool> SRIF = {};    //< State Ready Interrupt Flag
     } STATUS = {};
 
     /// AES State Register - 1 bytes
     static constexpr struct STATE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
     } STATE = {};
 
     /// AES Key Register - 1 bytes
     static constexpr struct KEY_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
     } KEY = {};
 
     /// AES Interrupt Control Register - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<INTCTRL_t, 1, 0, AES::INTLVLv> INTLVL = {};    //< Interrupt level
     } INTCTRL = {};
 

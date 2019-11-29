@@ -114,22 +114,26 @@ struct PORTCFG_t {
 
     /// Multi-pin Configuration Mask - 1 bytes
     static constexpr struct MPCMASK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
     } MPCMASK = {};
 
     /// Virtual Port Control Register A - 1 bytes
     static constexpr struct VPCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<VPCTRLA_t, 7, 4, PORTCFG::VP13MAPv> VP1MAP = {};    //< Virtual Port 1 Mapping
         static constexpr bitfield_t<VPCTRLA_t, 3, 0, PORTCFG::VP02MAPv> VP0MAP = {};    //< Virtual Port 0 Mapping
     } VPCTRLA = {};
 
     /// Virtual Port Control Register B - 1 bytes
     static constexpr struct VPCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<VPCTRLB_t, 7, 4, PORTCFG::VP13MAPv> VP3MAP = {};    //< Virtual Port 3 Mapping
         static constexpr bitfield_t<VPCTRLB_t, 3, 0, PORTCFG::VP02MAPv> VP2MAP = {};    //< Virtual Port 2 Mapping
     } VPCTRLB = {};
 
     /// Clock and Event Out Register - 1 bytes
     static constexpr struct CLKEVOUT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<CLKEVOUT_t, 1, 0, PORTCFG::CLKOUTv> CLKOUT = {};    //< Peripheral Clock Output Port
         static constexpr bitfield_t<CLKEVOUT_t, 3, 2, PORTCFG::CLKOUTSELv> CLKOUTSEL = {};    //< Peripheral Clock Output Select
         static constexpr bitfield_t<CLKEVOUT_t, 5, 4, PORTCFG::EVOUTv> EVOUT = {};    //< Event Output Port
@@ -139,12 +143,14 @@ struct PORTCFG_t {
 
     /// EBI Output register - 1 bytes
     static constexpr struct EBIOUT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<EBIOUT_t, 1, 0, PORTCFG::EBICSOUTv> EBICSOUT = {};    //< EBI Chip Select Output
         static constexpr bitfield_t<EBIOUT_t, 3, 2, PORTCFG::EBIADROUTv> EBIADROUT = {};    //< EBI Address Output
     } EBIOUT = {};
 
     /// Event Output Select - 1 bytes
     static constexpr struct EVOUTSEL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
         static constexpr bitfield_t<EVOUTSEL_t, 2, 0, PORTCFG::EVOUTSELv> EVOUTSEL = {};    //< Event Output Select
     } EVOUTSEL = {};
 

@@ -169,6 +169,7 @@ struct DMA_CH_t {
 
     /// Channel Control - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 7, 7, bool> ENABLE = {};    //< Channel Enable
         static constexpr bitfield_t<CTRLA_t, 6, 6, bool> RESET = {};    //< Channel Software Reset
         static constexpr bitfield_t<CTRLA_t, 5, 5, bool> REPEAT = {};    //< Channel Repeat Mode
@@ -179,6 +180,7 @@ struct DMA_CH_t {
 
     /// Channel Control - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRLB_t, 7, 7, bool> CHBUSY = {};    //< Block Transfer Busy
         static constexpr bitfield_t<CTRLB_t, 6, 6, bool> CHPEND = {};    //< Block Transfer Pending
         static constexpr bitfield_t<CTRLB_t, 5, 5, bool> ERRIF = {};    //< Block Transfer Error Interrupt Flag
@@ -189,6 +191,7 @@ struct DMA_CH_t {
 
     /// Address Control - 1 bytes
     static constexpr struct ADDRCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<ADDRCTRL_t, 7, 6, DMA::CH_SRCRELOADv> SRCRELOAD = {};    //< Channel Source Address Reload
         static constexpr bitfield_t<ADDRCTRL_t, 5, 4, DMA::CH_SRCDIRv> SRCDIR = {};    //< Channel Source Address Mode
         static constexpr bitfield_t<ADDRCTRL_t, 3, 2, DMA::CH_DESTRELOADv> DESTRELOAD = {};    //< Channel Destination Address Reload
@@ -197,39 +200,48 @@ struct DMA_CH_t {
 
     /// Channel Trigger Source - 1 bytes
     static constexpr struct TRIGSRC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<TRIGSRC_t, 7, 0, DMA::CH_TRIGSRCv> TRIGSRC = {};    //< Channel Trigger Source
     } TRIGSRC = {};
 
     /// Channel Block Transfer Count - 2 bytes
     static constexpr struct TRFCNT_t : reg_t<uint16_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0004>::operator=;
     } TRFCNT = {};
 
     /// Channel Repeat Count - 1 bytes
     static constexpr struct REPCNT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
     } REPCNT = {};
 
     /// Channel Source Address 0 - 1 bytes
     static constexpr struct SRCADDR0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0008>::operator=;
     } SRCADDR0 = {};
 
     /// Channel Source Address 1 - 1 bytes
     static constexpr struct SRCADDR1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0009>::operator=;
     } SRCADDR1 = {};
 
     /// Channel Source Address 2 - 1 bytes
     static constexpr struct SRCADDR2_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000A>::operator=;
     } SRCADDR2 = {};
 
     /// Channel Destination Address 0 - 1 bytes
     static constexpr struct DESTADDR0_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000C>::operator=;
     } DESTADDR0 = {};
 
     /// Channel Destination Address 1 - 1 bytes
     static constexpr struct DESTADDR1_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000D>::operator=;
     } DESTADDR1 = {};
 
     /// Channel Destination Address 2 - 1 bytes
     static constexpr struct DESTADDR2_t : reg_t<uint8_t, BASE_ADDRESS + 0x000E> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000E>::operator=;
     } DESTADDR2 = {};
 
 };
@@ -245,6 +257,7 @@ struct DMA_t {
 
     /// Control - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 7, 7, bool> ENABLE = {};    //< Enable
         static constexpr bitfield_t<CTRL_t, 6, 6, bool> RESET = {};    //< Software Reset
         static constexpr bitfield_t<CTRL_t, 3, 2, DMA::DBUFMODEv> DBUFMODE = {};    //< Double Buffering Mode
@@ -253,6 +266,7 @@ struct DMA_t {
 
     /// Transfer Interrupt Status - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<INTFLAGS_t, 7, 7, bool> CH3ERRIF = {};    //< Channel 3 Block Transfer Error Interrupt Flag
         static constexpr bitfield_t<INTFLAGS_t, 6, 6, bool> CH2ERRIF = {};    //< Channel 2 Block Transfer Error Interrupt Flag
         static constexpr bitfield_t<INTFLAGS_t, 5, 5, bool> CH1ERRIF = {};    //< Channel 1 Block Transfer Error Interrupt Flag
@@ -265,6 +279,7 @@ struct DMA_t {
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> CH3BUSY = {};    //< Channel 3 Block Transfer Busy
         static constexpr bitfield_t<STATUS_t, 6, 6, bool> CH2BUSY = {};    //< Channel 2 Block Transfer Busy
         static constexpr bitfield_t<STATUS_t, 5, 5, bool> CH1BUSY = {};    //< Channel 1 Block Transfer Busy
@@ -277,6 +292,7 @@ struct DMA_t {
 
     /// Temporary Register For 16/24-bit Access - 2 bytes
     static constexpr struct TEMP_t : reg_t<uint16_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0006>::operator=;
     } TEMP = {};
 
     /// DMA Channel 0

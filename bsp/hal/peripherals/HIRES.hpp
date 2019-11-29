@@ -33,6 +33,7 @@ struct HIRES_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 2, 2, bool> HRPLUS = {};    //< High Resolution Plus
         static constexpr bitfield_t<CTRLA_t, 1, 0, HIRES::HRENv> HREN = {};    //< High Resolution Enable
     } CTRLA = {};

@@ -105,11 +105,13 @@ struct TC2_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 3, 0, TC2::CLKSELv> CLKSEL = {};    //< Clock Selection
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRLB_t, 7, 7, bool> HCMPDEN = {};    //< High Byte Compare D Enable
         static constexpr bitfield_t<CTRLB_t, 6, 6, bool> HCMPCEN = {};    //< High Byte Compare C Enable
         static constexpr bitfield_t<CTRLB_t, 5, 5, bool> HCMPBEN = {};    //< High Byte Compare B Enable
@@ -122,6 +124,7 @@ struct TC2_t {
 
     /// Control register C - 1 bytes
     static constexpr struct CTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<CTRLC_t, 7, 7, bool> HCMPD = {};    //< High Byte Compare D Output Value
         static constexpr bitfield_t<CTRLC_t, 6, 6, bool> HCMPC = {};    //< High Byte Compare C Output Value
         static constexpr bitfield_t<CTRLC_t, 5, 5, bool> HCMPB = {};    //< High Byte Compare B Output Value
@@ -134,17 +137,20 @@ struct TC2_t {
 
     /// Control Register E - 1 bytes
     static constexpr struct CTRLE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<CTRLE_t, 1, 0, TC2::BYTEMv> BYTEM = {};    //< Byte Mode
     } CTRLE = {};
 
     /// Interrupt Control Register A - 1 bytes
     static constexpr struct INTCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
         static constexpr bitfield_t<INTCTRLA_t, 3, 2, TC2::HUNFINTLVLv> HUNFINTLVL = {};    //< High Byte Underflow Interrupt Level
         static constexpr bitfield_t<INTCTRLA_t, 1, 0, TC2::LUNFINTLVLv> LUNFINTLVL = {};    //< Low Byte Underflow interrupt level
     } INTCTRLA = {};
 
     /// Interrupt Control Register B - 1 bytes
     static constexpr struct INTCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0007>::operator=;
         static constexpr bitfield_t<INTCTRLB_t, 7, 6, TC2::LCMPDINTLVLv> LCMPDINTLVL = {};    //< Low Byte Compare D Interrupt Level
         static constexpr bitfield_t<INTCTRLB_t, 5, 4, TC2::LCMPCINTLVLv> LCMPCINTLVL = {};    //< Low Byte Compare C Interrupt Level
         static constexpr bitfield_t<INTCTRLB_t, 3, 2, TC2::LCMPBINTLVLv> LCMPBINTLVL = {};    //< Low Byte Compare B Interrupt Level
@@ -153,12 +159,14 @@ struct TC2_t {
 
     /// Control Register F - 1 bytes
     static constexpr struct CTRLF_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0009>::operator=;
         static constexpr bitfield_t<CTRLF_t, 3, 2, TC2::CMDv> CMD = {};    //< Command
         static constexpr bitfield_t<CTRLF_t, 1, 0, TC2::CMDENv> CMDEN = {};    //< Command Enable
     } CTRLF = {};
 
     /// Interrupt Flag Register - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000C>::operator=;
         static constexpr bitfield_t<INTFLAGS_t, 7, 7, bool> LCMPDIF = {};    //< Low Byte Compare D Interrupt Flag
         static constexpr bitfield_t<INTFLAGS_t, 6, 6, bool> LCMPCIF = {};    //< Low Byte Compare C Interrupt Flag
         static constexpr bitfield_t<INTFLAGS_t, 5, 5, bool> LCMPBIF = {};    //< Low Byte Compare B Interrupt Flag
@@ -169,50 +177,62 @@ struct TC2_t {
 
     /// Low Byte Count - 1 bytes
     static constexpr struct LCNT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0020> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0020>::operator=;
     } LCNT = {};
 
     /// High Byte Count - 1 bytes
     static constexpr struct HCNT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0021> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0021>::operator=;
     } HCNT = {};
 
     /// Low Byte Period - 1 bytes
     static constexpr struct LPER_t : reg_t<uint8_t, BASE_ADDRESS + 0x0026> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0026>::operator=;
     } LPER = {};
 
     /// High Byte Period - 1 bytes
     static constexpr struct HPER_t : reg_t<uint8_t, BASE_ADDRESS + 0x0027> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0027>::operator=;
     } HPER = {};
 
     /// Low Byte Compare A - 1 bytes
     static constexpr struct LCMPA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0028> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0028>::operator=;
     } LCMPA = {};
 
     /// High Byte Compare A - 1 bytes
     static constexpr struct HCMPA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0029> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0029>::operator=;
     } HCMPA = {};
 
     /// Low Byte Compare B - 1 bytes
     static constexpr struct LCMPB_t : reg_t<uint8_t, BASE_ADDRESS + 0x002A> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x002A>::operator=;
     } LCMPB = {};
 
     /// High Byte Compare B - 1 bytes
     static constexpr struct HCMPB_t : reg_t<uint8_t, BASE_ADDRESS + 0x002B> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x002B>::operator=;
     } HCMPB = {};
 
     /// Low Byte Compare C - 1 bytes
     static constexpr struct LCMPC_t : reg_t<uint8_t, BASE_ADDRESS + 0x002C> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x002C>::operator=;
     } LCMPC = {};
 
     /// High Byte Compare C - 1 bytes
     static constexpr struct HCMPC_t : reg_t<uint8_t, BASE_ADDRESS + 0x002D> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x002D>::operator=;
     } HCMPC = {};
 
     /// Low Byte Compare D - 1 bytes
     static constexpr struct LCMPD_t : reg_t<uint8_t, BASE_ADDRESS + 0x002E> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x002E>::operator=;
     } LCMPD = {};
 
     /// High Byte Compare D - 1 bytes
     static constexpr struct HCMPD_t : reg_t<uint8_t, BASE_ADDRESS + 0x002F> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x002F>::operator=;
     } HCMPD = {};
 
     // TC2 ISR Vector Offsets (two bytes each)

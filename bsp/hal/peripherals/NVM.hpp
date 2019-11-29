@@ -104,40 +104,49 @@ struct NVM_t {
 
     /// Address Register 0 - 1 bytes
     static constexpr struct ADDR0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
     } ADDR0 = {};
 
     /// Address Register 1 - 1 bytes
     static constexpr struct ADDR1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
     } ADDR1 = {};
 
     /// Address Register 2 - 1 bytes
     static constexpr struct ADDR2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
     } ADDR2 = {};
 
     /// Data Register 0 - 1 bytes
     static constexpr struct DATA0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
     } DATA0 = {};
 
     /// Data Register 1 - 1 bytes
     static constexpr struct DATA1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
     } DATA1 = {};
 
     /// Data Register 2 - 1 bytes
     static constexpr struct DATA2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
     } DATA2 = {};
 
     /// Command - 1 bytes
     static constexpr struct CMD_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000A>::operator=;
         static constexpr bitfield_t<CMD_t, 6, 0, NVM::CMDv> CMD = {};    //< Command
     } CMD = {};
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000B>::operator=;
         static constexpr bitfield_t<CTRLA_t, 0, 0, bool> CMDEX = {};    //< Command Execute
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000C>::operator=;
         static constexpr bitfield_t<CTRLB_t, 3, 3, bool> EEMAPEN = {};    //< EEPROM Mapping Enable
         static constexpr bitfield_t<CTRLB_t, 2, 2, bool> FPRM = {};    //< Flash Power Reduction Enable
         static constexpr bitfield_t<CTRLB_t, 1, 1, bool> EPRM = {};    //< EEPROM Power Reduction Enable
@@ -146,12 +155,14 @@ struct NVM_t {
 
     /// Interrupt Control - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000D>::operator=;
         static constexpr bitfield_t<INTCTRL_t, 3, 2, NVM::SPMLVLv> SPMLVL = {};    //< SPM Interrupt Level
         static constexpr bitfield_t<INTCTRL_t, 1, 0, NVM::EELVLv> EELVL = {};    //< EEPROM Interrupt Level
     } INTCTRL = {};
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x000F> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000F>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> NVMBUSY = {};    //< Non-volatile Memory Busy
         static constexpr bitfield_t<STATUS_t, 6, 6, bool> FBUSY = {};    //< Flash Memory Busy
         static constexpr bitfield_t<STATUS_t, 1, 1, bool> EELOAD = {};    //< EEPROM Page Buffer Active Loading
@@ -160,6 +171,7 @@ struct NVM_t {
 
     /// Lock Bits - 1 bytes
     static constexpr struct LOCKBITS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0010> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0010>::operator=;
         static constexpr bitfield_t<LOCKBITS_t, 7, 6, NVM::BLBBv> BLBB = {};    //< Boot Lock Bits - Boot Section
         static constexpr bitfield_t<LOCKBITS_t, 5, 4, NVM::BLBAv> BLBA = {};    //< Boot Lock Bits - Application Section
         static constexpr bitfield_t<LOCKBITS_t, 3, 2, NVM::BLBATv> BLBAT = {};    //< Boot Lock Bits - Application Table

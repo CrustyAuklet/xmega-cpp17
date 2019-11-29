@@ -54,6 +54,7 @@ struct WDT_t {
 
     /// Control - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 5, 2, WDT::PERv> PER = {};    //< Period
         static constexpr bitfield_t<CTRL_t, 1, 1, bool> ENABLE = {};    //< Enable
         static constexpr bitfield_t<CTRL_t, 0, 0, bool> CEN = {};    //< Change Enable
@@ -61,6 +62,7 @@ struct WDT_t {
 
     /// Windowed Mode Control - 1 bytes
     static constexpr struct WINCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<WINCTRL_t, 5, 2, WDT::WPERv> WPER = {};    //< Windowed Mode Period
         static constexpr bitfield_t<WINCTRL_t, 1, 1, bool> WEN = {};    //< Windowed Mode Enable
         static constexpr bitfield_t<WINCTRL_t, 0, 0, bool> WCEN = {};    //< Windowed Mode Change Enable
@@ -68,6 +70,7 @@ struct WDT_t {
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<STATUS_t, 0, 0, bool> SYNCBUSY = {};    //< Syncronization busy
     } STATUS = {};
 

@@ -58,6 +58,7 @@ struct OSC_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 4, 4, bool> PLLEN = {};    //< PLL Enable
         static constexpr bitfield_t<CTRL_t, 3, 3, bool> XOSCEN = {};    //< External Oscillator Enable
         static constexpr bitfield_t<CTRL_t, 2, 2, bool> RC32KEN = {};    //< Internal 32.768 kHz RC Oscillator Enable
@@ -67,6 +68,7 @@ struct OSC_t {
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<STATUS_t, 4, 4, bool> PLLRDY = {};    //< PLL Ready
         static constexpr bitfield_t<STATUS_t, 3, 3, bool> XOSCRDY = {};    //< External Oscillator Ready
         static constexpr bitfield_t<STATUS_t, 2, 2, bool> RC32KRDY = {};    //< Internal 32.768 kHz RC Oscillator Ready
@@ -76,6 +78,7 @@ struct OSC_t {
 
     /// External Oscillator Control Register - 1 bytes
     static constexpr struct XOSCCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<XOSCCTRL_t, 7, 6, OSC::FRQRANGEv> FRQRANGE = {};    //< Frequency Range
         static constexpr bitfield_t<XOSCCTRL_t, 5, 5, bool> X32KLPM = {};    //< 32.768 kHz XTAL OSC Low-power Mode
         static constexpr bitfield_t<XOSCCTRL_t, 4, 4, bool> XOSCPWR = {};    //< 16 MHz Crystal Oscillator High Power mode
@@ -84,6 +87,7 @@ struct OSC_t {
 
     /// Oscillator Failure Detection Register - 1 bytes
     static constexpr struct XOSCFAIL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<XOSCFAIL_t, 3, 3, bool> PLLFDIF = {};    //< PLL Failure Detection Interrupt Flag
         static constexpr bitfield_t<XOSCFAIL_t, 2, 2, bool> PLLFDEN = {};    //< PLL Failure Detection Enable
         static constexpr bitfield_t<XOSCFAIL_t, 1, 1, bool> XOSCFDIF = {};    //< XOSC Failure Detection Interrupt Flag
@@ -92,10 +96,12 @@ struct OSC_t {
 
     /// 32.768 kHz Internal Oscillator Calibration Register - 1 bytes
     static constexpr struct RC32KCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
     } RC32KCAL = {};
 
     /// PLL Control Register - 1 bytes
     static constexpr struct PLLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<PLLCTRL_t, 7, 6, OSC::PLLSRCv> PLLSRC = {};    //< Clock Source
         static constexpr bitfield_t<PLLCTRL_t, 5, 5, bool> PLLDIV = {};    //< Divide by 2
         static constexpr bitfield_t<PLLCTRL_t, 4, 0> PLLFAC = {};    //< Multiplication Factor
@@ -103,6 +109,7 @@ struct OSC_t {
 
     /// DFLL Control Register - 1 bytes
     static constexpr struct DFLLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
         static constexpr bitfield_t<DFLLCTRL_t, 2, 1, OSC::RC32MCREFv> RC32MCREF = {};    //< 32 MHz DFLL Calibration Reference
         static constexpr bitfield_t<DFLLCTRL_t, 0, 0, bool> RC2MCREF = {};    //< 2 MHz DFLL Calibration Reference
     } DFLLCTRL = {};

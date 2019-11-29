@@ -74,6 +74,7 @@ struct TWI_MASTER_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 7, 6, TWI::MASTER_INTLVLv> INTLVL = {};    //< Interrupt Level
         static constexpr bitfield_t<CTRLA_t, 5, 5, bool> RIEN = {};    //< Read Interrupt Enable
         static constexpr bitfield_t<CTRLA_t, 4, 4, bool> WIEN = {};    //< Write Interrupt Enable
@@ -82,6 +83,7 @@ struct TWI_MASTER_t {
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRLB_t, 3, 2, TWI::MASTER_TIMEOUTv> TIMEOUT = {};    //< Inactive Bus Timeout
         static constexpr bitfield_t<CTRLB_t, 1, 1, bool> QCEN = {};    //< Quick Command Enable
         static constexpr bitfield_t<CTRLB_t, 0, 0, bool> SMEN = {};    //< Smart Mode Enable
@@ -89,12 +91,14 @@ struct TWI_MASTER_t {
 
     /// Control Register C - 1 bytes
     static constexpr struct CTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<CTRLC_t, 2, 2, bool> ACKACT = {};    //< Acknowledge Action
         static constexpr bitfield_t<CTRLC_t, 1, 0, TWI::MASTER_CMDv> CMD = {};    //< Command
     } CTRLC = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> RIF = {};    //< Read Interrupt Flag
         static constexpr bitfield_t<STATUS_t, 6, 6, bool> WIF = {};    //< Write Interrupt Flag
         static constexpr bitfield_t<STATUS_t, 5, 5, bool> CLKHOLD = {};    //< Clock Hold
@@ -106,14 +110,17 @@ struct TWI_MASTER_t {
 
     /// Baurd Rate Control Register - 1 bytes
     static constexpr struct BAUD_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
     } BAUD = {};
 
     /// Address Register - 1 bytes
     static constexpr struct ADDR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
     } ADDR = {};
 
     /// Data Register - 1 bytes
     static constexpr struct DATA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
     } DATA = {};
 
 };
@@ -129,6 +136,7 @@ struct TWI_SLAVE_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 7, 6, TWI::SLAVE_INTLVLv> INTLVL = {};    //< Interrupt Level
         static constexpr bitfield_t<CTRLA_t, 5, 5, bool> DIEN = {};    //< Data Interrupt Enable
         static constexpr bitfield_t<CTRLA_t, 4, 4, bool> APIEN = {};    //< Address/Stop Interrupt Enable
@@ -140,12 +148,14 @@ struct TWI_SLAVE_t {
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRLB_t, 2, 2, bool> ACKACT = {};    //< Acknowledge Action
         static constexpr bitfield_t<CTRLB_t, 1, 0, TWI::SLAVE_CMDv> CMD = {};    //< Command
     } CTRLB = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> DIF = {};    //< Data Interrupt Flag
         static constexpr bitfield_t<STATUS_t, 6, 6, bool> APIF = {};    //< Address/Stop Interrupt Flag
         static constexpr bitfield_t<STATUS_t, 5, 5, bool> CLKHOLD = {};    //< Clock Hold
@@ -158,14 +168,17 @@ struct TWI_SLAVE_t {
 
     /// Address Register - 1 bytes
     static constexpr struct ADDR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
     } ADDR = {};
 
     /// Data Register - 1 bytes
     static constexpr struct DATA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
     } DATA = {};
 
     /// Address Mask Register - 1 bytes
     static constexpr struct ADDRMASK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<ADDRMASK_t, 7, 1> ADDRMASK = {};    //< Address Mask
         static constexpr bitfield_t<ADDRMASK_t, 0, 0, bool> ADDREN = {};    //< Address Enable
     } ADDRMASK = {};
@@ -183,6 +196,7 @@ struct TWI_t {
 
     /// TWI Common Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 2, 1, TWI::SDAHOLDv> SDAHOLD = {};    //< SDA Hold Time Enable
         static constexpr bitfield_t<CTRL_t, 0, 0, bool> EDIEN = {};    //< External Driver Interface Enable
     } CTRL = {};

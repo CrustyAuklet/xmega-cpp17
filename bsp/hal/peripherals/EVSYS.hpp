@@ -169,46 +169,55 @@ struct EVSYS_t {
 
     /// Event Channel 0 Multiplexer - 1 bytes
     static constexpr struct CH0MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CH0MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 0 Multiplexer
     } CH0MUX = {};
 
     /// Event Channel 1 Multiplexer - 1 bytes
     static constexpr struct CH1MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CH1MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 1 Multiplexer
     } CH1MUX = {};
 
     /// Event Channel 2 Multiplexer - 1 bytes
     static constexpr struct CH2MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<CH2MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 2 Multiplexer
     } CH2MUX = {};
 
     /// Event Channel 3 Multiplexer - 1 bytes
     static constexpr struct CH3MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<CH3MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 3 Multiplexer
     } CH3MUX = {};
 
     /// Event Channel 4 Multiplexer - 1 bytes
     static constexpr struct CH4MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<CH4MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 4 Multiplexer
     } CH4MUX = {};
 
     /// Event Channel 5 Multiplexer - 1 bytes
     static constexpr struct CH5MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<CH5MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 5 Multiplexer
     } CH5MUX = {};
 
     /// Event Channel 6 Multiplexer - 1 bytes
     static constexpr struct CH6MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0006>::operator=;
         static constexpr bitfield_t<CH6MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 6 Multiplexer
     } CH6MUX = {};
 
     /// Event Channel 7 Multiplexer - 1 bytes
     static constexpr struct CH7MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0007>::operator=;
         static constexpr bitfield_t<CH7MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 7 Multiplexer
     } CH7MUX = {};
 
     /// Channel 0 Control Register - 1 bytes
     static constexpr struct CH0CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0008>::operator=;
         static constexpr bitfield_t<CH0CTRL_t, 6, 5> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
         static constexpr bitfield_t<CH0CTRL_t, 4, 4, bool> QDIEN = {};    //< Quadrature Decoder Index Enable
         static constexpr bitfield_t<CH0CTRL_t, 3, 3, bool> QDEN = {};    //< Quadrature Decoder Enable
@@ -217,11 +226,13 @@ struct EVSYS_t {
 
     /// Channel 1 Control Register - 1 bytes
     static constexpr struct CH1CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0009>::operator=;
         static constexpr bitfield_t<CH1CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH1CTRL = {};
 
     /// Channel 2 Control Register - 1 bytes
     static constexpr struct CH2CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000A>::operator=;
         static constexpr bitfield_t<CH2CTRL_t, 6, 5, EVSYS::QDIRMv> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
         static constexpr bitfield_t<CH2CTRL_t, 4, 4, bool> QDIEN = {};    //< Quadrature Decoder Index Enable
         static constexpr bitfield_t<CH2CTRL_t, 3, 3, bool> QDEN = {};    //< Quadrature Decoder Enable
@@ -230,11 +241,13 @@ struct EVSYS_t {
 
     /// Channel 3 Control Register - 1 bytes
     static constexpr struct CH3CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000B>::operator=;
         static constexpr bitfield_t<CH3CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH3CTRL = {};
 
     /// Channel 4 Control Register - 1 bytes
     static constexpr struct CH4CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000C>::operator=;
         static constexpr bitfield_t<CH4CTRL_t, 6, 5, EVSYS::QDIRMv> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
         static constexpr bitfield_t<CH4CTRL_t, 4, 4, bool> QDIEN = {};    //< Quadrature Decoder Index Enable
         static constexpr bitfield_t<CH4CTRL_t, 3, 3, bool> QDEN = {};    //< Quadrature Decoder Enable
@@ -243,25 +256,30 @@ struct EVSYS_t {
 
     /// Channel 5 Control Register - 1 bytes
     static constexpr struct CH5CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000D>::operator=;
         static constexpr bitfield_t<CH5CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH5CTRL = {};
 
     /// Channel 6 Control Register - 1 bytes
     static constexpr struct CH6CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000E> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000E>::operator=;
         static constexpr bitfield_t<CH6CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH6CTRL = {};
 
     /// Channel 7 Control Register - 1 bytes
     static constexpr struct CH7CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000F> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000F>::operator=;
         static constexpr bitfield_t<CH7CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH7CTRL = {};
 
     /// Event Strobe - 1 bytes
     static constexpr struct STROBE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0010> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0010>::operator=;
     } STROBE = {};
 
     /// Event Data - 1 bytes
     static constexpr struct DATA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0011> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0011>::operator=;
     } DATA = {};
 
 };

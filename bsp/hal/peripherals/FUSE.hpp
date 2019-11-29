@@ -93,17 +93,20 @@ struct NVM_FUSES_t {
 
     /// JTAG User ID - 1 bytes
     static constexpr struct FUSEBYTE0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<FUSEBYTE0_t, 7, 0> JTAGUSERID = {};    //< JTAG User ID
     } FUSEBYTE0 = {};
 
     /// Watchdog Configuration - 1 bytes
     static constexpr struct FUSEBYTE1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<FUSEBYTE1_t, 7, 4, FUSE::WDv> WDWP = {};    //< Watchdog Window Timeout Period
         static constexpr bitfield_t<FUSEBYTE1_t, 3, 0, FUSE::WDPv> WDP = {};    //< Watchdog Timeout Period
     } FUSEBYTE1 = {};
 
     /// Reset Configuration - 1 bytes
     static constexpr struct FUSEBYTE2_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<FUSEBYTE2_t, 6, 6, bool> BOOTRST = {};    //< Boot Loader Section Reset Vector
         static constexpr bitfield_t<FUSEBYTE2_t, 5, 5, bool> TOSCSEL = {};    //< Timer Oscillator pin location
         static constexpr bitfield_t<FUSEBYTE2_t, 1, 0, FUSE::BODv> BODPD = {};    //< BOD Operation in Power-Down Mode
@@ -111,6 +114,7 @@ struct NVM_FUSES_t {
 
     /// Start-up Configuration - 1 bytes
     static constexpr struct FUSEBYTE4_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0004>::operator=;
         static constexpr bitfield_t<FUSEBYTE4_t, 4, 4, bool> RSTDISBL = {};    //< External Reset Disable
         static constexpr bitfield_t<FUSEBYTE4_t, 3, 2, FUSE::SUTv> SUT = {};    //< Start-up Time
         static constexpr bitfield_t<FUSEBYTE4_t, 1, 1, bool> WDLOCK = {};    //< Watchdog Timer Lock
@@ -119,6 +123,7 @@ struct NVM_FUSES_t {
 
     /// EESAVE and BOD Level - 1 bytes
     static constexpr struct FUSEBYTE5_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<FUSEBYTE5_t, 5, 4, FUSE::BODACTv> BODACT = {};    //< BOD Operation in Active Mode
         static constexpr bitfield_t<FUSEBYTE5_t, 3, 3, bool> EESAVE = {};    //< Preserve EEPROM Through Chip Erase
         static constexpr bitfield_t<FUSEBYTE5_t, 2, 0, FUSE::BODLVLv> BODLVL = {};    //< Brownout Detection Voltage Level

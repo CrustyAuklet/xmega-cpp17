@@ -26,6 +26,7 @@ struct PMIC_t {
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<STATUS_t, 7, 7, bool> NMIEX = {};    //< Non-maskable Interrupt Executing
         static constexpr bitfield_t<STATUS_t, 2, 2, bool> HILVLEX = {};    //< High Level Interrupt Executing
         static constexpr bitfield_t<STATUS_t, 1, 1, bool> MEDLVLEX = {};    //< Medium Level Interrupt Executing
@@ -34,11 +35,13 @@ struct PMIC_t {
 
     /// Interrupt Priority - 1 bytes
     static constexpr struct INTPRI_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<INTPRI_t, 7, 0> INTPRI = {};    //< Interrupt Priority
     } INTPRI = {};
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<CTRL_t, 7, 7, bool> RREN = {};    //< Round-Robin Priority Enable
         static constexpr bitfield_t<CTRL_t, 6, 6, bool> IVSEL = {};    //< Interrupt Vector Select
         static constexpr bitfield_t<CTRL_t, 2, 2, bool> HILVLEN = {};    //< High Level Enable

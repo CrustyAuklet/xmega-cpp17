@@ -38,15 +38,18 @@ struct IRCOM_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRL_t, 3, 0, IRCOM::EVSELv> EVSEL = {};    //< Event Channel Select
     } CTRL = {};
 
     /// IrDA Transmitter Pulse Length Control Register - 1 bytes
     static constexpr struct TXPLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
     } TXPLCTRL = {};
 
     /// IrDA Receiver Pulse Length Control Register - 1 bytes
     static constexpr struct RXPLCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
     } RXPLCTRL = {};
 
 };

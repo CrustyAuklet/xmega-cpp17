@@ -26,6 +26,7 @@ struct RST_t {
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<STATUS_t, 6, 6, bool> SDRF = {};    //< Spike Detection Reset Flag
         static constexpr bitfield_t<STATUS_t, 5, 5, bool> SRF = {};    //< Software Reset Flag
         static constexpr bitfield_t<STATUS_t, 4, 4, bool> PDIRF = {};    //< Programming and Debug Interface Interface Reset Flag
@@ -37,6 +38,7 @@ struct RST_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRL_t, 0, 0, bool> SWRST = {};    //< Software Reset
     } CTRL = {};
 

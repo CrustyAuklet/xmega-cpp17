@@ -50,6 +50,7 @@ struct DAC_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0000>::operator=;
         static constexpr bitfield_t<CTRLA_t, 4, 4, bool> IDOEN = {};    //< Internal Output Enable
         static constexpr bitfield_t<CTRLA_t, 3, 3, bool> CH1EN = {};    //< Channel 1 Output Enable
         static constexpr bitfield_t<CTRLA_t, 2, 2, bool> CH0EN = {};    //< Channel 0 Output Enable
@@ -59,6 +60,7 @@ struct DAC_t {
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0001>::operator=;
         static constexpr bitfield_t<CTRLB_t, 6, 5, DAC::CHSELv> CHSEL = {};    //< Channel Select
         static constexpr bitfield_t<CTRLB_t, 1, 1, bool> CH1TRIG = {};    //< Channel 1 Event Trig Enable
         static constexpr bitfield_t<CTRLB_t, 0, 0, bool> CH0TRIG = {};    //< Channel 0 Event Trig Enable
@@ -66,48 +68,57 @@ struct DAC_t {
 
     /// Control Register C - 1 bytes
     static constexpr struct CTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0002>::operator=;
         static constexpr bitfield_t<CTRLC_t, 4, 3, DAC::REFSELv> REFSEL = {};    //< Reference Select
         static constexpr bitfield_t<CTRLC_t, 0, 0, bool> LEFTADJ = {};    //< Left-adjust Result
     } CTRLC = {};
 
     /// Event Input Control - 1 bytes
     static constexpr struct EVCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0003>::operator=;
         static constexpr bitfield_t<EVCTRL_t, 3, 3, bool> EVSPLIT = {};    //< Separate Event Channel Input for Channel 1
         static constexpr bitfield_t<EVCTRL_t, 2, 0, DAC::EVSELv> EVSEL = {};    //< Event Input Selection
     } EVCTRL = {};
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0005>::operator=;
         static constexpr bitfield_t<STATUS_t, 1, 1, bool> CH1DRE = {};    //< Channel 1 Data Register Empty
         static constexpr bitfield_t<STATUS_t, 0, 0, bool> CH0DRE = {};    //< Channel 0 Data Register Empty
     } STATUS = {};
 
     /// Gain Calibration - 1 bytes
     static constexpr struct CH0GAINCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0008>::operator=;
         static constexpr bitfield_t<CH0GAINCAL_t, 6, 0> CH0GAINCAL = {};    //< Gain Calibration
     } CH0GAINCAL = {};
 
     /// Offset Calibration - 1 bytes
     static constexpr struct CH0OFFSETCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x0009>::operator=;
         static constexpr bitfield_t<CH0OFFSETCAL_t, 6, 0> CH0OFFSETCAL = {};    //< Offset Calibration
     } CH0OFFSETCAL = {};
 
     /// Gain Calibration - 1 bytes
     static constexpr struct CH1GAINCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000A>::operator=;
         static constexpr bitfield_t<CH1GAINCAL_t, 6, 0> CH1GAINCAL = {};    //< Gain Calibration
     } CH1GAINCAL = {};
 
     /// Offset Calibration - 1 bytes
     static constexpr struct CH1OFFSETCAL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
+        using reg_t<uint8_t, BASE_ADDRESS + 0x000B>::operator=;
         static constexpr bitfield_t<CH1OFFSETCAL_t, 6, 0> CH1OFFSETCAL = {};    //< Offset Calibration
     } CH1OFFSETCAL = {};
 
     /// Channel 0 Data - 2 bytes
     static constexpr struct CH0DATA_t : reg_t<uint16_t, BASE_ADDRESS + 0x0018> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x0018>::operator=;
     } CH0DATA = {};
 
     /// Channel 1 Data - 2 bytes
     static constexpr struct CH1DATA_t : reg_t<uint16_t, BASE_ADDRESS + 0x001A> {
+        using reg_t<uint16_t, BASE_ADDRESS + 0x001A>::operator=;
     } CH1DATA = {};
 
 };
