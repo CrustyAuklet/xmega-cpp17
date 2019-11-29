@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace AWEX {
 
@@ -17,7 +19,6 @@ namespace AWEX {
         CLEAROE = 0x01, // Clear Output Enable Bits
         CLEARDIR = 0x03, // Clear I/O Port Direction Bits
     };
-
 }   // namespace AWEX
 
 /**
@@ -31,12 +32,12 @@ struct AWEX_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x20, 5> PGM = {};    //< Pattern Generation Mode
-        static constexpr bitfield_t<CTRL_t, 0x10, 4> CWCM = {};    //< Common Waveform Channel Mode
-        static constexpr bitfield_t<CTRL_t, 0x08, 3> DTICCDEN = {};    //< Dead Time Insertion Compare Channel D Enable
-        static constexpr bitfield_t<CTRL_t, 0x04, 2> DTICCCEN = {};    //< Dead Time Insertion Compare Channel C Enable
-        static constexpr bitfield_t<CTRL_t, 0x02, 1> DTICCBEN = {};    //< Dead Time Insertion Compare Channel B Enable
-        static constexpr bitfield_t<CTRL_t, 0x01, 0> DTICCAEN = {};    //< Dead Time Insertion Compare Channel A Enable
+        static constexpr bitfield_t<CTRL_t, 5, 5, bool> PGM = {};    //< Pattern Generation Mode
+        static constexpr bitfield_t<CTRL_t, 4, 4, bool> CWCM = {};    //< Common Waveform Channel Mode
+        static constexpr bitfield_t<CTRL_t, 3, 3, bool> DTICCDEN = {};    //< Dead Time Insertion Compare Channel D Enable
+        static constexpr bitfield_t<CTRL_t, 2, 2, bool> DTICCCEN = {};    //< Dead Time Insertion Compare Channel C Enable
+        static constexpr bitfield_t<CTRL_t, 1, 1, bool> DTICCBEN = {};    //< Dead Time Insertion Compare Channel B Enable
+        static constexpr bitfield_t<CTRL_t, 0, 0, bool> DTICCAEN = {};    //< Dead Time Insertion Compare Channel A Enable
     } CTRL = {};
 
     /// Fault Detection Event Mask - 1 bytes
@@ -45,23 +46,23 @@ struct AWEX_t {
 
     /// Fault Detection Control Register - 1 bytes
     static constexpr struct FDCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<FDCTRL_t, 0x10, 4> FDDBD = {};    //< Fault Detect on Disable Break Disable
-        static constexpr bitfield_t<FDCTRL_t, 0x04, 2> FDMODE = {};    //< Fault Detect Mode
-        static constexpr bitfield_t<FDCTRL_t, 0x03, 0, FDACTv> FDACT = {};    //< Fault Detect Action
+        static constexpr bitfield_t<FDCTRL_t, 4, 4, bool> FDDBD = {};    //< Fault Detect on Disable Break Disable
+        static constexpr bitfield_t<FDCTRL_t, 2, 2, bool> FDMODE = {};    //< Fault Detect Mode
+        static constexpr bitfield_t<FDCTRL_t, 1, 0, AWEX::FDACTv> FDACT = {};    //< Fault Detect Action
     } FDCTRL = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<STATUS_t, 0x04, 2> FDF = {};    //< Fault Detect Flag
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> DTHSBUFV = {};    //< Dead Time High Side Buffer Valid
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> DTLSBUFV = {};    //< Dead Time Low Side Buffer Valid
+        static constexpr bitfield_t<STATUS_t, 2, 2, bool> FDF = {};    //< Fault Detect Flag
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> DTHSBUFV = {};    //< Dead Time High Side Buffer Valid
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> DTLSBUFV = {};    //< Dead Time Low Side Buffer Valid
     } STATUS = {};
 
     /// Status Set Register - 1 bytes
     static constexpr struct STATUSSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
-        static constexpr bitfield_t<STATUSSET_t, 0x04, 2> FDF = {};    //< Fault Detect Flag
-        static constexpr bitfield_t<STATUSSET_t, 0x02, 1> DTHSBUFV = {};    //< Dead Time High Side Buffer Valid
-        static constexpr bitfield_t<STATUSSET_t, 0x01, 0> DTLSBUFV = {};    //< Dead Time Low Side Buffer Valid
+        static constexpr bitfield_t<STATUSSET_t, 2, 2, bool> FDF = {};    //< Fault Detect Flag
+        static constexpr bitfield_t<STATUSSET_t, 1, 1, bool> DTHSBUFV = {};    //< Dead Time High Side Buffer Valid
+        static constexpr bitfield_t<STATUSSET_t, 0, 0, bool> DTLSBUFV = {};    //< Dead Time Low Side Buffer Valid
     } STATUSSET = {};
 
     /// Dead Time Both Sides - 1 bytes
@@ -94,4 +95,4 @@ struct AWEX_t {
 
 };
 
-} // namespace device
+} // namespace sfr

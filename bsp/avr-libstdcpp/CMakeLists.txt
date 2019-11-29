@@ -10,9 +10,9 @@ target_include_directories(libstdcpp
 
 target_sources(libstdcpp
     INTERFACE
-        ${CMAKE_CURRENT_LIST_DIR}/src/chrono.cc
-        ${CMAKE_CURRENT_LIST_DIR}/src/functexcept.cc
-        ${CMAKE_CURRENT_LIST_DIR}/src/hash_bytes.cc
-        ${CMAKE_CURRENT_LIST_DIR}/src/limits.cc
-        ${CMAKE_CURRENT_LIST_DIR}/src/nothrow.cc
+        # ${CMAKE_CURRENT_LIST_DIR}/src/chrono.cc
+        # ${CMAKE_CURRENT_LIST_DIR}/src/functexcept.cc
+        # ${CMAKE_CURRENT_LIST_DIR}/src/hash_bytes.cc
+        # ${CMAKE_CURRENT_LIST_DIR}/src/limits.cc
+        # ${CMAKE_CURRENT_LIST_DIR}/src/nothrow.cc
 )

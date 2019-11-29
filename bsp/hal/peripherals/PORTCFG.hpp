@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace PORTCFG {
 
@@ -30,7 +32,6 @@ namespace PORTCFG {
         PORTQ = 0x0E, // Mapped To PORTQ
         PORTR = 0x0F, // Mapped To PORTR
     };
-
     // Virtual Port Mapping
     enum class VP13MAPv : uint8_t {
         PORTA = 0x00, // Mapped To PORTA
@@ -50,7 +51,6 @@ namespace PORTCFG {
         PORTQ = 0x0E, // Mapped To PORTQ
         PORTR = 0x0F, // Mapped To PORTR
     };
-
     // System Clock Output Port
     enum class CLKOUTv : uint8_t {
         OFF = 0x00, // System Clock Output Disabled
@@ -58,14 +58,12 @@ namespace PORTCFG {
         PD7 = 0x02, // System Clock Output on Port D pin 7
         PE7 = 0x03, // System Clock Output on Port E pin 7
     };
-
     // Peripheral Clock Output Select
     enum class CLKOUTSELv : uint8_t {
         CLK1X = 0x00, // 1x Peripheral Clock Output to pin
         CLK2X = 0x01, // 2x Peripheral Clock Output to pin
         CLK4X = 0x02, // 4x Peripheral Clock Output to pin
     };
-
     // Event Output Port
     enum class EVOUTv : uint8_t {
         OFF = 0x00, // Event Output Disabled
@@ -73,13 +71,11 @@ namespace PORTCFG {
         PD7 = 0x02, // Event Channel 7 Output on Port D pin 7
         PE7 = 0x03, // Event Channel 7 Output on Port E pin 7
     };
-
     // Clock and Event Output Port
     enum class CLKEVPINv : uint8_t {
         PIN7 = 0x00, // Clock and Event Ouput on PIN 7
         PIN4 = 0x01, // Clock and Event Ouput on PIN 4
     };
-
     // EBI Address Output Port
     enum class EBIADROUTv : uint8_t {
         PF = 0x00, // EBI port 3 address output on PORTF pins 0 to 7
@@ -87,7 +83,6 @@ namespace PORTCFG {
         PFH = 0x02, // EBI port 3 address output on PORTF pins 4 to 7
         PEH = 0x03, // EBI port 3 address output on PORTE pins 4 to 7
     };
-
     // EBI Chip Select Output Port
     enum class EBICSOUTv : uint8_t {
         PH = 0x00, // EBI chip select output to PORTH pin 4 to 7
@@ -95,7 +90,6 @@ namespace PORTCFG {
         PF = 0x02, // EBI chip select output to PORTF pin 4 to 7
         PE = 0x03, // EBI chip select output to PORTE pin 4 to 7
     };
-
     // Event Output Select
     enum class EVOUTSELv : uint8_t {
         _0 = 0x00, // Event Channel 0 output to pin
@@ -107,7 +101,6 @@ namespace PORTCFG {
         _6 = 0x06, // Event Channel 6 output to pin
         _7 = 0x07, // Event Channel 7 output to pin
     };
-
 }   // namespace PORTCFG
 
 /**
@@ -125,36 +118,36 @@ struct PORTCFG_t {
 
     /// Virtual Port Control Register A - 1 bytes
     static constexpr struct VPCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<VPCTRLA_t, 0xF0, 4, VP13MAPv> VP1MAP = {};    //< Virtual Port 1 Mapping
-        static constexpr bitfield_t<VPCTRLA_t, 0x0F, 0, VP02MAPv> VP0MAP = {};    //< Virtual Port 0 Mapping
+        static constexpr bitfield_t<VPCTRLA_t, 7, 4, PORTCFG::VP13MAPv> VP1MAP = {};    //< Virtual Port 1 Mapping
+        static constexpr bitfield_t<VPCTRLA_t, 3, 0, PORTCFG::VP02MAPv> VP0MAP = {};    //< Virtual Port 0 Mapping
     } VPCTRLA = {};
 
     /// Virtual Port Control Register B - 1 bytes
     static constexpr struct VPCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<VPCTRLB_t, 0xF0, 4, VP13MAPv> VP3MAP = {};    //< Virtual Port 3 Mapping
-        static constexpr bitfield_t<VPCTRLB_t, 0x0F, 0, VP02MAPv> VP2MAP = {};    //< Virtual Port 2 Mapping
+        static constexpr bitfield_t<VPCTRLB_t, 7, 4, PORTCFG::VP13MAPv> VP3MAP = {};    //< Virtual Port 3 Mapping
+        static constexpr bitfield_t<VPCTRLB_t, 3, 0, PORTCFG::VP02MAPv> VP2MAP = {};    //< Virtual Port 2 Mapping
     } VPCTRLB = {};
 
     /// Clock and Event Out Register - 1 bytes
     static constexpr struct CLKEVOUT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<CLKEVOUT_t, 0x03, 0, CLKOUTv> CLKOUT = {};    //< Peripheral Clock Output Port
-        static constexpr bitfield_t<CLKEVOUT_t, 0x0C, 2, CLKOUTSELv> CLKOUTSEL = {};    //< Peripheral Clock Output Select
-        static constexpr bitfield_t<CLKEVOUT_t, 0x30, 4, EVOUTv> EVOUT = {};    //< Event Output Port
-        static constexpr bitfield_t<CLKEVOUT_t, 0x40, 6> RTCOUT = {};    //< RTC Clock Output
-        static constexpr bitfield_t<CLKEVOUT_t, 0x80, 7, CLKEVPINv> CLKEVPIN = {};    //< Peripheral Clock and Event Output pin Select
+        static constexpr bitfield_t<CLKEVOUT_t, 1, 0, PORTCFG::CLKOUTv> CLKOUT = {};    //< Peripheral Clock Output Port
+        static constexpr bitfield_t<CLKEVOUT_t, 3, 2, PORTCFG::CLKOUTSELv> CLKOUTSEL = {};    //< Peripheral Clock Output Select
+        static constexpr bitfield_t<CLKEVOUT_t, 5, 4, PORTCFG::EVOUTv> EVOUT = {};    //< Event Output Port
+        static constexpr bitfield_t<CLKEVOUT_t, 6, 6, bool> RTCOUT = {};    //< RTC Clock Output
+        static constexpr bitfield_t<CLKEVOUT_t, 7, 7, bool> CLKEVPIN = {};    //< Peripheral Clock and Event Output pin Select
     } CLKEVOUT = {};
 
     /// EBI Output register - 1 bytes
     static constexpr struct EBIOUT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
-        static constexpr bitfield_t<EBIOUT_t, 0x03, 0, EBICSOUTv> EBICSOUT = {};    //< EBI Chip Select Output
-        static constexpr bitfield_t<EBIOUT_t, 0x0C, 2, EBIADROUTv> EBIADROUT = {};    //< EBI Address Output
+        static constexpr bitfield_t<EBIOUT_t, 1, 0, PORTCFG::EBICSOUTv> EBICSOUT = {};    //< EBI Chip Select Output
+        static constexpr bitfield_t<EBIOUT_t, 3, 2, PORTCFG::EBIADROUTv> EBIADROUT = {};    //< EBI Address Output
     } EBIOUT = {};
 
     /// Event Output Select - 1 bytes
     static constexpr struct EVOUTSEL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
-        static constexpr bitfield_t<EVOUTSEL_t, 0x07, 0, EVOUTSELv> EVOUTSEL = {};    //< Event Output Select
+        static constexpr bitfield_t<EVOUTSEL_t, 2, 0, PORTCFG::EVOUTSELv> EVOUTSEL = {};    //< Event Output Select
     } EVOUTSEL = {};
 
 };
 
-} // namespace device
+} // namespace sfr

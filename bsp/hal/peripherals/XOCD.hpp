@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace XOCD {
 
@@ -24,14 +26,14 @@ struct OCD_t {
 
     /// OCD Register 0 - 1 bytes
     static constexpr struct OCDR0_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<OCDR0_t, 0xFF, 0> OCDRD = {};    //< OCDR Dirty
+        static constexpr bitfield_t<OCDR0_t, 7, 0> OCDRD = {};    //< OCDR Dirty
     } OCDR0 = {};
 
     /// OCD Register 1 - 1 bytes
     static constexpr struct OCDR1_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<OCDR1_t, 0x01, 0> OCDRD = {};    //< OCDR Dirty
+        static constexpr bitfield_t<OCDR1_t, 0, 0, bool> OCDRD = {};    //< OCDR Dirty
     } OCDR1 = {};
 
 };
 
-} // namespace device
+} // namespace sfr

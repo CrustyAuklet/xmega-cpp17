@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace SLEEP {
 
@@ -19,7 +21,6 @@ namespace SLEEP {
         STDBY = 0x06, // Standby Mode
         ESTDBY = 0x07, // Extended Standby Mode
     };
-
 }   // namespace SLEEP
 
 /**
@@ -33,10 +34,10 @@ struct SLEEP_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x0E, 1, SMODEv> SMODE = {};    //< Sleep Mode
-        static constexpr bitfield_t<CTRL_t, 0x01, 0> SEN = {};    //< Sleep Enable
+        static constexpr bitfield_t<CTRL_t, 3, 1, SLEEP::SMODEv> SMODE = {};    //< Sleep Mode
+        static constexpr bitfield_t<CTRL_t, 0, 0, bool> SEN = {};    //< Sleep Enable
     } CTRL = {};
 
 };
 
-} // namespace device
+} // namespace sfr

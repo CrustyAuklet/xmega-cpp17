@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace ADC {
 
@@ -30,7 +32,6 @@ namespace ADC {
         PIN14 = 0x0E, // Input pin 14
         PIN15 = 0x0F, // Input pin 15
     };
-
     // Internal input multiplexer selections
     enum class CH_MUXINTv : uint8_t {
         TEMP = 0x00, // Temperature Reference
@@ -38,7 +39,6 @@ namespace ADC {
         SCALEDVCC = 0x02, // 1/10 scaled VCC
         DAC = 0x03, // DAC output
     };
-
     // Negative input multiplexer selection
     enum class CH_MUXNEGv : uint8_t {
         PIN0 = 0x00, // Input pin 0 (Input Mode = 2)
@@ -54,7 +54,6 @@ namespace ADC {
         INTGND_MODE4 = 0x04, // Internal Ground (Input Mode = 3)
         GND_MODE4 = 0x07, // PAD Ground (Input Mode = 3)
     };
-
     // Input mode
     enum class CH_INPUTMODEv : uint8_t {
         INTERNAL = 0x00, // Internal inputs, no gain
@@ -62,7 +61,6 @@ namespace ADC {
         DIFF = 0x02, // Differential input, no gain
         DIFFWGAIN = 0x03, // Differential input, with gain
     };
-
     // Gain factor
     enum class CH_GAINv : uint8_t {
         _1X = 0x00, // 1x gain
@@ -74,14 +72,12 @@ namespace ADC {
         _64X = 0x06, // 64x gain
         DIV2 = 0x07, // x/2 gain
     };
-
     // Conversion result resolution
     enum class RESOLUTIONv : uint8_t {
         _12BIT = 0x00, // 12-bit right-adjusted result
         _8BIT = 0x02, // 8-bit right-adjusted result
         LEFT12BIT = 0x03, // 12-bit left-adjusted result
     };
-
     // Current Limitation Mode
     enum class CURRLIMITv : uint8_t {
         NO = 0x00, // No limit
@@ -89,7 +85,6 @@ namespace ADC {
         MED = 0x02, // Medium current limit, max. sampling rate 1MSPS
         HIGH = 0x03, // High current limit, max. sampling rate 0.5MSPS
     };
-
     // Voltage reference selection
     enum class REFSELv : uint8_t {
         INT1V = 0x00, // Internal 1V
@@ -98,7 +93,6 @@ namespace ADC {
         AREFB = 0x03, // External reference on PORT B
         INTVCC2 = 0x04, // Internal VCC / 2
     };
-
     // Channel sweep selection
     enum class SWEEPv : uint8_t {
         _0 = 0x00, // ADC Channel 0
@@ -106,7 +100,6 @@ namespace ADC {
         _012 = 0x02, // ADC Channel 0,1,2
         _0123 = 0x03, // ADC Channel 0,1,2,3
     };
-
     // Event channel input selection
     enum class EVSELv : uint8_t {
         _0123 = 0x00, // Event Channel 0,1,2,3
@@ -118,7 +111,6 @@ namespace ADC {
         _67 = 0x06, // Event Channel 6,7
         _7 = 0x07, // Event Channel 7
     };
-
     // Event action selection
     enum class EVACTv : uint8_t {
         NONE = 0x00, // No event action
@@ -129,14 +121,12 @@ namespace ADC {
         SWEEP = 0x05, // First event triggers sweep
         SYNCSWEEP = 0x06, // The ADC is flushed and restarted for accurate timing
     };
-
     // Interupt mode
     enum class CH_INTMODEv : uint8_t {
         COMPLETE = 0x00, // Interrupt on conversion complete
         BELOW = 0x01, // Interrupt on result below compare value
         ABOVE = 0x03, // Interrupt on result above compare value
     };
-
     // Interrupt level
     enum class CH_INTLVLv : uint8_t {
         OFF = 0x00, // Interrupt disabled
@@ -144,7 +134,6 @@ namespace ADC {
         MED = 0x02, // Medium level
         HI = 0x03, // High level
     };
-
     // DMA request selection
     enum class DMASELv : uint8_t {
         OFF = 0x00, // Combined DMA request OFF
@@ -152,7 +141,6 @@ namespace ADC {
         CH012 = 0x02, // ADC Channel 0 or 1 or 2
         CH0123 = 0x03, // ADC Channel 0 or 1 or 2 or 3
     };
-
     // Clock prescaler
     enum class PRESCALERv : uint8_t {
         DIV4 = 0x00, // Divide clock by 4
@@ -163,14 +151,6 @@ namespace ADC {
         DIV128 = 0x05, // Divide clock by 128
         DIV256 = 0x06, // Divide clock by 256
         DIV512 = 0x07, // Divide clock by 512
-    };
-
-    // ADC ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        CH0 = 0, // Interrupt 0
-        CH1 = 1, // Interrupt 1
-        CH2 = 2, // Interrupt 2
-        CH3 = 3, // Interrupt 3
     };
 }   // namespace ADC
 
@@ -185,27 +165,27 @@ struct ADC_CH_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x80, 7> START = {};    //< Channel Start Conversion
-        static constexpr bitfield_t<CTRL_t, 0x1C, 2, CH_GAINv> GAIN = {};    //< Gain Factor
-        static constexpr bitfield_t<CTRL_t, 0x03, 0, CH_INPUTMODEv> INPUTMODE = {};    //< Input Mode Select
+        static constexpr bitfield_t<CTRL_t, 7, 7, bool> START = {};    //< Channel Start Conversion
+        static constexpr bitfield_t<CTRL_t, 4, 2, ADC::CH_GAINv> GAIN = {};    //< Gain Factor
+        static constexpr bitfield_t<CTRL_t, 1, 0, ADC::CH_INPUTMODEv> INPUTMODE = {};    //< Input Mode Select
     } CTRL = {};
 
     /// MUX Control - 1 bytes
     static constexpr struct MUXCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<MUXCTRL_t, 0x78, 3, CH_MUXPOSv> MUXPOS = {};    //< MUX selection on Positive ADC input
-        static constexpr bitfield_t<MUXCTRL_t, 0x78, 3, CH_MUXINTv> MUXINT = {};    //< MUX selection on Internal ADC input
-        static constexpr bitfield_t<MUXCTRL_t, 0x07, 0, CH_MUXNEGv> MUXNEG = {};    //< MUX selection on Negative ADC input
+        static constexpr bitfield_t<MUXCTRL_t, 6, 3, ADC::CH_MUXPOSv> MUXPOS = {};    //< MUX selection on Positive ADC input
+        static constexpr bitfield_t<MUXCTRL_t, 6, 3, ADC::CH_MUXINTv> MUXINT = {};    //< MUX selection on Internal ADC input
+        static constexpr bitfield_t<MUXCTRL_t, 2, 0, ADC::CH_MUXNEGv> MUXNEG = {};    //< MUX selection on Negative ADC input
     } MUXCTRL = {};
 
     /// Channel Interrupt Control Register - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<INTCTRL_t, 0x0C, 2, CH_INTMODEv> INTMODE = {};    //< Interrupt Mode
-        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, CH_INTLVLv> INTLVL = {};    //< Interrupt Level
+        static constexpr bitfield_t<INTCTRL_t, 3, 2, ADC::CH_INTMODEv> INTMODE = {};    //< Interrupt Mode
+        static constexpr bitfield_t<INTCTRL_t, 1, 0, ADC::CH_INTLVLv> INTLVL = {};    //< Interrupt Level
     } INTCTRL = {};
 
     /// Interrupt Flags - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> CHIF = {};    //< Channel Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> CHIF = {};    //< Channel Interrupt Flag
     } INTFLAGS = {};
 
     /// Channel Result - 2 bytes
@@ -214,8 +194,8 @@ struct ADC_CH_t {
 
     /// Input Channel Scan - 1 bytes
     static constexpr struct SCAN_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
-        static constexpr bitfield_t<SCAN_t, 0xF0, 4> OFFSET = {};    //< Positive MUX setting offset
-        static constexpr bitfield_t<SCAN_t, 0x0F, 0> SCANNUM = {};    //< Number of Channels included in scan
+        static constexpr bitfield_t<SCAN_t, 7, 4> OFFSET = {};    //< Positive MUX setting offset
+        static constexpr bitfield_t<SCAN_t, 3, 0> SCANNUM = {};    //< Number of Channels included in scan
     } SCAN = {};
 
 };
@@ -231,49 +211,49 @@ struct ADC_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRLA_t, 0xC0, 6, DMASELv> DMASEL = {};    //< DMA Selection
-        static constexpr bitfield_t<CTRLA_t, 0x20, 5> CH3START = {};    //< Channel 3 Start Conversion
-        static constexpr bitfield_t<CTRLA_t, 0x10, 4> CH2START = {};    //< Channel 2 Start Conversion
-        static constexpr bitfield_t<CTRLA_t, 0x08, 3> CH1START = {};    //< Channel 1 Start Conversion
-        static constexpr bitfield_t<CTRLA_t, 0x04, 2> CH0START = {};    //< Channel 0 Start Conversion
-        static constexpr bitfield_t<CTRLA_t, 0x02, 1> FLUSH = {};    //< Flush Pipeline
-        static constexpr bitfield_t<CTRLA_t, 0x01, 0> ENABLE = {};    //< Enable ADC
+        static constexpr bitfield_t<CTRLA_t, 7, 6, ADC::DMASELv> DMASEL = {};    //< DMA Selection
+        static constexpr bitfield_t<CTRLA_t, 5, 5, bool> CH3START = {};    //< Channel 3 Start Conversion
+        static constexpr bitfield_t<CTRLA_t, 4, 4, bool> CH2START = {};    //< Channel 2 Start Conversion
+        static constexpr bitfield_t<CTRLA_t, 3, 3, bool> CH1START = {};    //< Channel 1 Start Conversion
+        static constexpr bitfield_t<CTRLA_t, 2, 2, bool> CH0START = {};    //< Channel 0 Start Conversion
+        static constexpr bitfield_t<CTRLA_t, 1, 1, bool> FLUSH = {};    //< Flush Pipeline
+        static constexpr bitfield_t<CTRLA_t, 0, 0, bool> ENABLE = {};    //< Enable ADC
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CTRLB_t, 0x80, 7> IMPMODE = {};    //< Gain Stage Impedance Mode
-        static constexpr bitfield_t<CTRLB_t, 0x60, 5, CURRLIMITv> CURRLIMIT = {};    //< Current Limitation
-        static constexpr bitfield_t<CTRLB_t, 0x10, 4> CONMODE = {};    //< Conversion Mode
-        static constexpr bitfield_t<CTRLB_t, 0x08, 3> FREERUN = {};    //< Free Running Mode Enable
-        static constexpr bitfield_t<CTRLB_t, 0x06, 1, RESOLUTIONv> RESOLUTION = {};    //< Result Resolution
+        static constexpr bitfield_t<CTRLB_t, 7, 7, bool> IMPMODE = {};    //< Gain Stage Impedance Mode
+        static constexpr bitfield_t<CTRLB_t, 6, 5, ADC::CURRLIMITv> CURRLIMIT = {};    //< Current Limitation
+        static constexpr bitfield_t<CTRLB_t, 4, 4, bool> CONMODE = {};    //< Conversion Mode
+        static constexpr bitfield_t<CTRLB_t, 3, 3, bool> FREERUN = {};    //< Free Running Mode Enable
+        static constexpr bitfield_t<CTRLB_t, 2, 1, ADC::RESOLUTIONv> RESOLUTION = {};    //< Result Resolution
     } CTRLB = {};
 
     /// Reference Control - 1 bytes
     static constexpr struct REFCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<REFCTRL_t, 0x70, 4, REFSELv> REFSEL = {};    //< Reference Selection
-        static constexpr bitfield_t<REFCTRL_t, 0x02, 1> BANDGAP = {};    //< Bandgap enable
-        static constexpr bitfield_t<REFCTRL_t, 0x01, 0> TEMPREF = {};    //< Temperature Reference Enable
+        static constexpr bitfield_t<REFCTRL_t, 6, 4, ADC::REFSELv> REFSEL = {};    //< Reference Selection
+        static constexpr bitfield_t<REFCTRL_t, 1, 1, bool> BANDGAP = {};    //< Bandgap enable
+        static constexpr bitfield_t<REFCTRL_t, 0, 0, bool> TEMPREF = {};    //< Temperature Reference Enable
     } REFCTRL = {};
 
     /// Event Control - 1 bytes
     static constexpr struct EVCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<EVCTRL_t, 0xC0, 6, SWEEPv> SWEEP = {};    //< Channel Sweep Selection
-        static constexpr bitfield_t<EVCTRL_t, 0x38, 3, EVSELv> EVSEL = {};    //< Event Input Select
-        static constexpr bitfield_t<EVCTRL_t, 0x07, 0, EVACTv> EVACT = {};    //< Event Action Select
+        static constexpr bitfield_t<EVCTRL_t, 7, 6, ADC::SWEEPv> SWEEP = {};    //< Channel Sweep Selection
+        static constexpr bitfield_t<EVCTRL_t, 5, 3, ADC::EVSELv> EVSEL = {};    //< Event Input Select
+        static constexpr bitfield_t<EVCTRL_t, 2, 0, ADC::EVACTv> EVACT = {};    //< Event Action Select
     } EVCTRL = {};
 
     /// Clock Prescaler - 1 bytes
     static constexpr struct PRESCALER_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<PRESCALER_t, 0x07, 0, PRESCALERv> PRESCALER = {};    //< Clock Prescaler Selection
+        static constexpr bitfield_t<PRESCALER_t, 2, 0, ADC::PRESCALERv> PRESCALER = {};    //< Clock Prescaler Selection
     } PRESCALER = {};
 
     /// Interrupt Flags - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
-        static constexpr bitfield_t<INTFLAGS_t, 0x08, 3> CH3IF = {};    //< Channel 3 Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x04, 2> CH2IF = {};    //< Channel 2 Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> CH1IF = {};    //< Channel 1 Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> CH0IF = {};    //< Channel 0 Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 3, 3, bool> CH3IF = {};    //< Channel 3 Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 2, 2, bool> CH2IF = {};    //< Channel 2 Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> CH1IF = {};    //< Channel 1 Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> CH0IF = {};    //< Channel 0 Interrupt Flag
     } INTFLAGS = {};
 
     /// Temporary Register - 1 bytes
@@ -316,6 +296,13 @@ struct ADC_t {
     /// ADC Channel 3
     static constexpr ADC_CH_t<BASE_ADDRESS + 0x0038> CH3 = {};
 
+    // ADC ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        CH0 = 0, // Interrupt 0
+        CH1 = 1, // Interrupt 1
+        CH2 = 2, // Interrupt 2
+        CH3 = 3, // Interrupt 3
+    };
 };
 
-} // namespace device
+} // namespace sfr

@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace SIGROW {
 
@@ -160,4 +162,4 @@ struct NVM_PROD_SIGNATURES_t {
 
 };
 
-} // namespace device
+} // namespace sfr

@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace HIRES {
 
@@ -18,7 +20,6 @@ namespace HIRES {
         TC1 = 0x02, // Enable High Resolution on Timer/Counter 1
         BOTH = 0x03, // Enable High Resolution both Timer/Counters
     };
-
 }   // namespace HIRES
 
 /**
@@ -32,10 +33,10 @@ struct HIRES_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRLA_t, 0x04, 2, HRPLUSv> HRPLUS = {};    //< High Resolution Plus
-        static constexpr bitfield_t<CTRLA_t, 0x03, 0, HRENv> HREN = {};    //< High Resolution Enable
+        static constexpr bitfield_t<CTRLA_t, 2, 2, bool> HRPLUS = {};    //< High Resolution Plus
+        static constexpr bitfield_t<CTRLA_t, 1, 0, HIRES::HRENv> HREN = {};    //< High Resolution Enable
     } CTRLA = {};
 
 };
 
-} // namespace device
+} // namespace sfr

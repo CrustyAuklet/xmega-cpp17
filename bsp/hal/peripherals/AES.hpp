@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace AES {
 
@@ -17,11 +19,6 @@ namespace AES {
         LO = 0x01, // Low Level
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
-    };
-
-    // AES ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        INT = 0, // AES Interrupt
     };
 }   // namespace AES
 
@@ -36,17 +33,17 @@ struct AES_t {
 
     /// AES Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x80, 7> START = {};    //< Start/Run
-        static constexpr bitfield_t<CTRL_t, 0x40, 6> AUTO = {};    //< Auto Start Trigger
-        static constexpr bitfield_t<CTRL_t, 0x20, 5> RESET = {};    //< AES Software Reset
-        static constexpr bitfield_t<CTRL_t, 0x10, 4> DECRYPT = {};    //< Decryption / Direction
-        static constexpr bitfield_t<CTRL_t, 0x04, 2> XOR = {};    //< State XOR Load Enable
+        static constexpr bitfield_t<CTRL_t, 7, 7, bool> START = {};    //< Start/Run
+        static constexpr bitfield_t<CTRL_t, 6, 6, bool> AUTO = {};    //< Auto Start Trigger
+        static constexpr bitfield_t<CTRL_t, 5, 5, bool> RESET = {};    //< AES Software Reset
+        static constexpr bitfield_t<CTRL_t, 4, 4, bool> DECRYPT = {};    //< Decryption / Direction
+        static constexpr bitfield_t<CTRL_t, 2, 2, bool> XOR = {};    //< State XOR Load Enable
     } CTRL = {};
 
     /// AES Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<STATUS_t, 0x80, 7> ERROR = {};    //< AES Error
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> SRIF = {};    //< State Ready Interrupt Flag
+        static constexpr bitfield_t<STATUS_t, 7, 7, bool> ERROR = {};    //< AES Error
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> SRIF = {};    //< State Ready Interrupt Flag
     } STATUS = {};
 
     /// AES State Register - 1 bytes
@@ -59,9 +56,13 @@ struct AES_t {
 
     /// AES Interrupt Control Register - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, INTLVLv> INTLVL = {};    //< Interrupt level
+        static constexpr bitfield_t<INTCTRL_t, 1, 0, AES::INTLVLv> INTLVL = {};    //< Interrupt level
     } INTCTRL = {};
 
+    // AES ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        INT = 0, // AES Interrupt
+    };
 };
 
-} // namespace device
+} // namespace sfr

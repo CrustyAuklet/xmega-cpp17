@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace PMIC {
 
@@ -24,26 +26,26 @@ struct PMIC_t {
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<STATUS_t, 0x80, 7> NMIEX = {};    //< Non-maskable Interrupt Executing
-        static constexpr bitfield_t<STATUS_t, 0x04, 2> HILVLEX = {};    //< High Level Interrupt Executing
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> MEDLVLEX = {};    //< Medium Level Interrupt Executing
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> LOLVLEX = {};    //< Low Level Interrupt Executing
+        static constexpr bitfield_t<STATUS_t, 7, 7, bool> NMIEX = {};    //< Non-maskable Interrupt Executing
+        static constexpr bitfield_t<STATUS_t, 2, 2, bool> HILVLEX = {};    //< High Level Interrupt Executing
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> MEDLVLEX = {};    //< Medium Level Interrupt Executing
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> LOLVLEX = {};    //< Low Level Interrupt Executing
     } STATUS = {};
 
     /// Interrupt Priority - 1 bytes
     static constexpr struct INTPRI_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<INTPRI_t, 0xFF, 0> INTPRI = {};    //< Interrupt Priority
+        static constexpr bitfield_t<INTPRI_t, 7, 0> INTPRI = {};    //< Interrupt Priority
     } INTPRI = {};
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<CTRL_t, 0x80, 7> RREN = {};    //< Round-Robin Priority Enable
-        static constexpr bitfield_t<CTRL_t, 0x40, 6> IVSEL = {};    //< Interrupt Vector Select
-        static constexpr bitfield_t<CTRL_t, 0x04, 2> HILVLEN = {};    //< High Level Enable
-        static constexpr bitfield_t<CTRL_t, 0x02, 1> MEDLVLEN = {};    //< Medium Level Enable
-        static constexpr bitfield_t<CTRL_t, 0x01, 0> LOLVLEN = {};    //< Low Level Enable
+        static constexpr bitfield_t<CTRL_t, 7, 7, bool> RREN = {};    //< Round-Robin Priority Enable
+        static constexpr bitfield_t<CTRL_t, 6, 6, bool> IVSEL = {};    //< Interrupt Vector Select
+        static constexpr bitfield_t<CTRL_t, 2, 2, bool> HILVLEN = {};    //< High Level Enable
+        static constexpr bitfield_t<CTRL_t, 1, 1, bool> MEDLVLEN = {};    //< Medium Level Enable
+        static constexpr bitfield_t<CTRL_t, 0, 0, bool> LOLVLEN = {};    //< Low Level Enable
     } CTRL = {};
 
 };
 
-} // namespace device
+} // namespace sfr

@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace EVSYS {
 
@@ -18,7 +20,6 @@ namespace EVSYS {
         _10 = 0x02, // QDPH0 = 1, QDPH90 = 0
         _11 = 0x03, // QDPH0 = 1, QDPH90 = 1
     };
-
     // Digital filter coefficient
     enum class DIGFILTv : uint8_t {
         _1SAMPLE = 0x00, // 1 SAMPLE
@@ -30,7 +31,6 @@ namespace EVSYS {
         _7SAMPLES = 0x06, // 7 SAMPLES
         _8SAMPLES = 0x07, // 8 SAMPLES
     };
-
     // Event Channel multiplexer input selection
     enum class CHMUXv : uint8_t {
         OFF = 0x00, // Off
@@ -156,7 +156,6 @@ namespace EVSYS {
         TCF1_CCA = 0xFC, // Timer/Counter F1 Compare or Capture A
         TCF1_CCB = 0xFD, // Timer/Counter F1 Compare or Capture B
     };
-
 }   // namespace EVSYS
 
 /**
@@ -170,91 +169,91 @@ struct EVSYS_t {
 
     /// Event Channel 0 Multiplexer - 1 bytes
     static constexpr struct CH0MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CH0MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 0 Multiplexer
+        static constexpr bitfield_t<CH0MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 0 Multiplexer
     } CH0MUX = {};
 
     /// Event Channel 1 Multiplexer - 1 bytes
     static constexpr struct CH1MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CH1MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 1 Multiplexer
+        static constexpr bitfield_t<CH1MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 1 Multiplexer
     } CH1MUX = {};
 
     /// Event Channel 2 Multiplexer - 1 bytes
     static constexpr struct CH2MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<CH2MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 2 Multiplexer
+        static constexpr bitfield_t<CH2MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 2 Multiplexer
     } CH2MUX = {};
 
     /// Event Channel 3 Multiplexer - 1 bytes
     static constexpr struct CH3MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<CH3MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 3 Multiplexer
+        static constexpr bitfield_t<CH3MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 3 Multiplexer
     } CH3MUX = {};
 
     /// Event Channel 4 Multiplexer - 1 bytes
     static constexpr struct CH4MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<CH4MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 4 Multiplexer
+        static constexpr bitfield_t<CH4MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 4 Multiplexer
     } CH4MUX = {};
 
     /// Event Channel 5 Multiplexer - 1 bytes
     static constexpr struct CH5MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
-        static constexpr bitfield_t<CH5MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 5 Multiplexer
+        static constexpr bitfield_t<CH5MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 5 Multiplexer
     } CH5MUX = {};
 
     /// Event Channel 6 Multiplexer - 1 bytes
     static constexpr struct CH6MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
-        static constexpr bitfield_t<CH6MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 6 Multiplexer
+        static constexpr bitfield_t<CH6MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 6 Multiplexer
     } CH6MUX = {};
 
     /// Event Channel 7 Multiplexer - 1 bytes
     static constexpr struct CH7MUX_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
-        static constexpr bitfield_t<CH7MUX_t, 0xFF, 0, CHMUXv> CHMUX = {};    //< Event Channel 7 Multiplexer
+        static constexpr bitfield_t<CH7MUX_t, 7, 0, EVSYS::CHMUXv> CHMUX = {};    //< Event Channel 7 Multiplexer
     } CH7MUX = {};
 
     /// Channel 0 Control Register - 1 bytes
     static constexpr struct CH0CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
-        static constexpr bitfield_t<CH0CTRL_t, 0x60, 5> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
-        static constexpr bitfield_t<CH0CTRL_t, 0x10, 4> QDIEN = {};    //< Quadrature Decoder Index Enable
-        static constexpr bitfield_t<CH0CTRL_t, 0x08, 3> QDEN = {};    //< Quadrature Decoder Enable
-        static constexpr bitfield_t<CH0CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH0CTRL_t, 6, 5> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
+        static constexpr bitfield_t<CH0CTRL_t, 4, 4, bool> QDIEN = {};    //< Quadrature Decoder Index Enable
+        static constexpr bitfield_t<CH0CTRL_t, 3, 3, bool> QDEN = {};    //< Quadrature Decoder Enable
+        static constexpr bitfield_t<CH0CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH0CTRL = {};
 
     /// Channel 1 Control Register - 1 bytes
     static constexpr struct CH1CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
-        static constexpr bitfield_t<CH1CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH1CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH1CTRL = {};
 
     /// Channel 2 Control Register - 1 bytes
     static constexpr struct CH2CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
-        static constexpr bitfield_t<CH2CTRL_t, 0x60, 5, QDIRMv> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
-        static constexpr bitfield_t<CH2CTRL_t, 0x10, 4> QDIEN = {};    //< Quadrature Decoder Index Enable
-        static constexpr bitfield_t<CH2CTRL_t, 0x08, 3> QDEN = {};    //< Quadrature Decoder Enable
-        static constexpr bitfield_t<CH2CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH2CTRL_t, 6, 5, EVSYS::QDIRMv> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
+        static constexpr bitfield_t<CH2CTRL_t, 4, 4, bool> QDIEN = {};    //< Quadrature Decoder Index Enable
+        static constexpr bitfield_t<CH2CTRL_t, 3, 3, bool> QDEN = {};    //< Quadrature Decoder Enable
+        static constexpr bitfield_t<CH2CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH2CTRL = {};
 
     /// Channel 3 Control Register - 1 bytes
     static constexpr struct CH3CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
-        static constexpr bitfield_t<CH3CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH3CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH3CTRL = {};
 
     /// Channel 4 Control Register - 1 bytes
     static constexpr struct CH4CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
-        static constexpr bitfield_t<CH4CTRL_t, 0x60, 5, QDIRMv> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
-        static constexpr bitfield_t<CH4CTRL_t, 0x10, 4> QDIEN = {};    //< Quadrature Decoder Index Enable
-        static constexpr bitfield_t<CH4CTRL_t, 0x08, 3> QDEN = {};    //< Quadrature Decoder Enable
-        static constexpr bitfield_t<CH4CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH4CTRL_t, 6, 5, EVSYS::QDIRMv> QDIRM = {};    //< Quadrature Decoder Index Recognition Mode
+        static constexpr bitfield_t<CH4CTRL_t, 4, 4, bool> QDIEN = {};    //< Quadrature Decoder Index Enable
+        static constexpr bitfield_t<CH4CTRL_t, 3, 3, bool> QDEN = {};    //< Quadrature Decoder Enable
+        static constexpr bitfield_t<CH4CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH4CTRL = {};
 
     /// Channel 5 Control Register - 1 bytes
     static constexpr struct CH5CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
-        static constexpr bitfield_t<CH5CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH5CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH5CTRL = {};
 
     /// Channel 6 Control Register - 1 bytes
     static constexpr struct CH6CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000E> {
-        static constexpr bitfield_t<CH6CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH6CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH6CTRL = {};
 
     /// Channel 7 Control Register - 1 bytes
     static constexpr struct CH7CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000F> {
-        static constexpr bitfield_t<CH7CTRL_t, 0x07, 0, DIGFILTv> DIGFILT = {};    //< Digital Filter
+        static constexpr bitfield_t<CH7CTRL_t, 2, 0, EVSYS::DIGFILTv> DIGFILT = {};    //< Digital Filter
     } CH7CTRL = {};
 
     /// Event Strobe - 1 bytes
@@ -267,4 +266,4 @@ struct EVSYS_t {
 
 };
 
-} // namespace device
+} // namespace sfr

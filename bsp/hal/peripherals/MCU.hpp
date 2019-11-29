@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace MCU {
 
@@ -44,29 +46,29 @@ struct MCU_t {
 
     /// MCU Control - 1 bytes
     static constexpr struct MCUCR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
-        static constexpr bitfield_t<MCUCR_t, 0x01, 0> JTAGD = {};    //< JTAG Disable
+        static constexpr bitfield_t<MCUCR_t, 0, 0, bool> JTAGD = {};    //< JTAG Disable
     } MCUCR = {};
 
     /// Analog Startup Delay - 1 bytes
     static constexpr struct ANAINIT_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
-        static constexpr bitfield_t<ANAINIT_t, 0x0C, 2> STARTUPDLYB = {};    //< Analog startup delay Port B
-        static constexpr bitfield_t<ANAINIT_t, 0x03, 0> STARTUPDLYA = {};    //< Analog startup delay Port A
+        static constexpr bitfield_t<ANAINIT_t, 3, 2> STARTUPDLYB = {};    //< Analog startup delay Port B
+        static constexpr bitfield_t<ANAINIT_t, 1, 0> STARTUPDLYA = {};    //< Analog startup delay Port A
     } ANAINIT = {};
 
     /// Event System Lock - 1 bytes
     static constexpr struct EVSYSLOCK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
-        static constexpr bitfield_t<EVSYSLOCK_t, 0x10, 4> EVSYS1LOCK = {};    //< Event Channel 4-7 Lock
-        static constexpr bitfield_t<EVSYSLOCK_t, 0x01, 0> EVSYS0LOCK = {};    //< Event Channel 0-3 Lock
+        static constexpr bitfield_t<EVSYSLOCK_t, 4, 4, bool> EVSYS1LOCK = {};    //< Event Channel 4-7 Lock
+        static constexpr bitfield_t<EVSYSLOCK_t, 0, 0, bool> EVSYS0LOCK = {};    //< Event Channel 0-3 Lock
     } EVSYSLOCK = {};
 
     /// AWEX Lock - 1 bytes
     static constexpr struct AWEXLOCK_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
-        static constexpr bitfield_t<AWEXLOCK_t, 0x08, 3> AWEXFLOCK = {};    //< AWeX on T/C F0 Lock
-        static constexpr bitfield_t<AWEXLOCK_t, 0x04, 2> AWEXELOCK = {};    //< AWeX on T/C E0 Lock
-        static constexpr bitfield_t<AWEXLOCK_t, 0x02, 1> AWEXDLOCK = {};    //< AWeX on T/C D0 Lock
-        static constexpr bitfield_t<AWEXLOCK_t, 0x01, 0> AWEXCLOCK = {};    //< AWeX on T/C C0 Lock
+        static constexpr bitfield_t<AWEXLOCK_t, 3, 3, bool> AWEXFLOCK = {};    //< AWeX on T/C F0 Lock
+        static constexpr bitfield_t<AWEXLOCK_t, 2, 2, bool> AWEXELOCK = {};    //< AWeX on T/C E0 Lock
+        static constexpr bitfield_t<AWEXLOCK_t, 1, 1, bool> AWEXDLOCK = {};    //< AWeX on T/C D0 Lock
+        static constexpr bitfield_t<AWEXLOCK_t, 0, 0, bool> AWEXCLOCK = {};    //< AWeX on T/C C0 Lock
     } AWEXLOCK = {};
 
 };
 
-} // namespace device
+} // namespace sfr

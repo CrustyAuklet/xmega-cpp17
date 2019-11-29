@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace CRC {
 
@@ -17,7 +19,6 @@ namespace CRC {
         RESET0 = 0x02, // Reset CRC with CHECKSUM to all zeros
         RESET1 = 0x03, // Reset CRC with CHECKSUM to all ones
     };
-
     // Input Source
     enum class SOURCEv : uint8_t {
         DISABLE = 0x00, // Disabled
@@ -28,7 +29,6 @@ namespace CRC {
         DMAC2 = 0x06, // DMAC Channel 2
         DMAC3 = 0x07, // DMAC Channel 3
     };
-
 }   // namespace CRC
 
 /**
@@ -42,15 +42,15 @@ struct CRC_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0xC0, 6, RESETv> RESET = {};    //< Reset
-        static constexpr bitfield_t<CTRL_t, 0x20, 5> CRC32 = {};    //< CRC Mode
-        static constexpr bitfield_t<CTRL_t, 0x0F, 0, SOURCEv> SOURCE = {};    //< Input Source
+        static constexpr bitfield_t<CTRL_t, 7, 6, CRC::RESETv> RESET = {};    //< Reset
+        static constexpr bitfield_t<CTRL_t, 5, 5, bool> CRC32 = {};    //< CRC Mode
+        static constexpr bitfield_t<CTRL_t, 3, 0, CRC::SOURCEv> SOURCE = {};    //< Input Source
     } CTRL = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> ZERO = {};    //< Zero detection
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> BUSY = {};    //< Busy
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> ZERO = {};    //< Zero detection
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> BUSY = {};    //< Busy
     } STATUS = {};
 
     /// Data Input - 1 bytes
@@ -75,4 +75,4 @@ struct CRC_t {
 
 };
 
-} // namespace device
+} // namespace sfr

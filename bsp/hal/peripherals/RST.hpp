@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace RST {
 
@@ -24,20 +26,20 @@ struct RST_t {
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<STATUS_t, 0x40, 6> SDRF = {};    //< Spike Detection Reset Flag
-        static constexpr bitfield_t<STATUS_t, 0x20, 5> SRF = {};    //< Software Reset Flag
-        static constexpr bitfield_t<STATUS_t, 0x10, 4> PDIRF = {};    //< Programming and Debug Interface Interface Reset Flag
-        static constexpr bitfield_t<STATUS_t, 0x08, 3> WDRF = {};    //< Watchdog Reset Flag
-        static constexpr bitfield_t<STATUS_t, 0x04, 2> BORF = {};    //< Brown-out Reset Flag
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> EXTRF = {};    //< External Reset Flag
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> PORF = {};    //< Power-on Reset Flag
+        static constexpr bitfield_t<STATUS_t, 6, 6, bool> SDRF = {};    //< Spike Detection Reset Flag
+        static constexpr bitfield_t<STATUS_t, 5, 5, bool> SRF = {};    //< Software Reset Flag
+        static constexpr bitfield_t<STATUS_t, 4, 4, bool> PDIRF = {};    //< Programming and Debug Interface Interface Reset Flag
+        static constexpr bitfield_t<STATUS_t, 3, 3, bool> WDRF = {};    //< Watchdog Reset Flag
+        static constexpr bitfield_t<STATUS_t, 2, 2, bool> BORF = {};    //< Brown-out Reset Flag
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> EXTRF = {};    //< External Reset Flag
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> PORF = {};    //< Power-on Reset Flag
     } STATUS = {};
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CTRL_t, 0x01, 0> SWRST = {};    //< Software Reset
+        static constexpr bitfield_t<CTRL_t, 0, 0, bool> SWRST = {};    //< Software Reset
     } CTRL = {};
 
 };
 
-} // namespace device
+} // namespace sfr

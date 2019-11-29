@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <utility>
+#include <algorithm>
+
 using registerType = uint8_t;
 using addressType  = uint16_t;
 

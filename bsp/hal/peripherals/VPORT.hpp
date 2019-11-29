@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace VPORT {
 
@@ -36,10 +38,10 @@ struct VPORT_t {
 
     /// Interrupt Flag Register - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> INT1IF = {};    //< Port Interrupt 1 Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> INT0IF = {};    //< Port Interrupt 0 Flag
+        static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> INT1IF = {};    //< Port Interrupt 1 Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> INT0IF = {};    //< Port Interrupt 0 Flag
     } INTFLAGS = {};
 
 };
 
-} // namespace device
+} // namespace sfr

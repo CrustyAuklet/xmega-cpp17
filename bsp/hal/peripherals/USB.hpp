@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace USB {
 
@@ -18,7 +20,6 @@ namespace USB {
         MED = 0x02, // Medium level
         HI = 0x03, // High level
     };
-
     // USB Endpoint Type
     enum class EP_TYPEv : uint8_t {
         DISABLE = 0x00, // Endpoint Disabled
@@ -26,7 +27,6 @@ namespace USB {
         BULK = 0x02, // Bulk/Interrupt
         ISOCHRONOUS = 0x03, // Isochronous
     };
-
     // USB Endpoint Buffersize
     enum class EP_BUFSIZEv : uint8_t {
         _8 = 0x00, // 8 bytes buffer size
@@ -37,12 +37,6 @@ namespace USB {
         _256 = 0x05, // 256 bytes buffer size
         _512 = 0x06, // 512 bytes buffer size
         _1023 = 0x07, // 1023 bytes buffer size
-    };
-
-    // USB ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        BUSEVENT = 0, // SOF, suspend, resume, reset bus event interrupts, crc, underflow, overflow and stall error interrupts
-        TRNCOMPL = 1, // Transaction complete interrupt
     };
 }   // namespace USB
 
@@ -57,32 +51,32 @@ struct USB_EP_t {
 
     /// Endpoint Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<STATUS_t, 0x80, 7> STALLF = {};    //< Endpoint Stall Flag
-        static constexpr bitfield_t<STATUS_t, 0x80, 7> CRC = {};    //< CRC Error Flag
-        static constexpr bitfield_t<STATUS_t, 0x40, 6> UNF = {};    //< Underflow Enpoint FLag
-        static constexpr bitfield_t<STATUS_t, 0x40, 6> OVF = {};    //< Overflow Enpoint Flag for Output Endpoints
-        static constexpr bitfield_t<STATUS_t, 0x20, 5> TRNCOMPL0 = {};    //< Transaction Complete 0 Flag
-        static constexpr bitfield_t<STATUS_t, 0x10, 4> TRNCOMPL1 = {};    //< Transaction Complete 1 Flag
-        static constexpr bitfield_t<STATUS_t, 0x10, 4> SETUP = {};    //< SETUP Transaction Complete Flag
-        static constexpr bitfield_t<STATUS_t, 0x08, 3> BANK = {};    //< Bank Select
-        static constexpr bitfield_t<STATUS_t, 0x04, 2> BUSNACK1 = {};    //< Data Buffer 1 Not Acknowledge
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> BUSNACK0 = {};    //< Data Buffer 0 Not Acknowledge
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> TOGGLE = {};    //< Data Toggle
+        static constexpr bitfield_t<STATUS_t, 7, 7, bool> STALLF = {};    //< Endpoint Stall Flag
+        static constexpr bitfield_t<STATUS_t, 7, 7, bool> CRC = {};    //< CRC Error Flag
+        static constexpr bitfield_t<STATUS_t, 6, 6, bool> UNF = {};    //< Underflow Enpoint FLag
+        static constexpr bitfield_t<STATUS_t, 6, 6, bool> OVF = {};    //< Overflow Enpoint Flag for Output Endpoints
+        static constexpr bitfield_t<STATUS_t, 5, 5, bool> TRNCOMPL0 = {};    //< Transaction Complete 0 Flag
+        static constexpr bitfield_t<STATUS_t, 4, 4, bool> TRNCOMPL1 = {};    //< Transaction Complete 1 Flag
+        static constexpr bitfield_t<STATUS_t, 4, 4, bool> SETUP = {};    //< SETUP Transaction Complete Flag
+        static constexpr bitfield_t<STATUS_t, 3, 3, bool> BANK = {};    //< Bank Select
+        static constexpr bitfield_t<STATUS_t, 2, 2, bool> BUSNACK1 = {};    //< Data Buffer 1 Not Acknowledge
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> BUSNACK0 = {};    //< Data Buffer 0 Not Acknowledge
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> TOGGLE = {};    //< Data Toggle
     } STATUS = {};
 
     /// Endpoint Control - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CTRL_t, 0xC0, 6, EP_TYPEv> TYPE = {};    //< Endpoint Type
-        static constexpr bitfield_t<CTRL_t, 0x20, 5> MULTIPKT = {};    //< Multi Packet Transfer Enable
-        static constexpr bitfield_t<CTRL_t, 0x10, 4> PINGPONG = {};    //< Ping-Pong Enable
-        static constexpr bitfield_t<CTRL_t, 0x08, 3> INTDSBL = {};    //< Interrupt Disable
-        static constexpr bitfield_t<CTRL_t, 0x04, 2> STALL = {};    //< Data Stall
-        static constexpr bitfield_t<CTRL_t, 0x07, 0, EP_BUFSIZEv> BUFSIZE = {};    //< Data Buffer Size
+        static constexpr bitfield_t<CTRL_t, 7, 6, USB::EP_TYPEv> TYPE = {};    //< Endpoint Type
+        static constexpr bitfield_t<CTRL_t, 5, 5, bool> MULTIPKT = {};    //< Multi Packet Transfer Enable
+        static constexpr bitfield_t<CTRL_t, 4, 4, bool> PINGPONG = {};    //< Ping-Pong Enable
+        static constexpr bitfield_t<CTRL_t, 3, 3, bool> INTDSBL = {};    //< Interrupt Disable
+        static constexpr bitfield_t<CTRL_t, 2, 2, bool> STALL = {};    //< Data Stall
+        static constexpr bitfield_t<CTRL_t, 2, 0, USB::EP_BUFSIZEv> BUFSIZE = {};    //< Data Buffer Size
     } CTRL = {};
 
     /// USB Endpoint Counter - 2 bytes
     static constexpr struct CNT_t : reg_t<uint16_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<CNT_t, 0x8000, 15> ZLP = {};    //< Zero Length Packet
+        static constexpr bitfield_t<CNT_t, 15, 15, bool> ZLP = {};    //< Zero Length Packet
     } CNT = {};
 
     /// Data Pointer - 2 bytes
@@ -106,42 +100,42 @@ struct USB_t {
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRLA_t, 0x80, 7> ENABLE = {};    //< USB Enable
-        static constexpr bitfield_t<CTRLA_t, 0x40, 6> SPEED = {};    //< Speed Select
-        static constexpr bitfield_t<CTRLA_t, 0x20, 5> FIFOEN = {};    //< USB FIFO Enable
-        static constexpr bitfield_t<CTRLA_t, 0x10, 4> STFRNUM = {};    //< Store Frame Number Enable
-        static constexpr bitfield_t<CTRLA_t, 0x0F, 0> MAXEP = {};    //< Maximum Endpoint Addresses
+        static constexpr bitfield_t<CTRLA_t, 7, 7, bool> ENABLE = {};    //< USB Enable
+        static constexpr bitfield_t<CTRLA_t, 6, 6, bool> SPEED = {};    //< Speed Select
+        static constexpr bitfield_t<CTRLA_t, 5, 5, bool> FIFOEN = {};    //< USB FIFO Enable
+        static constexpr bitfield_t<CTRLA_t, 4, 4, bool> STFRNUM = {};    //< Store Frame Number Enable
+        static constexpr bitfield_t<CTRLA_t, 3, 0> MAXEP = {};    //< Maximum Endpoint Addresses
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CTRLB_t, 0x10, 4> PULLRST = {};    //< Pull during Reset
-        static constexpr bitfield_t<CTRLB_t, 0x04, 2> RWAKEUP = {};    //< Remote Wake-up
-        static constexpr bitfield_t<CTRLB_t, 0x02, 1> GNACK = {};    //< Global NACK
-        static constexpr bitfield_t<CTRLB_t, 0x01, 0> ATTACH = {};    //< Attach
+        static constexpr bitfield_t<CTRLB_t, 4, 4, bool> PULLRST = {};    //< Pull during Reset
+        static constexpr bitfield_t<CTRLB_t, 2, 2, bool> RWAKEUP = {};    //< Remote Wake-up
+        static constexpr bitfield_t<CTRLB_t, 1, 1, bool> GNACK = {};    //< Global NACK
+        static constexpr bitfield_t<CTRLB_t, 0, 0, bool> ATTACH = {};    //< Attach
     } CTRLB = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<STATUS_t, 0x08, 3> URESUME = {};    //< Upstream Resume
-        static constexpr bitfield_t<STATUS_t, 0x04, 2> RESUME = {};    //< Resume
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> SUSPEND = {};    //< Bus Suspended
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> BUSRST = {};    //< Bus Reset
+        static constexpr bitfield_t<STATUS_t, 3, 3, bool> URESUME = {};    //< Upstream Resume
+        static constexpr bitfield_t<STATUS_t, 2, 2, bool> RESUME = {};    //< Resume
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> SUSPEND = {};    //< Bus Suspended
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> BUSRST = {};    //< Bus Reset
     } STATUS = {};
 
     /// Address Register - 1 bytes
     static constexpr struct ADDR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<ADDR_t, 0x7F, 0> ADDR = {};    //< Device Address
+        static constexpr bitfield_t<ADDR_t, 6, 0> ADDR = {};    //< Device Address
     } ADDR = {};
 
     /// FIFO Write Pointer Register - 1 bytes
     static constexpr struct FIFOWP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<FIFOWP_t, 0x1F, 0> FIFOWP = {};    //< FIFO Write Pointer
+        static constexpr bitfield_t<FIFOWP_t, 4, 0> FIFOWP = {};    //< FIFO Write Pointer
     } FIFOWP = {};
 
     /// FIFO Read Pointer Register - 1 bytes
     static constexpr struct FIFORP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0005> {
-        static constexpr bitfield_t<FIFORP_t, 0x1F, 0> FIFORP = {};    //< FIFO Read Pointer
+        static constexpr bitfield_t<FIFORP_t, 4, 0> FIFORP = {};    //< FIFO Read Pointer
     } FIFORP = {};
 
     /// Endpoint Configuration Table Pointer - 2 bytes
@@ -150,53 +144,53 @@ struct USB_t {
 
     /// Interrupt Control Register A - 1 bytes
     static constexpr struct INTCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
-        static constexpr bitfield_t<INTCTRLA_t, 0x80, 7> SOFIE = {};    //< Start Of Frame Interrupt Enable
-        static constexpr bitfield_t<INTCTRLA_t, 0x40, 6> BUSEVIE = {};    //< Bus Event Interrupt Enable
-        static constexpr bitfield_t<INTCTRLA_t, 0x20, 5> BUSERRIE = {};    //< Bus Error Interrupt Enable
-        static constexpr bitfield_t<INTCTRLA_t, 0x10, 4> STALLIE = {};    //< STALL Interrupt Enable
-        static constexpr bitfield_t<INTCTRLA_t, 0x03, 0, INTLVLv> INTLVL = {};    //< Interrupt Level
+        static constexpr bitfield_t<INTCTRLA_t, 7, 7, bool> SOFIE = {};    //< Start Of Frame Interrupt Enable
+        static constexpr bitfield_t<INTCTRLA_t, 6, 6, bool> BUSEVIE = {};    //< Bus Event Interrupt Enable
+        static constexpr bitfield_t<INTCTRLA_t, 5, 5, bool> BUSERRIE = {};    //< Bus Error Interrupt Enable
+        static constexpr bitfield_t<INTCTRLA_t, 4, 4, bool> STALLIE = {};    //< STALL Interrupt Enable
+        static constexpr bitfield_t<INTCTRLA_t, 1, 0, USB::INTLVLv> INTLVL = {};    //< Interrupt Level
     } INTCTRLA = {};
 
     /// Interrupt Control Register B - 1 bytes
     static constexpr struct INTCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
-        static constexpr bitfield_t<INTCTRLB_t, 0x02, 1> TRNIE = {};    //< Transaction Complete Interrupt Enable
-        static constexpr bitfield_t<INTCTRLB_t, 0x01, 0> SETUPIE = {};    //< SETUP Transaction Complete Interrupt Enable
+        static constexpr bitfield_t<INTCTRLB_t, 1, 1, bool> TRNIE = {};    //< Transaction Complete Interrupt Enable
+        static constexpr bitfield_t<INTCTRLB_t, 0, 0, bool> SETUPIE = {};    //< SETUP Transaction Complete Interrupt Enable
     } INTCTRLB = {};
 
     /// Clear Interrupt Flag Register A - 1 bytes
     static constexpr struct INTFLAGSACLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x80, 7> SOFIF = {};    //< Start Of Frame Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x40, 6> SUSPENDIF = {};    //< Suspend Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x20, 5> RESUMEIF = {};    //< Resume Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x10, 4> RSTIF = {};    //< Reset Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x08, 3> CRCIF = {};    //< Isochronous CRC Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x04, 2> UNFIF = {};    //< Underflow Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x02, 1> OVFIF = {};    //< Overflow Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSACLR_t, 0x01, 0> STALLIF = {};    //< STALL Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 7, 7, bool> SOFIF = {};    //< Start Of Frame Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 6, 6, bool> SUSPENDIF = {};    //< Suspend Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 5, 5, bool> RESUMEIF = {};    //< Resume Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 4, 4, bool> RSTIF = {};    //< Reset Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 3, 3, bool> CRCIF = {};    //< Isochronous CRC Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 2, 2, bool> UNFIF = {};    //< Underflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 1, 1, bool> OVFIF = {};    //< Overflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSACLR_t, 0, 0, bool> STALLIF = {};    //< STALL Interrupt Flag
     } INTFLAGSACLR = {};
 
     /// Set Interrupt Flag Register A - 1 bytes
     static constexpr struct INTFLAGSASET_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x80, 7> SOFIF = {};    //< Start Of Frame Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x40, 6> SUSPENDIF = {};    //< Suspend Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x20, 5> RESUMEIF = {};    //< Resume Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x10, 4> RSTIF = {};    //< Reset Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x08, 3> CRCIF = {};    //< Isochronous CRC Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x04, 2> UNFIF = {};    //< Underflow Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x02, 1> OVFIF = {};    //< Overflow Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSASET_t, 0x01, 0> STALLIF = {};    //< STALL Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 7, 7, bool> SOFIF = {};    //< Start Of Frame Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 6, 6, bool> SUSPENDIF = {};    //< Suspend Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 5, 5, bool> RESUMEIF = {};    //< Resume Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 4, 4, bool> RSTIF = {};    //< Reset Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 3, 3, bool> CRCIF = {};    //< Isochronous CRC Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 2, 2, bool> UNFIF = {};    //< Underflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 1, 1, bool> OVFIF = {};    //< Overflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSASET_t, 0, 0, bool> STALLIF = {};    //< STALL Interrupt Flag
     } INTFLAGSASET = {};
 
     /// Clear Interrupt Flag Register B - 1 bytes
     static constexpr struct INTFLAGSBCLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
-        static constexpr bitfield_t<INTFLAGSBCLR_t, 0x02, 1> TRNIF = {};    //< Transaction Complete Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSBCLR_t, 0x01, 0> SETUPIF = {};    //< SETUP Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSBCLR_t, 1, 1, bool> TRNIF = {};    //< Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSBCLR_t, 0, 0, bool> SETUPIF = {};    //< SETUP Transaction Complete Interrupt Flag
     } INTFLAGSBCLR = {};
 
     /// Set Interrupt Flag Register B - 1 bytes
     static constexpr struct INTFLAGSBSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
-        static constexpr bitfield_t<INTFLAGSBSET_t, 0x02, 1> TRNIF = {};    //< Transaction Complete Interrupt Flag
-        static constexpr bitfield_t<INTFLAGSBSET_t, 0x01, 0> SETUPIF = {};    //< SETUP Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSBSET_t, 1, 1, bool> TRNIF = {};    //< Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGSBSET_t, 0, 0, bool> SETUPIF = {};    //< SETUP Transaction Complete Interrupt Flag
     } INTFLAGSBSET = {};
 
     /// Calibration Byte 0 - 1 bytes
@@ -207,6 +201,11 @@ struct USB_t {
     static constexpr struct CAL1_t : reg_t<uint8_t, BASE_ADDRESS + 0x003B> {
     } CAL1 = {};
 
+    // USB ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        BUSEVENT = 0, // SOF, suspend, resume, reset bus event interrupts, crc, underflow, overflow and stall error interrupts
+        TRNCOMPL = 1, // Transaction complete interrupt
+    };
 };
 
 /**
@@ -324,4 +323,4 @@ struct USB_EP_TABLE_t {
 
 };
 
-} // namespace device
+} // namespace sfr

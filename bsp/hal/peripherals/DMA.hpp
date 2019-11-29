@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace DMA {
 
@@ -18,7 +20,6 @@ namespace DMA {
         _4BYTE = 0x02, // 4-byte burst mode
         _8BYTE = 0x03, // 8-byte burst mode
     };
-
     // Source address reload mode
     enum class CH_SRCRELOADv : uint8_t {
         NONE = 0x00, // No reload
@@ -26,14 +27,12 @@ namespace DMA {
         BURST = 0x02, // Reload at end of burst
         TRANSACTION = 0x03, // Reload at end of transaction
     };
-
     // Source addressing mode
     enum class CH_SRCDIRv : uint8_t {
         FIXED = 0x00, // Fixed
         INC = 0x01, // Increment
         DEC = 0x02, // Decrement
     };
-
     // Destination adress reload mode
     enum class CH_DESTRELOADv : uint8_t {
         NONE = 0x00, // No reload
@@ -41,14 +40,12 @@ namespace DMA {
         BURST = 0x02, // Reload at end of burst
         TRANSACTION = 0x03, // Reload at end of transaction
     };
-
     // Destination adressing mode
     enum class CH_DESTDIRv : uint8_t {
         FIXED = 0x00, // Fixed
         INC = 0x01, // Increment
         DEC = 0x02, // Decrement
     };
-
     // Transfer trigger source
     enum class CH_TRIGSRCv : uint8_t {
         OFF = 0x00, // Off software triggers only
@@ -131,7 +128,6 @@ namespace DMA {
         USARTF1_RXC = 0xAE, // USART F1 Receive Complete
         USARTF1_DRE = 0xAF, // USART F1 Data Register Empty
     };
-
     // Double buffering mode
     enum class DBUFMODEv : uint8_t {
         DISABLED = 0x00, // Double buffering disabled
@@ -139,7 +135,6 @@ namespace DMA {
         CH23 = 0x02, // Double buffering enabled on channel 2/3
         CH01CH23 = 0x03, // Double buffering enabled on ch. 0/1 and ch. 2/3
     };
-
     // Priority mode
     enum class PRIMODEv : uint8_t {
         RR0123 = 0x00, // Round Robin
@@ -147,7 +142,6 @@ namespace DMA {
         CH01RR23 = 0x02, // Channel 0 > channel 1 > Round Robin on channel 2/3
         CH0123 = 0x03, // Channel 0 > channel 1 > channel 2 > channel 3
     };
-
     // Interrupt level
     enum class CH_ERRINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt disabled
@@ -155,21 +149,12 @@ namespace DMA {
         MED = 0x02, // Medium level
         HI = 0x03, // High level
     };
-
     // Interrupt level
     enum class CH_TRNINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt disabled
         LO = 0x01, // Low level
         MED = 0x02, // Medium level
         HI = 0x03, // High level
-    };
-
-    // DMA ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        CH0 = 0, // Channel 0 Interrupt
-        CH1 = 1, // Channel 1 Interrupt
-        CH2 = 2, // Channel 2 Interrupt
-        CH3 = 3, // Channel 3 Interrupt
     };
 }   // namespace DMA
 
@@ -184,35 +169,35 @@ struct DMA_CH_t {
 
     /// Channel Control - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRLA_t, 0x80, 7> ENABLE = {};    //< Channel Enable
-        static constexpr bitfield_t<CTRLA_t, 0x40, 6> RESET = {};    //< Channel Software Reset
-        static constexpr bitfield_t<CTRLA_t, 0x20, 5> REPEAT = {};    //< Channel Repeat Mode
-        static constexpr bitfield_t<CTRLA_t, 0x10, 4> TRFREQ = {};    //< Channel Transfer Request
-        static constexpr bitfield_t<CTRLA_t, 0x04, 2> SINGLE = {};    //< Channel Single Shot Data Transfer
-        static constexpr bitfield_t<CTRLA_t, 0x03, 0, CH_BURSTLENv> BURSTLEN = {};    //< Channel Transfer Mode
+        static constexpr bitfield_t<CTRLA_t, 7, 7, bool> ENABLE = {};    //< Channel Enable
+        static constexpr bitfield_t<CTRLA_t, 6, 6, bool> RESET = {};    //< Channel Software Reset
+        static constexpr bitfield_t<CTRLA_t, 5, 5, bool> REPEAT = {};    //< Channel Repeat Mode
+        static constexpr bitfield_t<CTRLA_t, 4, 4, bool> TRFREQ = {};    //< Channel Transfer Request
+        static constexpr bitfield_t<CTRLA_t, 2, 2, bool> SINGLE = {};    //< Channel Single Shot Data Transfer
+        static constexpr bitfield_t<CTRLA_t, 1, 0, DMA::CH_BURSTLENv> BURSTLEN = {};    //< Channel Transfer Mode
     } CTRLA = {};
 
     /// Channel Control - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CTRLB_t, 0x80, 7> CHBUSY = {};    //< Block Transfer Busy
-        static constexpr bitfield_t<CTRLB_t, 0x40, 6> CHPEND = {};    //< Block Transfer Pending
-        static constexpr bitfield_t<CTRLB_t, 0x20, 5> ERRIF = {};    //< Block Transfer Error Interrupt Flag
-        static constexpr bitfield_t<CTRLB_t, 0x10, 4> TRNIF = {};    //< Transaction Complete Interrup Flag
-        static constexpr bitfield_t<CTRLB_t, 0x0C, 2, CH_ERRINTLVLv> ERRINTLVL = {};    //< Transfer Error Interrupt Level
-        static constexpr bitfield_t<CTRLB_t, 0x03, 0, CH_TRNINTLVLv> TRNINTLVL = {};    //< Transaction Complete Interrupt Level
+        static constexpr bitfield_t<CTRLB_t, 7, 7, bool> CHBUSY = {};    //< Block Transfer Busy
+        static constexpr bitfield_t<CTRLB_t, 6, 6, bool> CHPEND = {};    //< Block Transfer Pending
+        static constexpr bitfield_t<CTRLB_t, 5, 5, bool> ERRIF = {};    //< Block Transfer Error Interrupt Flag
+        static constexpr bitfield_t<CTRLB_t, 4, 4, bool> TRNIF = {};    //< Transaction Complete Interrup Flag
+        static constexpr bitfield_t<CTRLB_t, 3, 2, DMA::CH_ERRINTLVLv> ERRINTLVL = {};    //< Transfer Error Interrupt Level
+        static constexpr bitfield_t<CTRLB_t, 1, 0, DMA::CH_TRNINTLVLv> TRNINTLVL = {};    //< Transaction Complete Interrupt Level
     } CTRLB = {};
 
     /// Address Control - 1 bytes
     static constexpr struct ADDRCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<ADDRCTRL_t, 0xC0, 6, CH_SRCRELOADv> SRCRELOAD = {};    //< Channel Source Address Reload
-        static constexpr bitfield_t<ADDRCTRL_t, 0x30, 4, CH_SRCDIRv> SRCDIR = {};    //< Channel Source Address Mode
-        static constexpr bitfield_t<ADDRCTRL_t, 0x0C, 2, CH_DESTRELOADv> DESTRELOAD = {};    //< Channel Destination Address Reload
-        static constexpr bitfield_t<ADDRCTRL_t, 0x03, 0, CH_DESTDIRv> DESTDIR = {};    //< Channel Destination Address Mode
+        static constexpr bitfield_t<ADDRCTRL_t, 7, 6, DMA::CH_SRCRELOADv> SRCRELOAD = {};    //< Channel Source Address Reload
+        static constexpr bitfield_t<ADDRCTRL_t, 5, 4, DMA::CH_SRCDIRv> SRCDIR = {};    //< Channel Source Address Mode
+        static constexpr bitfield_t<ADDRCTRL_t, 3, 2, DMA::CH_DESTRELOADv> DESTRELOAD = {};    //< Channel Destination Address Reload
+        static constexpr bitfield_t<ADDRCTRL_t, 1, 0, DMA::CH_DESTDIRv> DESTDIR = {};    //< Channel Destination Address Mode
     } ADDRCTRL = {};
 
     /// Channel Trigger Source - 1 bytes
     static constexpr struct TRIGSRC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<TRIGSRC_t, 0xFF, 0, CH_TRIGSRCv> TRIGSRC = {};    //< Channel Trigger Source
+        static constexpr bitfield_t<TRIGSRC_t, 7, 0, DMA::CH_TRIGSRCv> TRIGSRC = {};    //< Channel Trigger Source
     } TRIGSRC = {};
 
     /// Channel Block Transfer Count - 2 bytes
@@ -260,34 +245,34 @@ struct DMA_t {
 
     /// Control - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x80, 7> ENABLE = {};    //< Enable
-        static constexpr bitfield_t<CTRL_t, 0x40, 6> RESET = {};    //< Software Reset
-        static constexpr bitfield_t<CTRL_t, 0x0C, 2, DBUFMODEv> DBUFMODE = {};    //< Double Buffering Mode
-        static constexpr bitfield_t<CTRL_t, 0x03, 0, PRIMODEv> PRIMODE = {};    //< Channel Priority Mode
+        static constexpr bitfield_t<CTRL_t, 7, 7, bool> ENABLE = {};    //< Enable
+        static constexpr bitfield_t<CTRL_t, 6, 6, bool> RESET = {};    //< Software Reset
+        static constexpr bitfield_t<CTRL_t, 3, 2, DMA::DBUFMODEv> DBUFMODE = {};    //< Double Buffering Mode
+        static constexpr bitfield_t<CTRL_t, 1, 0, DMA::PRIMODEv> PRIMODE = {};    //< Channel Priority Mode
     } CTRL = {};
 
     /// Transfer Interrupt Status - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<INTFLAGS_t, 0x80, 7> CH3ERRIF = {};    //< Channel 3 Block Transfer Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x40, 6> CH2ERRIF = {};    //< Channel 2 Block Transfer Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x20, 5> CH1ERRIF = {};    //< Channel 1 Block Transfer Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x10, 4> CH0ERRIF = {};    //< Channel 0 Block Transfer Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x08, 3> CH3TRNIF = {};    //< Channel 3 Transaction Complete Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x04, 2> CH2TRNIF = {};    //< Channel 2 Transaction Complete Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> CH1TRNIF = {};    //< Channel 1 Transaction Complete Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> CH0TRNIF = {};    //< Channel 0 Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 7, 7, bool> CH3ERRIF = {};    //< Channel 3 Block Transfer Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 6, 6, bool> CH2ERRIF = {};    //< Channel 2 Block Transfer Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 5, 5, bool> CH1ERRIF = {};    //< Channel 1 Block Transfer Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 4, 4, bool> CH0ERRIF = {};    //< Channel 0 Block Transfer Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 3, 3, bool> CH3TRNIF = {};    //< Channel 3 Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 2, 2, bool> CH2TRNIF = {};    //< Channel 2 Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> CH1TRNIF = {};    //< Channel 1 Transaction Complete Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> CH0TRNIF = {};    //< Channel 0 Transaction Complete Interrupt Flag
     } INTFLAGS = {};
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<STATUS_t, 0x80, 7> CH3BUSY = {};    //< Channel 3 Block Transfer Busy
-        static constexpr bitfield_t<STATUS_t, 0x40, 6> CH2BUSY = {};    //< Channel 2 Block Transfer Busy
-        static constexpr bitfield_t<STATUS_t, 0x20, 5> CH1BUSY = {};    //< Channel 1 Block Transfer Busy
-        static constexpr bitfield_t<STATUS_t, 0x10, 4> CH0BUSY = {};    //< Channel 0 Block Transfer Busy
-        static constexpr bitfield_t<STATUS_t, 0x08, 3> CH3PEND = {};    //< Channel 3 Block Transfer Pending
-        static constexpr bitfield_t<STATUS_t, 0x04, 2> CH2PEND = {};    //< Channel 2 Block Transfer Pending
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> CH1PEND = {};    //< Channel 1 Block Transfer Pending
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> CH0PEND = {};    //< Channel 0 Block Transfer Pending
+        static constexpr bitfield_t<STATUS_t, 7, 7, bool> CH3BUSY = {};    //< Channel 3 Block Transfer Busy
+        static constexpr bitfield_t<STATUS_t, 6, 6, bool> CH2BUSY = {};    //< Channel 2 Block Transfer Busy
+        static constexpr bitfield_t<STATUS_t, 5, 5, bool> CH1BUSY = {};    //< Channel 1 Block Transfer Busy
+        static constexpr bitfield_t<STATUS_t, 4, 4, bool> CH0BUSY = {};    //< Channel 0 Block Transfer Busy
+        static constexpr bitfield_t<STATUS_t, 3, 3, bool> CH3PEND = {};    //< Channel 3 Block Transfer Pending
+        static constexpr bitfield_t<STATUS_t, 2, 2, bool> CH2PEND = {};    //< Channel 2 Block Transfer Pending
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> CH1PEND = {};    //< Channel 1 Block Transfer Pending
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> CH0PEND = {};    //< Channel 0 Block Transfer Pending
     } STATUS = {};
 
     /// Temporary Register For 16/24-bit Access - 2 bytes
@@ -306,6 +291,13 @@ struct DMA_t {
     /// DMA Channel 3
     static constexpr DMA_CH_t<BASE_ADDRESS + 0x0040> CH3 = {};
 
+    // DMA ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        CH0 = 0, // Channel 0 Interrupt
+        CH1 = 1, // Channel 1 Interrupt
+        CH2 = 2, // Channel 2 Interrupt
+        CH3 = 3, // Channel 3 Interrupt
+    };
 };
 
-} // namespace device
+} // namespace sfr

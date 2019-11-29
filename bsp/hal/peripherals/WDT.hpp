@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace WDT {
 
@@ -25,7 +27,6 @@ namespace WDT {
         _4KCLK = 0x09, // 4K cycles (4s @ 3.3V)
         _8KCLK = 0x0A, // 8K cycles (8s @ 3.3V)
     };
-
     // Closed window period
     enum class WPERv : uint8_t {
         _8CLK = 0x00, // 8 cycles (8ms @ 3.3V)
@@ -40,7 +41,6 @@ namespace WDT {
         _4KCLK = 0x09, // 4K cycles (4s @ 3.3V)
         _8KCLK = 0x0A, // 8K cycles (8s @ 3.3V)
     };
-
 }   // namespace WDT
 
 /**
@@ -54,23 +54,23 @@ struct WDT_t {
 
     /// Control - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x3C, 2, PERv> PER = {};    //< Period
-        static constexpr bitfield_t<CTRL_t, 0x02, 1> ENABLE = {};    //< Enable
-        static constexpr bitfield_t<CTRL_t, 0x01, 0> CEN = {};    //< Change Enable
+        static constexpr bitfield_t<CTRL_t, 5, 2, WDT::PERv> PER = {};    //< Period
+        static constexpr bitfield_t<CTRL_t, 1, 1, bool> ENABLE = {};    //< Enable
+        static constexpr bitfield_t<CTRL_t, 0, 0, bool> CEN = {};    //< Change Enable
     } CTRL = {};
 
     /// Windowed Mode Control - 1 bytes
     static constexpr struct WINCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<WINCTRL_t, 0x3C, 2, WPERv> WPER = {};    //< Windowed Mode Period
-        static constexpr bitfield_t<WINCTRL_t, 0x02, 1> WEN = {};    //< Windowed Mode Enable
-        static constexpr bitfield_t<WINCTRL_t, 0x01, 0> WCEN = {};    //< Windowed Mode Change Enable
+        static constexpr bitfield_t<WINCTRL_t, 5, 2, WDT::WPERv> WPER = {};    //< Windowed Mode Period
+        static constexpr bitfield_t<WINCTRL_t, 1, 1, bool> WEN = {};    //< Windowed Mode Enable
+        static constexpr bitfield_t<WINCTRL_t, 0, 0, bool> WCEN = {};    //< Windowed Mode Change Enable
     } WINCTRL = {};
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> SYNCBUSY = {};    //< Syncronization busy
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> SYNCBUSY = {};    //< Syncronization busy
     } STATUS = {};
 
 };
 
-} // namespace device
+} // namespace sfr

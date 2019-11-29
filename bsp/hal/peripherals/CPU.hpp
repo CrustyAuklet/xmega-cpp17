@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace CPU {
 
@@ -16,7 +18,6 @@ namespace CPU {
         SPM = 0x9D, // SPM Instruction Protection
         IOREG = 0xD8, // IO Register Protection
     };
-
 }   // namespace CPU
 
 /**
@@ -30,7 +31,7 @@ struct CPU_t {
 
     /// Configuration Change Protection - 1 bytes
     static constexpr struct CCP_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<CCP_t, 0xFF, 0, CCPv> CCP = {};    //< CCP signature
+        static constexpr bitfield_t<CCP_t, 7, 0, CPU::CCPv> CCP = {};    //< CCP signature
     } CCP = {};
 
     /// Ramp D - 1 bytes
@@ -63,16 +64,16 @@ struct CPU_t {
 
     /// Status Register - 1 bytes
     static constexpr struct SREG_t : reg_t<uint8_t, BASE_ADDRESS + 0x000F> {
-        static constexpr bitfield_t<SREG_t, 0x80, 7> I = {};    //< Global Interrupt Enable Flag
-        static constexpr bitfield_t<SREG_t, 0x40, 6> T = {};    //< Transfer Bit
-        static constexpr bitfield_t<SREG_t, 0x20, 5> H = {};    //< Half Carry Flag
-        static constexpr bitfield_t<SREG_t, 0x10, 4> S = {};    //< N Exclusive Or V Flag
-        static constexpr bitfield_t<SREG_t, 0x08, 3> V = {};    //< Two's Complement Overflow Flag
-        static constexpr bitfield_t<SREG_t, 0x04, 2> N = {};    //< Negative Flag
-        static constexpr bitfield_t<SREG_t, 0x02, 1> Z = {};    //< Zero Flag
-        static constexpr bitfield_t<SREG_t, 0x01, 0> C = {};    //< Carry Flag
+        static constexpr bitfield_t<SREG_t, 7, 7, bool> I = {};    //< Global Interrupt Enable Flag
+        static constexpr bitfield_t<SREG_t, 6, 6, bool> T = {};    //< Transfer Bit
+        static constexpr bitfield_t<SREG_t, 5, 5, bool> H = {};    //< Half Carry Flag
+        static constexpr bitfield_t<SREG_t, 4, 4, bool> S = {};    //< N Exclusive Or V Flag
+        static constexpr bitfield_t<SREG_t, 3, 3, bool> V = {};    //< Two's Complement Overflow Flag
+        static constexpr bitfield_t<SREG_t, 2, 2, bool> N = {};    //< Negative Flag
+        static constexpr bitfield_t<SREG_t, 1, 1, bool> Z = {};    //< Zero Flag
+        static constexpr bitfield_t<SREG_t, 0, 0, bool> C = {};    //< Carry Flag
     } SREG = {};
 
 };
 
-} // namespace device
+} // namespace sfr

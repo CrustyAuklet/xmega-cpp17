@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace NVM {
 
@@ -48,7 +50,6 @@ namespace NVM {
         ERASE_BOOT = 0x68, // Erase Boot Section
         FLASH_CRC = 0x78, // Flash CRC
     };
-
     // SPM ready interrupt level
     enum class SPMLVLv : uint8_t {
         OFF = 0x00, // Interrupt disabled
@@ -56,7 +57,6 @@ namespace NVM {
         MED = 0x02, // Medium level
         HI = 0x03, // High level
     };
-
     // EEPROM ready interrupt level
     enum class EELVLv : uint8_t {
         OFF = 0x00, // Interrupt disabled
@@ -64,7 +64,6 @@ namespace NVM {
         MED = 0x02, // Medium level
         HI = 0x03, // High level
     };
-
     // Boot lock bits - boot setcion
     enum class BLBBv : uint8_t {
         RWLOCK = 0x00, // Read and write not allowed
@@ -72,7 +71,6 @@ namespace NVM {
         WLOCK = 0x02, // Write not allowed
         NOLOCK = 0x03, // No locks
     };
-
     // Boot lock bits - application section
     enum class BLBAv : uint8_t {
         RWLOCK = 0x00, // Read and write not allowed
@@ -80,7 +78,6 @@ namespace NVM {
         WLOCK = 0x02, // Write not allowed
         NOLOCK = 0x03, // No locks
     };
-
     // Boot lock bits - application table section
     enum class BLBATv : uint8_t {
         RWLOCK = 0x00, // Read and write not allowed
@@ -88,18 +85,11 @@ namespace NVM {
         WLOCK = 0x02, // Write not allowed
         NOLOCK = 0x03, // No locks
     };
-
     // Lock bits
     enum class LBv : uint8_t {
         RWLOCK = 0x00, // Read and write not allowed
         WLOCK = 0x02, // Write not allowed
         NOLOCK = 0x03, // No locks
-    };
-
-    // NVM ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        EE = 0, // EE Interrupt
-        SPM = 1, // SPM Interrupt
     };
 }   // namespace NVM
 
@@ -138,44 +128,49 @@ struct NVM_t {
 
     /// Command - 1 bytes
     static constexpr struct CMD_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
-        static constexpr bitfield_t<CMD_t, 0x7F, 0, CMDv> CMD = {};    //< Command
+        static constexpr bitfield_t<CMD_t, 6, 0, NVM::CMDv> CMD = {};    //< Command
     } CMD = {};
 
     /// Control Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
-        static constexpr bitfield_t<CTRLA_t, 0x01, 0> CMDEX = {};    //< Command Execute
+        static constexpr bitfield_t<CTRLA_t, 0, 0, bool> CMDEX = {};    //< Command Execute
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
-        static constexpr bitfield_t<CTRLB_t, 0x08, 3> EEMAPEN = {};    //< EEPROM Mapping Enable
-        static constexpr bitfield_t<CTRLB_t, 0x04, 2> FPRM = {};    //< Flash Power Reduction Enable
-        static constexpr bitfield_t<CTRLB_t, 0x02, 1> EPRM = {};    //< EEPROM Power Reduction Enable
-        static constexpr bitfield_t<CTRLB_t, 0x01, 0> SPMLOCK = {};    //< SPM Lock
+        static constexpr bitfield_t<CTRLB_t, 3, 3, bool> EEMAPEN = {};    //< EEPROM Mapping Enable
+        static constexpr bitfield_t<CTRLB_t, 2, 2, bool> FPRM = {};    //< Flash Power Reduction Enable
+        static constexpr bitfield_t<CTRLB_t, 1, 1, bool> EPRM = {};    //< EEPROM Power Reduction Enable
+        static constexpr bitfield_t<CTRLB_t, 0, 0, bool> SPMLOCK = {};    //< SPM Lock
     } CTRLB = {};
 
     /// Interrupt Control - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x000D> {
-        static constexpr bitfield_t<INTCTRL_t, 0x0C, 2, SPMLVLv> SPMLVL = {};    //< SPM Interrupt Level
-        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, EELVLv> EELVL = {};    //< EEPROM Interrupt Level
+        static constexpr bitfield_t<INTCTRL_t, 3, 2, NVM::SPMLVLv> SPMLVL = {};    //< SPM Interrupt Level
+        static constexpr bitfield_t<INTCTRL_t, 1, 0, NVM::EELVLv> EELVL = {};    //< EEPROM Interrupt Level
     } INTCTRL = {};
 
     /// Status - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x000F> {
-        static constexpr bitfield_t<STATUS_t, 0x80, 7> NVMBUSY = {};    //< Non-volatile Memory Busy
-        static constexpr bitfield_t<STATUS_t, 0x40, 6> FBUSY = {};    //< Flash Memory Busy
-        static constexpr bitfield_t<STATUS_t, 0x02, 1> EELOAD = {};    //< EEPROM Page Buffer Active Loading
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> FLOAD = {};    //< Flash Page Buffer Active Loading
+        static constexpr bitfield_t<STATUS_t, 7, 7, bool> NVMBUSY = {};    //< Non-volatile Memory Busy
+        static constexpr bitfield_t<STATUS_t, 6, 6, bool> FBUSY = {};    //< Flash Memory Busy
+        static constexpr bitfield_t<STATUS_t, 1, 1, bool> EELOAD = {};    //< EEPROM Page Buffer Active Loading
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> FLOAD = {};    //< Flash Page Buffer Active Loading
     } STATUS = {};
 
     /// Lock Bits - 1 bytes
     static constexpr struct LOCKBITS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0010> {
-        static constexpr bitfield_t<LOCKBITS_t, 0xC0, 6, BLBBv> BLBB = {};    //< Boot Lock Bits - Boot Section
-        static constexpr bitfield_t<LOCKBITS_t, 0x30, 4, BLBAv> BLBA = {};    //< Boot Lock Bits - Application Section
-        static constexpr bitfield_t<LOCKBITS_t, 0x0C, 2, BLBATv> BLBAT = {};    //< Boot Lock Bits - Application Table
-        static constexpr bitfield_t<LOCKBITS_t, 0x03, 0, LBv> LB = {};    //< Lock Bits
+        static constexpr bitfield_t<LOCKBITS_t, 7, 6, NVM::BLBBv> BLBB = {};    //< Boot Lock Bits - Boot Section
+        static constexpr bitfield_t<LOCKBITS_t, 5, 4, NVM::BLBAv> BLBA = {};    //< Boot Lock Bits - Application Section
+        static constexpr bitfield_t<LOCKBITS_t, 3, 2, NVM::BLBATv> BLBAT = {};    //< Boot Lock Bits - Application Table
+        static constexpr bitfield_t<LOCKBITS_t, 1, 0, NVM::LBv> LB = {};    //< Lock Bits
     } LOCKBITS = {};
 
+    // NVM ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        EE = 0, // EE Interrupt
+        SPM = 1, // SPM Interrupt
+    };
 };
 
-} // namespace device
+} // namespace sfr

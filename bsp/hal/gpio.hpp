@@ -8,9 +8,6 @@ class gpio_pin {
     static_assert(PIN < 8, "PIN value in gpio_pin must be a number 0-7");
     static constexpr uint8_t PIN_MASK = 1 << PIN;   // Pin mask for use in all the functions
     static constexpr PORT Port = {};
-    // TODO: local static constexpr instance of the proper pinctrl/intmask registers for this pin
-    //static constexpr reg_t<uint8_t, ..?> PinCtrl = {};  <---- using THIS_PINCTRL = reg8_t<PORT::PIN0CTRL::ADDRESS + PIN>;
-    //static constexpr reg_t<uint8_t, ..?> IntCtrl = {};  <---- using THIS_INTMASK = reg8_t<PORT::INTMASK_BASE_ADDRESS + INT_NUM>;
 public:
     /// Set the pin as an output
     static void set_output() { Port.DIRSET = PIN_MASK; }
@@ -50,23 +47,40 @@ public:
 
     // configure the GPIO pin with some OR value of flags in device::io::PinConfig
     static void configure(const PinConfig config) {
-        PinCtrl = config;
+        if constexpr(PIN == 0)      { Port.PIN0CTRL = config; }
+        else if constexpr(PIN == 1) { Port.PIN1CTRL = config; }
+        else if constexpr(PIN == 2) { Port.PIN2CTRL = config; }
+        else if constexpr(PIN == 3) { Port.PIN3CTRL = config; }
+        else if constexpr(PIN == 4) { Port.PIN4CTRL = config; }
+        else if constexpr(PIN == 5) { Port.PIN5CTRL = config; }
+        else if constexpr(PIN == 6) { Port.PIN6CTRL = config; }
+        else if constexpr(PIN == 7) { Port.PIN7CTRL = config; }
     }
 
     template <uint8_t INT_NUM>
     static void enable_interrupt() {
         static_assert(INT_NUM <= 1, "GPIO interrupt must be 0 or 1");
-        THIS_INTMASK::write( THIS_INTMASK::read() | PIN_MASK );
+        if constexpr(INT_NUM) {
+            Port.INT0MASK |= PIN_MASK;
+        }
+        else {
+            Port.INT1MASK |= PIN_MASK;
+        }
     }
 
     template <uint8_t INT_NUM>
     static void disable_interrupt() {
         static_assert(INT_NUM <= 1, "GPIO interrupt must be 0 or 1");
-        THIS_INTMASK::write( THIS_INTMASK::read() & ~PIN_MASK );
+        if constexpr(INT_NUM) {
+            Port.INT0MASK &= ~PIN_MASK;
+        }
+        else {
+            Port.INT1MASK &= ~PIN_MASK;
+        }
     }
 
     static void set_lowpower() {
-        configure(MODE_PULLUP);
+        configure(PinConfig::MODE_PULLUP);
     }
 
 };

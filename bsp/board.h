@@ -6,7 +6,7 @@
 
 namespace board {
 
-typedef drivers::Uart_Basic< device::USARTC0, device::PC2, device::PC3 > Serial_C0;
+using Serial_C0 = drivers::Uart_Basic< decltype(device::USARTC0), decltype(device::PC2), decltype(device::PC3) >;
 
 }   // namespace board
 

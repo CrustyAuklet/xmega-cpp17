@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace GPIO {
 
@@ -88,4 +90,4 @@ struct GPIO_t {
 
 };
 
-} // namespace device
+} // namespace sfr

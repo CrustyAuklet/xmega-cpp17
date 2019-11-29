@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace IRCOM {
 
@@ -23,7 +25,6 @@ namespace IRCOM {
         _6 = 0x0E, // Event Channel 6
         _7 = 0x0F, // Event Channel 7
     };
-
 }   // namespace IRCOM
 
 /**
@@ -37,7 +38,7 @@ struct IRCOM_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x0F, 0, EVSELv> EVSEL = {};    //< Event Channel Select
+        static constexpr bitfield_t<CTRL_t, 3, 0, IRCOM::EVSELv> EVSEL = {};    //< Event Channel Select
     } CTRL = {};
 
     /// IrDA Transmitter Pulse Length Control Register - 1 bytes
@@ -50,4 +51,4 @@ struct IRCOM_t {
 
 };
 
-} // namespace device
+} // namespace sfr

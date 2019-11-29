@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace RTC {
 
@@ -22,7 +24,6 @@ namespace RTC {
         DIV256 = 0x06, // RTC Clock / 256
         DIV1024 = 0x07, // RTC Clock / 1024
     };
-
     // Compare Interrupt level
     enum class COMPINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -30,19 +31,12 @@ namespace RTC {
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
     };
-
     // Overflow Interrupt level
     enum class OVFINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
         LO = 0x01, // Low Level
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
-    };
-
-    // RTC ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        OVF = 0, // Overflow Interrupt
-        COMP = 1, // Compare Interrupt
     };
 }   // namespace RTC
 
@@ -57,24 +51,24 @@ struct RTC_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x07, 0, PRESCALERv> PRESCALER = {};    //< Prescaling Factor
+        static constexpr bitfield_t<CTRL_t, 2, 0, RTC::PRESCALERv> PRESCALER = {};    //< Prescaling Factor
     } CTRL = {};
 
     /// Status Register - 1 bytes
     static constexpr struct STATUS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<STATUS_t, 0x01, 0> SYNCBUSY = {};    //< Synchronization Busy Flag
+        static constexpr bitfield_t<STATUS_t, 0, 0, bool> SYNCBUSY = {};    //< Synchronization Busy Flag
     } STATUS = {};
 
     /// Interrupt Control Register - 1 bytes
     static constexpr struct INTCTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<INTCTRL_t, 0x0C, 2, COMPINTLVLv> COMPINTLVL = {};    //< Compare Match Interrupt Level
-        static constexpr bitfield_t<INTCTRL_t, 0x03, 0, OVFINTLVLv> OVFINTLVL = {};    //< Overflow Interrupt Level
+        static constexpr bitfield_t<INTCTRL_t, 3, 2, RTC::COMPINTLVLv> COMPINTLVL = {};    //< Compare Match Interrupt Level
+        static constexpr bitfield_t<INTCTRL_t, 1, 0, RTC::OVFINTLVLv> OVFINTLVL = {};    //< Overflow Interrupt Level
     } INTCTRL = {};
 
     /// Interrupt Flags - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> COMPIF = {};    //< Compare Match Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> OVFIF = {};    //< Overflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> COMPIF = {};    //< Compare Match Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> OVFIF = {};    //< Overflow Interrupt Flag
     } INTFLAGS = {};
 
     /// Temporary register - 1 bytes
@@ -93,6 +87,11 @@ struct RTC_t {
     static constexpr struct COMP_t : reg_t<uint16_t, BASE_ADDRESS + 0x000C> {
     } COMP = {};
 
+    // RTC ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        OVF = 0, // Overflow Interrupt
+        COMP = 1, // Compare Interrupt
+    };
 };
 
-} // namespace device
+} // namespace sfr

@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace TC {
 
@@ -30,7 +32,6 @@ namespace TC {
         EVCH6 = 0x0E, // Event Channel 6
         EVCH7 = 0x0F, // Event Channel 7
     };
-
     // Waveform Generation Mode
     enum class WGMODEv : uint8_t {
         NORMAL = 0x00, // Normal Mode
@@ -44,14 +45,12 @@ namespace TC {
         DSBOTTOM = 0x07, // Dual Slope, Update on BOTTOM
         DS_B = 0x07, // Dual Slope, Update on BOTTOM
     };
-
     // Byte Mode
     enum class BYTEMv : uint8_t {
         NORMAL = 0x00, // 16-bit mode
         BYTEMODE = 0x01, // Timer/Counter operating in byte mode only
         SPLITMODE = 0x02, // Timer/Counter split into two 8-bit Counters (TC2)
     };
-
     // Event Action
     enum class EVACTv : uint8_t {
         OFF = 0x00, // No Event Action
@@ -62,7 +61,6 @@ namespace TC {
         FRQ = 0x05, // Frequency Capture
         PW = 0x06, // Pulse-width Capture
     };
-
     // Event Selection
     enum class EVSELv : uint8_t {
         OFF = 0x00, // No Event Source
@@ -75,7 +73,6 @@ namespace TC {
         CH6 = 0x0E, // Event Channel 6
         CH7 = 0x0F, // Event Channel 7
     };
-
     // Error Interrupt Level
     enum class ERRINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -83,7 +80,6 @@ namespace TC {
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
     };
-
     // Overflow Interrupt Level
     enum class OVFINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -91,7 +87,6 @@ namespace TC {
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
     };
-
     // Compare or Capture D Interrupt Level
     enum class CCDINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -99,7 +94,6 @@ namespace TC {
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
     };
-
     // Compare or Capture C Interrupt Level
     enum class CCCINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -107,7 +101,6 @@ namespace TC {
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
     };
-
     // Compare or Capture B Interrupt Level
     enum class CCBINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -115,7 +108,6 @@ namespace TC {
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
     };
-
     // Compare or Capture A Interrupt Level
     enum class CCAINTLVLv : uint8_t {
         OFF = 0x00, // Interrupt Disabled
@@ -123,30 +115,12 @@ namespace TC {
         MED = 0x02, // Medium Level
         HI = 0x03, // High Level
     };
-
     // Timer/Counter Command
     enum class CMDv : uint8_t {
         NONE = 0x00, // No Command
         UPDATE = 0x01, // Force Update
         RESTART = 0x02, // Force Restart
         RESET = 0x03, // Force Hard Reset
-    };
-
-    // TC0 ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        OVF = 0, // Overflow Interrupt
-        ERR = 1, // Error Interrupt
-        CCA = 2, // Compare or Capture A Interrupt
-        CCB = 3, // Compare or Capture B Interrupt
-        CCC = 4, // Compare or Capture C Interrupt
-        CCD = 5, // Compare or Capture D Interrupt
-    };
-    // TC1 ISR Vector Offsets (two bytes each)
-    enum class INTERRUPTS {
-        OVF = 0, // Overflow Interrupt
-        ERR = 1, // Error Interrupt
-        CCA = 2, // Compare or Capture A Interrupt
-        CCB = 3, // Compare or Capture B Interrupt
     };
 }   // namespace TC
 
@@ -161,92 +135,92 @@ struct TC0_t {
 
     /// Control  Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRLA_t, 0x0F, 0, CLKSELv> CLKSEL = {};    //< Clock Selection
+        static constexpr bitfield_t<CTRLA_t, 3, 0, TC::CLKSELv> CLKSEL = {};    //< Clock Selection
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CTRLB_t, 0x80, 7> CCDEN = {};    //< Compare or Capture D Enable
-        static constexpr bitfield_t<CTRLB_t, 0x40, 6> CCCEN = {};    //< Compare or Capture C Enable
-        static constexpr bitfield_t<CTRLB_t, 0x20, 5> CCBEN = {};    //< Compare or Capture B Enable
-        static constexpr bitfield_t<CTRLB_t, 0x10, 4> CCAEN = {};    //< Compare or Capture A Enable
-        static constexpr bitfield_t<CTRLB_t, 0x07, 0, WGMODEv> WGMODE = {};    //< Waveform generation mode
+        static constexpr bitfield_t<CTRLB_t, 7, 7, bool> CCDEN = {};    //< Compare or Capture D Enable
+        static constexpr bitfield_t<CTRLB_t, 6, 6, bool> CCCEN = {};    //< Compare or Capture C Enable
+        static constexpr bitfield_t<CTRLB_t, 5, 5, bool> CCBEN = {};    //< Compare or Capture B Enable
+        static constexpr bitfield_t<CTRLB_t, 4, 4, bool> CCAEN = {};    //< Compare or Capture A Enable
+        static constexpr bitfield_t<CTRLB_t, 2, 0, TC::WGMODEv> WGMODE = {};    //< Waveform generation mode
     } CTRLB = {};
 
     /// Control register C - 1 bytes
     static constexpr struct CTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<CTRLC_t, 0x08, 3> CMPD = {};    //< Compare D Output Value
-        static constexpr bitfield_t<CTRLC_t, 0x04, 2> CMPC = {};    //< Compare C Output Value
-        static constexpr bitfield_t<CTRLC_t, 0x02, 1> CMPB = {};    //< Compare B Output Value
-        static constexpr bitfield_t<CTRLC_t, 0x01, 0> CMPA = {};    //< Compare A Output Value
+        static constexpr bitfield_t<CTRLC_t, 3, 3, bool> CMPD = {};    //< Compare D Output Value
+        static constexpr bitfield_t<CTRLC_t, 2, 2, bool> CMPC = {};    //< Compare C Output Value
+        static constexpr bitfield_t<CTRLC_t, 1, 1, bool> CMPB = {};    //< Compare B Output Value
+        static constexpr bitfield_t<CTRLC_t, 0, 0, bool> CMPA = {};    //< Compare A Output Value
     } CTRLC = {};
 
     /// Control Register D - 1 bytes
     static constexpr struct CTRLD_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<CTRLD_t, 0xE0, 5, EVACTv> EVACT = {};    //< Event Action
-        static constexpr bitfield_t<CTRLD_t, 0x10, 4> EVDLY = {};    //< Event Delay
-        static constexpr bitfield_t<CTRLD_t, 0x0F, 0, EVSELv> EVSEL = {};    //< Event Source Select
+        static constexpr bitfield_t<CTRLD_t, 7, 5, TC::EVACTv> EVACT = {};    //< Event Action
+        static constexpr bitfield_t<CTRLD_t, 4, 4, bool> EVDLY = {};    //< Event Delay
+        static constexpr bitfield_t<CTRLD_t, 3, 0, TC::EVSELv> EVSEL = {};    //< Event Source Select
     } CTRLD = {};
 
     /// Control Register E - 1 bytes
     static constexpr struct CTRLE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<CTRLE_t, 0x03, 0, BYTEMv> BYTEM = {};    //< Byte Mode
+        static constexpr bitfield_t<CTRLE_t, 1, 0, TC::BYTEMv> BYTEM = {};    //< Byte Mode
     } CTRLE = {};
 
     /// Interrupt Control Register A - 1 bytes
     static constexpr struct INTCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
-        static constexpr bitfield_t<INTCTRLA_t, 0x0C, 2, ERRINTLVLv> ERRINTLVL = {};    //< Error Interrupt Level
-        static constexpr bitfield_t<INTCTRLA_t, 0x03, 0, OVFINTLVLv> OVFINTLVL = {};    //< Overflow interrupt level
+        static constexpr bitfield_t<INTCTRLA_t, 3, 2, TC::ERRINTLVLv> ERRINTLVL = {};    //< Error Interrupt Level
+        static constexpr bitfield_t<INTCTRLA_t, 1, 0, TC::OVFINTLVLv> OVFINTLVL = {};    //< Overflow interrupt level
     } INTCTRLA = {};
 
     /// Interrupt Control Register B - 1 bytes
     static constexpr struct INTCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
-        static constexpr bitfield_t<INTCTRLB_t, 0xC0, 6, CCDINTLVLv> CCDINTLVL = {};    //< Compare or Capture D Interrupt Level
-        static constexpr bitfield_t<INTCTRLB_t, 0x30, 4, CCCINTLVLv> CCCINTLVL = {};    //< Compare or Capture C Interrupt Level
-        static constexpr bitfield_t<INTCTRLB_t, 0x0C, 2, CCBINTLVLv> CCBINTLVL = {};    //< Compare or Capture B Interrupt Level
-        static constexpr bitfield_t<INTCTRLB_t, 0x03, 0, CCAINTLVLv> CCAINTLVL = {};    //< Compare or Capture A Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 7, 6, TC::CCDINTLVLv> CCDINTLVL = {};    //< Compare or Capture D Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 5, 4, TC::CCCINTLVLv> CCCINTLVL = {};    //< Compare or Capture C Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 3, 2, TC::CCBINTLVLv> CCBINTLVL = {};    //< Compare or Capture B Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 1, 0, TC::CCAINTLVLv> CCAINTLVL = {};    //< Compare or Capture A Interrupt Level
     } INTCTRLB = {};
 
     /// Control Register F Clear - 1 bytes
     static constexpr struct CTRLFCLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
-        static constexpr bitfield_t<CTRLFCLR_t, 0x0C, 2> CMD = {};    //< Command
-        static constexpr bitfield_t<CTRLFCLR_t, 0x02, 1> LUPD = {};    //< Lock Update
-        static constexpr bitfield_t<CTRLFCLR_t, 0x01, 0> DIR = {};    //< Direction
+        static constexpr bitfield_t<CTRLFCLR_t, 3, 2> CMD = {};    //< Command
+        static constexpr bitfield_t<CTRLFCLR_t, 1, 1, bool> LUPD = {};    //< Lock Update
+        static constexpr bitfield_t<CTRLFCLR_t, 0, 0, bool> DIR = {};    //< Direction
     } CTRLFCLR = {};
 
     /// Control Register F Set - 1 bytes
     static constexpr struct CTRLFSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
-        static constexpr bitfield_t<CTRLFSET_t, 0x0C, 2, CMDv> CMD = {};    //< Command
-        static constexpr bitfield_t<CTRLFSET_t, 0x02, 1> LUPD = {};    //< Lock Update
-        static constexpr bitfield_t<CTRLFSET_t, 0x01, 0> DIR = {};    //< Direction
+        static constexpr bitfield_t<CTRLFSET_t, 3, 2, TC::CMDv> CMD = {};    //< Command
+        static constexpr bitfield_t<CTRLFSET_t, 1, 1, bool> LUPD = {};    //< Lock Update
+        static constexpr bitfield_t<CTRLFSET_t, 0, 0, bool> DIR = {};    //< Direction
     } CTRLFSET = {};
 
     /// Control Register G Clear - 1 bytes
     static constexpr struct CTRLGCLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
-        static constexpr bitfield_t<CTRLGCLR_t, 0x10, 4> CCDBV = {};    //< Compare or Capture D Buffer Valid
-        static constexpr bitfield_t<CTRLGCLR_t, 0x08, 3> CCCBV = {};    //< Compare or Capture C Buffer Valid
-        static constexpr bitfield_t<CTRLGCLR_t, 0x04, 2> CCBBV = {};    //< Compare or Capture B Buffer Valid
-        static constexpr bitfield_t<CTRLGCLR_t, 0x02, 1> CCABV = {};    //< Compare or Capture A Buffer Valid
-        static constexpr bitfield_t<CTRLGCLR_t, 0x01, 0> PERBV = {};    //< Period Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 4, 4, bool> CCDBV = {};    //< Compare or Capture D Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 3, 3, bool> CCCBV = {};    //< Compare or Capture C Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 2, 2, bool> CCBBV = {};    //< Compare or Capture B Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 1, 1, bool> CCABV = {};    //< Compare or Capture A Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 0, 0, bool> PERBV = {};    //< Period Buffer Valid
     } CTRLGCLR = {};
 
     /// Control Register G Set - 1 bytes
     static constexpr struct CTRLGSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
-        static constexpr bitfield_t<CTRLGSET_t, 0x10, 4> CCDBV = {};    //< Compare or Capture D Buffer Valid
-        static constexpr bitfield_t<CTRLGSET_t, 0x08, 3> CCCBV = {};    //< Compare or Capture C Buffer Valid
-        static constexpr bitfield_t<CTRLGSET_t, 0x04, 2> CCBBV = {};    //< Compare or Capture B Buffer Valid
-        static constexpr bitfield_t<CTRLGSET_t, 0x02, 1> CCABV = {};    //< Compare or Capture A Buffer Valid
-        static constexpr bitfield_t<CTRLGSET_t, 0x01, 0> PERBV = {};    //< Period Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 4, 4, bool> CCDBV = {};    //< Compare or Capture D Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 3, 3, bool> CCCBV = {};    //< Compare or Capture C Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 2, 2, bool> CCBBV = {};    //< Compare or Capture B Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 1, 1, bool> CCABV = {};    //< Compare or Capture A Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 0, 0, bool> PERBV = {};    //< Period Buffer Valid
     } CTRLGSET = {};
 
     /// Interrupt Flag Register - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
-        static constexpr bitfield_t<INTFLAGS_t, 0x80, 7> CCDIF = {};    //< Compare or Capture D Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x40, 6> CCCIF = {};    //< Compare or Capture C Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x20, 5> CCBIF = {};    //< Compare or Capture B Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x10, 4> CCAIF = {};    //< Compare or Capture A Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> ERRIF = {};    //< Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> OVFIF = {};    //< Overflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 7, 7, bool> CCDIF = {};    //< Compare or Capture D Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 6, 6, bool> CCCIF = {};    //< Compare or Capture C Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 5, 5, bool> CCBIF = {};    //< Compare or Capture B Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 4, 4, bool> CCAIF = {};    //< Compare or Capture A Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> ERRIF = {};    //< Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> OVFIF = {};    //< Overflow Interrupt Flag
     } INTFLAGS = {};
 
     /// Temporary Register For 16-bit Access - 1 bytes
@@ -297,6 +271,15 @@ struct TC0_t {
     static constexpr struct CCDBUF_t : reg_t<uint16_t, BASE_ADDRESS + 0x003E> {
     } CCDBUF = {};
 
+    // TC0 ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        OVF = 0, // Overflow Interrupt
+        ERR = 1, // Error Interrupt
+        CCA = 2, // Compare or Capture A Interrupt
+        CCB = 3, // Compare or Capture B Interrupt
+        CCC = 4, // Compare or Capture C Interrupt
+        CCD = 5, // Compare or Capture D Interrupt
+    };
 };
 
 /**
@@ -310,80 +293,80 @@ struct TC1_t {
 
     /// Control  Register A - 1 bytes
     static constexpr struct CTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRLA_t, 0x0F, 0, CLKSELv> CLKSEL = {};    //< Clock Selection
+        static constexpr bitfield_t<CTRLA_t, 3, 0, TC::CLKSELv> CLKSEL = {};    //< Clock Selection
     } CTRLA = {};
 
     /// Control Register B - 1 bytes
     static constexpr struct CTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0001> {
-        static constexpr bitfield_t<CTRLB_t, 0x20, 5> CCBEN = {};    //< Compare or Capture B Enable
-        static constexpr bitfield_t<CTRLB_t, 0x10, 4> CCAEN = {};    //< Compare or Capture A Enable
-        static constexpr bitfield_t<CTRLB_t, 0x07, 0, WGMODEv> WGMODE = {};    //< Waveform generation mode
+        static constexpr bitfield_t<CTRLB_t, 5, 5, bool> CCBEN = {};    //< Compare or Capture B Enable
+        static constexpr bitfield_t<CTRLB_t, 4, 4, bool> CCAEN = {};    //< Compare or Capture A Enable
+        static constexpr bitfield_t<CTRLB_t, 2, 0, TC::WGMODEv> WGMODE = {};    //< Waveform generation mode
     } CTRLB = {};
 
     /// Control register C - 1 bytes
     static constexpr struct CTRLC_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<CTRLC_t, 0x02, 1> CMPB = {};    //< Compare B Output Value
-        static constexpr bitfield_t<CTRLC_t, 0x01, 0> CMPA = {};    //< Compare A Output Value
+        static constexpr bitfield_t<CTRLC_t, 1, 1, bool> CMPB = {};    //< Compare B Output Value
+        static constexpr bitfield_t<CTRLC_t, 0, 0, bool> CMPA = {};    //< Compare A Output Value
     } CTRLC = {};
 
     /// Control Register D - 1 bytes
     static constexpr struct CTRLD_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<CTRLD_t, 0xE0, 5, EVACTv> EVACT = {};    //< Event Action
-        static constexpr bitfield_t<CTRLD_t, 0x10, 4> EVDLY = {};    //< Event Delay
-        static constexpr bitfield_t<CTRLD_t, 0x0F, 0, EVSELv> EVSEL = {};    //< Event Source Select
+        static constexpr bitfield_t<CTRLD_t, 7, 5, TC::EVACTv> EVACT = {};    //< Event Action
+        static constexpr bitfield_t<CTRLD_t, 4, 4, bool> EVDLY = {};    //< Event Delay
+        static constexpr bitfield_t<CTRLD_t, 3, 0, TC::EVSELv> EVSEL = {};    //< Event Source Select
     } CTRLD = {};
 
     /// Control Register E - 1 bytes
     static constexpr struct CTRLE_t : reg_t<uint8_t, BASE_ADDRESS + 0x0004> {
-        static constexpr bitfield_t<CTRLE_t, 0x01, 0> BYTEM = {};    //< Byte Mode
+        static constexpr bitfield_t<CTRLE_t, 0, 0, bool> BYTEM = {};    //< Byte Mode
     } CTRLE = {};
 
     /// Interrupt Control Register A - 1 bytes
     static constexpr struct INTCTRLA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0006> {
-        static constexpr bitfield_t<INTCTRLA_t, 0x0C, 2, ERRINTLVLv> ERRINTLVL = {};    //< Error Interrupt Level
-        static constexpr bitfield_t<INTCTRLA_t, 0x03, 0, OVFINTLVLv> OVFINTLVL = {};    //< Overflow interrupt level
+        static constexpr bitfield_t<INTCTRLA_t, 3, 2, TC::ERRINTLVLv> ERRINTLVL = {};    //< Error Interrupt Level
+        static constexpr bitfield_t<INTCTRLA_t, 1, 0, TC::OVFINTLVLv> OVFINTLVL = {};    //< Overflow interrupt level
     } INTCTRLA = {};
 
     /// Interrupt Control Register B - 1 bytes
     static constexpr struct INTCTRLB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0007> {
-        static constexpr bitfield_t<INTCTRLB_t, 0x0C, 2, CCBINTLVLv> CCBINTLVL = {};    //< Compare or Capture B Interrupt Level
-        static constexpr bitfield_t<INTCTRLB_t, 0x03, 0, CCAINTLVLv> CCAINTLVL = {};    //< Compare or Capture A Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 3, 2, TC::CCBINTLVLv> CCBINTLVL = {};    //< Compare or Capture B Interrupt Level
+        static constexpr bitfield_t<INTCTRLB_t, 1, 0, TC::CCAINTLVLv> CCAINTLVL = {};    //< Compare or Capture A Interrupt Level
     } INTCTRLB = {};
 
     /// Control Register F Clear - 1 bytes
     static constexpr struct CTRLFCLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x0008> {
-        static constexpr bitfield_t<CTRLFCLR_t, 0x0C, 2> CMD = {};    //< Command
-        static constexpr bitfield_t<CTRLFCLR_t, 0x02, 1> LUPD = {};    //< Lock Update
-        static constexpr bitfield_t<CTRLFCLR_t, 0x01, 0> DIR = {};    //< Direction
+        static constexpr bitfield_t<CTRLFCLR_t, 3, 2> CMD = {};    //< Command
+        static constexpr bitfield_t<CTRLFCLR_t, 1, 1, bool> LUPD = {};    //< Lock Update
+        static constexpr bitfield_t<CTRLFCLR_t, 0, 0, bool> DIR = {};    //< Direction
     } CTRLFCLR = {};
 
     /// Control Register F Set - 1 bytes
     static constexpr struct CTRLFSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x0009> {
-        static constexpr bitfield_t<CTRLFSET_t, 0x0C, 2, CMDv> CMD = {};    //< Command
-        static constexpr bitfield_t<CTRLFSET_t, 0x02, 1> LUPD = {};    //< Lock Update
-        static constexpr bitfield_t<CTRLFSET_t, 0x01, 0> DIR = {};    //< Direction
+        static constexpr bitfield_t<CTRLFSET_t, 3, 2, TC::CMDv> CMD = {};    //< Command
+        static constexpr bitfield_t<CTRLFSET_t, 1, 1, bool> LUPD = {};    //< Lock Update
+        static constexpr bitfield_t<CTRLFSET_t, 0, 0, bool> DIR = {};    //< Direction
     } CTRLFSET = {};
 
     /// Control Register G Clear - 1 bytes
     static constexpr struct CTRLGCLR_t : reg_t<uint8_t, BASE_ADDRESS + 0x000A> {
-        static constexpr bitfield_t<CTRLGCLR_t, 0x04, 2> CCBBV = {};    //< Compare or Capture B Buffer Valid
-        static constexpr bitfield_t<CTRLGCLR_t, 0x02, 1> CCABV = {};    //< Compare or Capture A Buffer Valid
-        static constexpr bitfield_t<CTRLGCLR_t, 0x01, 0> PERBV = {};    //< Period Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 2, 2, bool> CCBBV = {};    //< Compare or Capture B Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 1, 1, bool> CCABV = {};    //< Compare or Capture A Buffer Valid
+        static constexpr bitfield_t<CTRLGCLR_t, 0, 0, bool> PERBV = {};    //< Period Buffer Valid
     } CTRLGCLR = {};
 
     /// Control Register G Set - 1 bytes
     static constexpr struct CTRLGSET_t : reg_t<uint8_t, BASE_ADDRESS + 0x000B> {
-        static constexpr bitfield_t<CTRLGSET_t, 0x04, 2> CCBBV = {};    //< Compare or Capture B Buffer Valid
-        static constexpr bitfield_t<CTRLGSET_t, 0x02, 1> CCABV = {};    //< Compare or Capture A Buffer Valid
-        static constexpr bitfield_t<CTRLGSET_t, 0x01, 0> PERBV = {};    //< Period Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 2, 2, bool> CCBBV = {};    //< Compare or Capture B Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 1, 1, bool> CCABV = {};    //< Compare or Capture A Buffer Valid
+        static constexpr bitfield_t<CTRLGSET_t, 0, 0, bool> PERBV = {};    //< Period Buffer Valid
     } CTRLGSET = {};
 
     /// Interrupt Flag Register - 1 bytes
     static constexpr struct INTFLAGS_t : reg_t<uint8_t, BASE_ADDRESS + 0x000C> {
-        static constexpr bitfield_t<INTFLAGS_t, 0x20, 5> CCBIF = {};    //< Compare or Capture B Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x10, 4> CCAIF = {};    //< Compare or Capture A Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x02, 1> ERRIF = {};    //< Error Interrupt Flag
-        static constexpr bitfield_t<INTFLAGS_t, 0x01, 0> OVFIF = {};    //< Overflow Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 5, 5, bool> CCBIF = {};    //< Compare or Capture B Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 4, 4, bool> CCAIF = {};    //< Compare or Capture A Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 1, 1, bool> ERRIF = {};    //< Error Interrupt Flag
+        static constexpr bitfield_t<INTFLAGS_t, 0, 0, bool> OVFIF = {};    //< Overflow Interrupt Flag
     } INTFLAGS = {};
 
     /// Temporary Register For 16-bit Access - 1 bytes
@@ -418,6 +401,13 @@ struct TC1_t {
     static constexpr struct CCBBUF_t : reg_t<uint16_t, BASE_ADDRESS + 0x003A> {
     } CCBBUF = {};
 
+    // TC1 ISR Vector Offsets (two bytes each)
+    enum class INTERRUPTS {
+        OVF = 0, // Overflow Interrupt
+        ERR = 1, // Error Interrupt
+        CCA = 2, // Compare or Capture A Interrupt
+        CCB = 3, // Compare or Capture B Interrupt
+    };
 };
 
-} // namespace device
+} // namespace sfr

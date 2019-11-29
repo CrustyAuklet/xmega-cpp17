@@ -7,7 +7,9 @@
 #include "register.hpp"
 #include <stdint.h>
 
-namespace device {
+namespace sfr {
+    using seal::registers::reg_t;
+    using seal::registers::bitfield_t;
 
 namespace DFLL {
 
@@ -24,17 +26,17 @@ struct DFLL_t {
 
     /// Control Register - 1 bytes
     static constexpr struct CTRL_t : reg_t<uint8_t, BASE_ADDRESS + 0x0000> {
-        static constexpr bitfield_t<CTRL_t, 0x01, 0> ENABLE = {};    //< DFLL Enable
+        static constexpr bitfield_t<CTRL_t, 0, 0, bool> ENABLE = {};    //< DFLL Enable
     } CTRL = {};
 
     /// Calibration Register A - 1 bytes
     static constexpr struct CALA_t : reg_t<uint8_t, BASE_ADDRESS + 0x0002> {
-        static constexpr bitfield_t<CALA_t, 0x7F, 0> CALL = {};    //< DFLL Calibration Value A
+        static constexpr bitfield_t<CALA_t, 6, 0> CALL = {};    //< DFLL Calibration Value A
     } CALA = {};
 
     /// Calibration Register B - 1 bytes
     static constexpr struct CALB_t : reg_t<uint8_t, BASE_ADDRESS + 0x0003> {
-        static constexpr bitfield_t<CALB_t, 0x3F, 0> CALH = {};    //< DFLL Calibration Value B
+        static constexpr bitfield_t<CALB_t, 5, 0> CALH = {};    //< DFLL Calibration Value B
     } CALB = {};
 
     /// Oscillator Compare Register 0 - 1 bytes
@@ -51,4 +53,4 @@ struct DFLL_t {
 
 };
 
-} // namespace device
+} // namespace sfr
