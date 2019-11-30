@@ -87,16 +87,19 @@ namespace drivers {
             static_assert(!USART::buad_too_high(Baud, DoubleSpeed), "Chosen baud rate is too high!");
             static_assert(!USART::buad_too_low(Baud, DoubleSpeed), "Chosen baud rate is too low!");
 
-            // RXD_PIN::set_input();
-            // RXD_PIN::configure(RXD_PIN::MODE_TOTEM);
-            // TXD_PIN::set_output();
-            // TXD_PIN::set_low();
+            m_rx.set_input();
+            m_rx.configure(RXD_PIN::PinConfig::MODE_TOTEM);
+            m_tx.set_output();
+            m_tx.set_low();
 
-            m_instance.BAUDCTRLB = 0;
-            m_instance.BAUDCTRLA = 0;
+            m_instance.BAUDCTRLA = USART::get_baud(Baud) >> 8;
+            m_instance.BAUDCTRLB = USART::get_baud(Baud) & 0xFF;
             m_instance.CTRLB.CLK2X = DoubleSpeed;
 
-            // INSTANCE::set_mode_async(CharSizeMode, TwoStopBits, ParityMode);
+            device::USARTC0.CTRLC = device::USARTC0.CTRLC.PMODE.shift(ParityMode)
+                                  | device::USARTC0.CTRLC.SBMODE.shift(TwoStopBits)
+                                  | device::USARTC0.CTRLC.CHSIZE.shift(CharSize)
+                                  | device::USARTC0.CTRLC.CMODE.shift(sfr::USART::CMODEv::ASYNCHRONOUS);
             // CTRLC::write( static_cast<uint8_t>(ParityMode) << CTRLC::PMODE::SHIFT         // Parity
             //         | TwoStopBits << CTRLC::SBMODE::SHIFT       // Stop Bit Mode
             //         | static_cast<uint8_t>(CharSizeMode)        // Character size
