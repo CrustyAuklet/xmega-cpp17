@@ -2,34 +2,7 @@
 
 #include <cstdint>
 
-// TODO: Make fuctions constexpr instead of just static. style like register abstraction.
-template <class PORT, uint8_t PIN>
-class gpio_pin {
-    static_assert(PIN < 8, "PIN value in gpio_pin must be a number 0-7");
-    static constexpr uint8_t PIN_MASK = 1 << PIN;   // Pin mask for use in all the functions
-    static constexpr PORT Port = {};
-public:
-    /// Set the pin as an output
-    constexpr void set_output() const noexcept { Port.DIRSET = PIN_MASK; }
-    /// Set the pin as in input
-    constexpr void set_input() const noexcept { Port.DIRCLR = PIN_MASK; }
-    /// Set the output level of the pin to low. Pin must be set as Output.
-    constexpr void set_low() const noexcept { Port.OUTSET = PIN_MASK; }
-    /// Set the output level of the pin to high. Pin must be set as Output.
-    constexpr void set_high() const noexcept { Port.OUTCLR = PIN_MASK; }
-    /// Toggle the output level of the pin. Pin must be set as Output.
-    constexpr void toggle() const noexcept { Port.OUTTGL = PIN_MASK; }
-    /// set the level of the pin using a boolean argument
-    constexpr void set_value(const bool level) const noexcept {
-        if(level){ set_high(); }
-        else { set_low(); }
-    }
-    /// get the current state of the pin. Digital input buffer must be enabled.
-    constexpr volatile bool get_value() const noexcept { return Port.IN & PIN_MASK; }
-
-    constexpr operator volatile bool&() noexcept { return get_value(); }
-    constexpr operator const volatile bool&() const noexcept { return get_value(); }
-
+namespace GPIO {
     enum class PinConfig : uint8_t {
         SENSE_BOTHEDGES     = 0x00 << 0, //< IOPORT sense both rising and falling edges
         SENSE_RISING        = 0x01 << 0, //< IOPORT sense rising edges
@@ -48,8 +21,39 @@ public:
         SLEW_RATE_LIMIT     = 0x01 << 7  //< Slew rate limiting
     };
 
+    PinConfig operator|(PinConfig a, PinConfig b) { return PinConfig(int(a) | int(b)); }
+    PinConfig operator&(PinConfig a, PinConfig b) { return PinConfig(int(a) & int(b)); }
+} // namespace GPIO
+
+template <class PORT, uint8_t PIN>
+class gpio_pin {
+    static_assert(PIN < 8, "PIN value in gpio_pin must be a number 0-7");
+    static constexpr uint8_t PIN_MASK = 1 << PIN;   // Pin mask for use in all the functions
+    static constexpr PORT Port = {};
+public:
+    /// Set the pin as an output
+    constexpr void set_output() const noexcept { Port.DIRSET = PIN_MASK; }
+    /// Set the pin as in input
+    constexpr void set_input() const noexcept { Port.DIRCLR = PIN_MASK; }
+    /// Set the output level of the pin to low. Pin must be set as Output.
+    constexpr void set_low() const noexcept { Port.OUTCLR = PIN_MASK; }
+    /// Set the output level of the pin to high. Pin must be set as Output.
+    constexpr void set_high() const noexcept { Port.OUTSET = PIN_MASK; }
+    /// Toggle the output level of the pin. Pin must be set as Output.
+    constexpr void toggle() const noexcept { Port.OUTTGL = PIN_MASK; }
+    /// set the level of the pin using a boolean argument
+    constexpr void set_value(const bool level) const noexcept {
+        if(level){ set_high(); }
+        else { set_low(); }
+    }
+    /// get the current state of the pin. Digital input buffer must be enabled.
+    constexpr volatile bool get_value() const noexcept { return Port.IN & PIN_MASK; }
+
+    constexpr operator volatile bool&() noexcept { return get_value(); }
+    constexpr operator const volatile bool&() const noexcept { return get_value(); }
+
     // configure the GPIO pin with some OR value of flags in device::io::PinConfig
-    constexpr void configure(const PinConfig config) const noexcept {
+    constexpr void configure(const GPIO::PinConfig config) const noexcept {
         if constexpr(PIN == 0)      { Port.PIN0CTRL = static_cast<uint8_t>(config); }
         else if constexpr(PIN == 1) { Port.PIN1CTRL = static_cast<uint8_t>(config); }
         else if constexpr(PIN == 2) { Port.PIN2CTRL = static_cast<uint8_t>(config); }
@@ -83,7 +87,7 @@ public:
     }
 
     constexpr void set_lowpower() const noexcept {
-        configure(PinConfig::MODE_PULLUP);
+        configure(GPIO::PinConfig::MODE_PULLUP);
     }
 
 };

@@ -88,7 +88,7 @@ namespace drivers {
             static_assert(!USART::buad_too_low(Baud, DoubleSpeed), "Chosen baud rate is too low!");
 
             m_rx.set_input();
-            m_rx.configure(RXD_PIN::PinConfig::MODE_TOTEM);
+            m_rx.configure(GPIO::PinConfig::MODE_TOTEM);
             m_tx.set_output();
             m_tx.set_low();
 
@@ -100,11 +100,6 @@ namespace drivers {
                                   | device::USARTC0.CTRLC.SBMODE.shift(TwoStopBits)
                                   | device::USARTC0.CTRLC.CHSIZE.shift(CharSize)
                                   | device::USARTC0.CTRLC.CMODE.shift(sfr::USART::CMODEv::ASYNCHRONOUS);
-            // CTRLC::write( static_cast<uint8_t>(ParityMode) << CTRLC::PMODE::SHIFT         // Parity
-            //         | TwoStopBits << CTRLC::SBMODE::SHIFT       // Stop Bit Mode
-            //         | static_cast<uint8_t>(CharSizeMode)        // Character size
-            //         | static_cast<uint8_t>(CMODEv::ASYNCHRONOUS)// Async Polled Mode
-            // );
         }
 
         constexpr void start() const noexcept {
