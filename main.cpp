@@ -1,7 +1,7 @@
-#include "board.h"
+#include "board.hpp"
 #include <util/delay.h>
 
-int main( void ) {
+[[gnu::OS_main]] int main() {
     board::SerialC0.init<9600, true>();
     board::SerialC0.start();
     board::UserLED.init();

@@ -44,6 +44,7 @@ target_include_directories(bsp
 
 target_sources(bsp
     INTERFACE
+        board.hpp
 )
 
 # from older toolchain file, better to use target_compile_options && target_link_options. Temporarily kept for reference.

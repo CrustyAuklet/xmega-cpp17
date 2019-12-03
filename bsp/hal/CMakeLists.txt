@@ -10,4 +10,10 @@ target_include_directories(hal
 
 target_sources(hal
     INTERFACE
+        device.hpp
+        gpio.hpp
+        register.hpp
+        drivers/led.hpp
+        drivers/twi.hpp
+        drivers/uart.hpp
 )

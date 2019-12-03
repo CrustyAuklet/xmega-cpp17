@@ -1,9 +1,7 @@
-#ifndef SEAL_HAL_UART_XMEGA
-#define SEAL_HAL_UART_XMEGA
+#pragma once
 
 #include "gpio.hpp"
 #include "peripherals/USART.hpp"
-#include "device.hpp"
 #include <cstdint>
 
 namespace drivers {
@@ -96,10 +94,10 @@ namespace drivers {
             m_instance.BAUDCTRLB = USART::get_baud(Baud) & 0xFF;
             m_instance.CTRLB.CLK2X = DoubleSpeed;
 
-            device::USARTC0.CTRLC = device::USARTC0.CTRLC.PMODE.shift(ParityMode)
-                                  | device::USARTC0.CTRLC.SBMODE.shift(TwoStopBits)
-                                  | device::USARTC0.CTRLC.CHSIZE.shift(CharSize)
-                                  | device::USARTC0.CTRLC.CMODE.shift(sfr::USART::CMODEv::ASYNCHRONOUS);
+            m_instance.CTRLC = m_instance.CTRLC.PMODE.shift(ParityMode)
+                              | m_instance.CTRLC.SBMODE.shift(TwoStopBits)
+                              | m_instance.CTRLC.CHSIZE.shift(CharSize)
+                              | m_instance.CTRLC.CMODE.shift(sfr::USART::CMODEv::ASYNCHRONOUS);
         }
 
         constexpr void start() const noexcept {
@@ -149,4 +147,3 @@ namespace drivers {
     };
 
 }   // namesapce device
-#endif  // SEAL_HAL_UART_XMEGA
