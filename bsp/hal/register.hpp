@@ -73,7 +73,10 @@ struct reg_t
     {
         static_assert (!readonly,"this register is read-only");
         reg_t::value() = bit_field_value.value;
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+        // NOTE: this is OK as long as the type has no state
         return reg_t<T,address>{};
+#pragma GCC diagnostic pop
     }
 
     template<typename U>
@@ -81,14 +84,20 @@ struct reg_t
     {
         static_assert (!readonly,"this register is read-only");
         reg_t::value() = (reg_t::value() & ~bit_field_value.mask) | bit_field_value.value;
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+        // NOTE: this is OK as long as the type has no state
         return reg_t<T,address>{};
+#pragma GCC diagnostic pop
     }
 
     inline constexpr reg_t operator|=(const T& value) const noexcept
     {
         static_assert (!readonly,"this register is read-only");
         reg_t::value() |= value;
+#pragma GCC diagnostic ignored "-Wreturn-local-addr"
+        // NOTE: this is OK as long as the type has no state
         return reg_t<T,address>{};
+#pragma GCC diagnostic pop
     }
 
     inline constexpr reg_t operator&=(const T& value) const noexcept
