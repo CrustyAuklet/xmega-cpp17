@@ -8,8 +8,10 @@
 #include <stdint.h>
 
 namespace sfr {
-    using seal::registers::reg_t;
-    using seal::registers::bitfield_t;
+    using ucpp::registers::reg_t;
+    using ucpp::registers::bitfield_t;
+    using ucpp::registers::registerType;
+    using ucpp::registers::addressType;
 
 namespace CLK {
 
