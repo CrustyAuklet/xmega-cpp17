@@ -1,0 +1,30 @@
+﻿{
+  "configurations": [
+    {
+      "name": "avr-gcc-9.2.0",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out-avr\\build\\${name}",
+      "installRoot": "${projectDir}\\out-avr\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [],
+      "variables": [],
+      "intelliSenseMode": "linux-gcc-arm",
+      "cmakeToolchain": "${projectDir}\\scripts\\avr-toolchain.cmake"
+    },
+    {
+      "name": "x86-Clang-Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}\\out-host\\build\\${name}",
+      "installRoot": "${projectDir}\\out-host\\install\\${name}",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "clang_cl_x86" ],
+      "variables": []
+    }
+  ]
+}

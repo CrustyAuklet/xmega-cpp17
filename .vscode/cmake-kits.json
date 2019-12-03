@@ -1,0 +1,6 @@
+[
+    {
+        "name": "avr-gcc-9.2.0",
+        "toolchainFile": "./scripts/avr-toolchain.cmake"
+    }
+]
