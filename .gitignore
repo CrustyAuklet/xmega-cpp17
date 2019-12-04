@@ -5,6 +5,7 @@
 *[Rr]eleases*/
 [nN]ON*/
 *[Bb]uild*/
+*[Oo]ut*/
 .*/
 
 # IDE and editor files
