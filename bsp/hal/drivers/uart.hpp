@@ -9,28 +9,27 @@
 namespace drivers {
 
     namespace USART {
-        constexpr bool buad_too_high(const uint32_t Baud, const bool doublespeed) {
-            return doublespeed ? (Baud > F_CPU / 8U) : (Baud > F_CPU / 8U*2U);
+        constexpr bool buad_too_high(const uint32_t CpuFreq, const uint32_t Baud, const bool doublespeed) {
+            return doublespeed ? (Baud > CpuFreq / 8U) : (Baud > CpuFreq / 8U*2U);
         }
 
-        constexpr bool buad_too_low(const uint32_t Baud, const bool doublespeed) {
-            return doublespeed ? (Baud < F_CPU / 4194304UL) : (Baud < F_CPU / 4194304UL*2UL );
+        constexpr bool buad_too_low(const uint32_t CpuFreq, const uint32_t Baud, const bool doublespeed) {
+            return doublespeed ? (Baud < CpuFreq / 4'194'304UL) : (Baud < CpuFreq / 4'194'304UL*2UL );
         }
 
         /// calculates the baud settings for UART with BAUDCTRLA in the MSB of the return value and BAUDCTRLB in the LSB
-        constexpr uint16_t get_baud(const uint32_t Baud) {
+        constexpr uint16_t get_baud(uint32_t CpuFreq, const uint32_t Baud) {
             // Find the lowest possible exponent.
-            uint32_t cpu_hz = F_CPU;
-            uint32_t limit  = 0xfffU >> 4;
-            const uint32_t ratio  = F_CPU / Baud;
+            const uint32_t ratio  = CpuFreq / Baud;
+            uint32_t limit  = 0xfffU >> 4U;
             int8_t exp = -7;
             while (exp < 7) {
                 if (ratio < limit) {
                     break;
                 }
-                limit <<= 1;
+                limit <<= 1U;
                 if (exp < -3) {
-                    limit |= 1;
+                    limit |= 1U;
                 }
                 exp++;
             }
@@ -46,26 +45,26 @@ namespace drivers {
             if (exp < 0) {
                 // We are supposed to subtract 1, then apply BSCALE. We want to apply BSCALE first,
                 // so we need to turn everything inside the parenthesis into a single fractional expression.
-                cpu_hz -= 8 * Baud;
+                CpuFreq -= 8 * Baud;
 
                 // If we end up with a left-shift after taking the final divide-by-8 into account, do the shift before the divide.
                 // Otherwise, left-shift the denominator instead (effectively resulting in an overall right shift.)
                 if (exp <= -3) {
-                    div = ((cpu_hz << (-exp - 3)) + Baud / 2) / Baud;
+                    div = ((CpuFreq << (-exp - 3)) + Baud / 2) / Baud;
                 } else {
                     const uint32_t baudShift = Baud << (exp + 3);
-                    div = (cpu_hz + baudShift / 2) / baudShift;
+                    div = (CpuFreq + baudShift / 2) / baudShift;
                 }
             } else {
                 // We will always do a right shift in this case,
                 // but we need to shift three extra positions because of the divide-by-8.
                 const uint32_t baudShift = Baud << (exp + 3);
-                div = (cpu_hz + baudShift / 2) / baudShift - 1;
+                div = (CpuFreq + baudShift / 2) / baudShift - 1;
             }
 
-            const uint8_t buad_ctrl_a = div;
-            const uint8_t buad_ctrl_b = (((div >> 8) & 0X0F) | (exp << 4));
-            return buad_ctrl_a<<8 | buad_ctrl_b;
+            const uint8_t baud_ctrl_a = div;
+            const uint8_t baud_ctrl_b = (((div >> 8U) & 0x0F) | (exp << 4U));
+            return baud_ctrl_a<<8U | baud_ctrl_b;
         }
 
         using CHAR_SIZE = sfr::USART::CHSIZEv;
@@ -82,18 +81,18 @@ namespace drivers {
             : m_instance(instance), m_rx(rxp), m_tx(txp)
         {}
 
-        template <uint32_t Baud = 9600, bool DoubleSpeed = false>
+        template <uint32_t CpuFreq, uint32_t Baud = 9600, bool DoubleSpeed = false>
         constexpr void init(const USART::CHAR_SIZE CharSize = USART::CHAR_SIZE::_8BIT, const USART::PARITY_MODE ParityMode = USART::PARITY_MODE::DISABLED, const bool TwoStopBits = false) const noexcept {
-            static_assert(!USART::buad_too_high(Baud, DoubleSpeed), "Chosen baud rate is too high!");
-            static_assert(!USART::buad_too_low(Baud, DoubleSpeed), "Chosen baud rate is too low!");
+            static_assert(!USART::buad_too_high(CpuFreq, Baud, DoubleSpeed), "Chosen baud rate is too high!");
+            static_assert(!USART::buad_too_low(CpuFreq, Baud, DoubleSpeed), "Chosen baud rate is too low!");
 
             m_rx.set_input();
             m_rx.configure(GPIO::PinConfig::MODE_TOTEM);
             m_tx.set_output();
             m_tx.set_low();
 
-            m_instance.BAUDCTRLA = USART::get_baud(Baud) >> 8;
-            m_instance.BAUDCTRLB = USART::get_baud(Baud) & 0xFF;
+            m_instance.BAUDCTRLA = USART::get_baud(CpuFreq, Baud) >> 8;
+            m_instance.BAUDCTRLB = USART::get_baud(CpuFreq, Baud) & 0xFF;
             m_instance.CTRLB.CLK2X = DoubleSpeed;
 
             m_instance.CTRLC = m_instance.CTRLC.PMODE.shift(ParityMode)

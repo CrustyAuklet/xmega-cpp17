@@ -2,7 +2,7 @@
 #include <util/delay.h>
 
 [[gnu::OS_main]] int main() {
-    board::SerialC0.init<9600, true>();
+    board::SerialC0.init<board::CPUFreq, 9600, true>();
     board::SerialC0.start();
     board::UserLED.init();
 
