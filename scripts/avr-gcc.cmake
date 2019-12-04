@@ -67,6 +67,10 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 )
 
 add_custom_target(program_edbg
-       COMMAND ${AT_UPPLOAD} -t edbg -i PDI -d ${CMAKE_SYSTEM_PROCESSOR} program -f $<SHELL_PATH:$<TARGET_FILE:${PROJECT_NAME}>>
+       COMMAND ${AT_UPPLOAD} -t edbg -i PDI -d ${CMAKE_SYSTEM_PROCESSOR} -xr program -fl --verify -f $<SHELL_PATH:$<TARGET_FILE:${PROJECT_NAME}>>
        DEPENDS ${PROJECT_NAME}
+)
+
+add_custom_target(chiperase_edbg
+        COMMAND ${AT_UPPLOAD} -t edbg -i PDI -d ${CMAKE_SYSTEM_PROCESSOR} -xr chiperase
 )
