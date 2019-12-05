@@ -1,13 +1,10 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.15)
 project(xmega-hal
         LANGUAGES C CXX )
 
 add_executable(${PROJECT_NAME} main.cpp)
 
 add_subdirectory(bsp)
-
-# all post build steps in a generic file. Include after add_executable!
-include(scripts/avr-gcc.cmake)
 
 target_sources(${PROJECT_NAME}
     PUBLIC
@@ -23,14 +20,30 @@ target_compile_features(${PROJECT_NAME}
         cxx_std_17
 )
 
-target_compile_options(${PROJECT_NAME}
-    PUBLIC
-        $<$<CONFIG:Debug>:-O1>    # avr delay doesn't work with no optimization
-        "-fno-exceptions"
-        "-fno-rtti"
-        "-funsigned-char"
-        "-funsigned-bitfields"
-        "-fpack-struct"
-        "-fshort-enums"
-        "-Wall"
-)
+if(CMAKE_CROSSCOMPILING)
+    # all post build steps in a generic file. Include after add_executable!
+    include(scripts/avr-gcc.cmake)
+
+    target_compile_options(${PROJECT_NAME}
+        PUBLIC
+            $<$<CONFIG:Debug>:-O1>    # avr delay doesn't work with no optimization
+            "-fno-exceptions"
+            "-fno-rtti"
+            "-funsigned-char"
+            "-funsigned-bitfields"
+            "-fpack-struct"
+            "-fshort-enums"
+            "-Wall"
+    )
+else()
+    target_compile_options(${PROJECT_NAME}
+            PUBLIC
+            "-fno-exceptions"
+            "-fno-rtti"
+            "-funsigned-char"
+            "-funsigned-bitfields"
+            #"-fpack-struct"
+            #"-fshort-enums"
+            "-Wall"
+    )
+endif()

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.15)
 
 add_library(hal INTERFACE)
 add_library(avr::hal ALIAS hal)
