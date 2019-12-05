@@ -69,21 +69,46 @@ struct reg_t
     using type = T;
     static inline volatile T& value()noexcept
     {
-       return *reinterpret_cast<volatile T*>(address);
+        if constexpr (sim::simulation) {
+            // use memory mapped file
+            return *reinterpret_cast<volatile T*>( sim::get_mem_address(address) );
+        }
+        else {
+            return *reinterpret_cast<volatile T*>(address);
+        }
+    }
+
+    static inline T read() noexcept
+    {
+        if constexpr (sim::simulation) {
+            return sim::read<T>(address);
+        }
+        else {
+            return *reinterpret_cast<volatile T*>(address);
+        }
+    }
+
+    static inline void write(const T val) noexcept
+    {
+        static_assert (!readonly,"this register is read-only");
+        if constexpr (sim::simulation) {
+            sim::write(address, val);
+        }
+        else {
+            *reinterpret_cast<volatile T*>(address) = val;
+        }
     }
 
     inline constexpr reg_t operator=(const T& value) const noexcept
     {
-        static_assert (!readonly,"this register is read-only");
-        reg_t::value() = value;
+        reg_t::write(value);
         return reg_t<T,address>{};
     }
 
     template<typename U>
     inline constexpr auto operator=(const U& bit_field_value) const noexcept -> decltype (std::declval<U>().value, std::declval<U>().mask, std::declval<reg_t<T,address>>())
     {
-        static_assert (!readonly,"this register is read-only");
-        reg_t::value() = bit_field_value.value;
+        reg_t::write(bit_field_value.value);
         // NOTE: this is OK as long as the type has no state
         return reg_t<T,address>{};
     }
@@ -91,31 +116,27 @@ struct reg_t
     template<typename U>
     inline constexpr auto operator|=(const U& bit_field_value) const noexcept -> decltype (std::declval<U>().value, std::declval<U>().mask, std::declval<reg_t<T,address>>())
     {
-        static_assert (!readonly,"this register is read-only");
-        reg_t::value() = (reg_t::value() & ~bit_field_value.mask) | bit_field_value.value;
+        reg_t::write( (reg_t::read() & ~bit_field_value.mask) | bit_field_value.value );
         // NOTE: this is OK as long as the type has no state
         return reg_t<T,address>{};
     }
 
     inline constexpr reg_t operator|=(const T& value) const noexcept
     {
-        static_assert (!readonly,"this register is read-only");
-        reg_t::value() |= value;
+        reg_t::write( reg_t::read() | value );
         // NOTE: this is OK as long as the type has no state
         return reg_t<T,address>{};
     }
 
     inline constexpr reg_t operator&=(const T& value) const noexcept
     {
-        static_assert (!readonly,"this register is read-only");
-        reg_t::value() &= value;
+        reg_t::write( reg_t::read() & value );
         return reg_t<T,address>{};
     }
 
     constexpr operator volatile T&() noexcept
     {
-        static_assert (!readonly,"this register is read-only");
-        return value();
+        return read();
     }
     constexpr operator const volatile T&() const noexcept { return *reinterpret_cast<volatile T*>(address); }
 };
@@ -152,18 +173,16 @@ struct bitfield_t
 
     inline constexpr bitfield_t operator=(const value_t& value) const noexcept
     {
-        static_assert (!readonly,"this bit field is read-only");
         type tmp = shift(value).value;
-        reg_t::value() = (reg_t::value() &  ~mask)|tmp;
+        reg_t::write( (reg_t::read() &  ~mask)|tmp );
         return bitfield_t<reg_t,start_index,stop_index,value_t>{};
     }
 
     constexpr operator value_t() noexcept
     {
-        static_assert (!readonly,"this bit field is read-only");
-        return value_t((int(reg_t::value())& mask)>>start);
+        return value_t((int(reg_t::read())& mask)>>start);
     }
-    constexpr operator value_t() const noexcept { return value_t((int(reg_t::value())& mask)>>start); }
+    constexpr operator value_t() const noexcept { return value_t((int(reg_t::read())& mask)>>start); }
 };
 
 namespace  {
@@ -202,17 +221,17 @@ struct bitfield_array_t
     inline constexpr bitfield_array_t operator=(const T& value) const noexcept
     {
         if constexpr(std::is_integral_v<T>)
-            reg_t::value() = mask & (value << start_index);
+            reg_t::write( mask & (value << start_index) );
         else if constexpr(std::conjunction_v<std::is_enum<T>, std::is_same<T,value_t>>)
         {
             auto v = bitfield_cat<count-1>(static_cast<unsigned long long>(value), width);
-            reg_t::value() = mask & (v << start_index);
+            reg_t::write( mask & (v << start_index) );
         }
         return bitfield_array_t<start_index,width,reg_t,count,value_t>{};
     }
 
-    constexpr operator typename reg_t::type() noexcept { return typename reg_t::type((int(reg_t::value())& mask)>>start_index); }
-    constexpr operator typename reg_t::type() const noexcept { return typename reg_t::type((int(reg_t::value())& mask)>>start_index); }
+    constexpr operator typename reg_t::type() noexcept { return typename reg_t::type((int(reg_t::read())& mask)>>start_index); }
+    constexpr operator typename reg_t::type() const noexcept { return typename reg_t::type((int(reg_t::read())& mask)>>start_index); }
 };
 
 }

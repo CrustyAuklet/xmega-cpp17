@@ -20,6 +20,17 @@ target_compile_features(${PROJECT_NAME}
         cxx_std_17
 )
 
+target_compile_options(${PROJECT_NAME}
+    PUBLIC
+        "-fno-exceptions"
+        "-fno-rtti"
+        "-funsigned-char"
+        "-funsigned-bitfields"
+        "-fdata-sections"
+        "-ffunction-sections"
+        "-Wall"
+)
+
 if(CMAKE_CROSSCOMPILING)
     # all post build steps in a generic file. Include after add_executable!
     include(scripts/avr-gcc.cmake)
@@ -27,23 +38,11 @@ if(CMAKE_CROSSCOMPILING)
     target_compile_options(${PROJECT_NAME}
         PUBLIC
             $<$<CONFIG:Debug>:-O1>    # avr delay doesn't work with no optimization
-            "-fno-exceptions"
-            "-fno-rtti"
-            "-funsigned-char"
-            "-funsigned-bitfields"
             "-fpack-struct"
             "-fshort-enums"
-            "-Wall"
     )
 else()
     target_compile_options(${PROJECT_NAME}
-            PUBLIC
-            "-fno-exceptions"
-            "-fno-rtti"
-            "-funsigned-char"
-            "-funsigned-bitfields"
-            #"-fpack-struct"
-            #"-fshort-enums"
-            "-Wall"
+        PUBLIC
     )
 endif()
