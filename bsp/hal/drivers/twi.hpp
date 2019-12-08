@@ -20,37 +20,108 @@ namespace drivers {
         using BUS_TIMEOUT = sfr::TWI::MASTER_TIMEOUTv;
         using SDA_HOLD = sfr::TWI::SDAHOLDv;
         using INT_LVL = sfr::TWI::MASTER_INTLVLv;
+        using MASTER_CMD = sfr::TWI::MASTER_CMDv;
+
+        enum class TWI_ERROR : uint8_t { NACK, ARBITRATION_LOST, BUS_ERROR };
+
+        struct MasterStatus {
+            uint8_t twi_status_byte;
+
+            /**
+             * This flag is set when a byte is successfully received in master read mode; i.e., no
+             * arbitration was lost or bus error occurred during the operation. Writing a one to
+             * this bit location will clear RIF. When this flag is set, the master forces the SCL line low,
+             * stretching the TWI clock period. Clearing the interrupt flags will release the SCL line.
+             *
+             * Flag is cleared automatically when: writing to ADDR, writing to DATA, reading DATA,
+             * or writing a valid CMD to CTRLC
+             * @return TRUE if the read complete flag is set
+             */
+            constexpr bool read_complete() const noexcept {
+                return twi_status_byte & (1U<<7U);
+            }
+
+            /**
+             * This flag is set when a byte is transmitted in master write mode. The flag is set regardless
+             * of the occurrence of a bus error or an arbitration lost condition. WIF is also set if
+             * arbitration is lost during sending of a NACK in master read mode, and if issuing a START
+             * condition when the bus state is unknown. Writing a one to this bit location will clear WIF.
+             * When this flag is set, the master forces the SCL line low, stretching the TWI clock period.
+             * Clearing the interrupt flags will release the SCL line.
+             * @return TRUE if the Write complete flag is set
+             */
+            constexpr bool write_complete() const noexcept {
+                return twi_status_byte & (1U<<6U);;
+            }
+
+            /**
+             * This flag is set when the master is holding the SCL line low. This is a status flag and
+             * a read-only flag that is set when RIF or WIF is set.
+             */
+            constexpr bool clock_holding() const noexcept {
+                return twi_status_byte & (1U<<5U);
+            }
+
+            /// Returns the most recent acknowledge bit from the slave, returning TRUE if that was an ACK
+            constexpr bool received_nack() const noexcept {
+                // in hardware a 1 means a NACK was received last
+                return twi_status_byte & (1U<<4U);
+            }
+
+            /**
+             * This flag is set if arbitration is lost while transmitting a high data bit or a NACK bit,
+             * or while issuing a START or repeated START condition on the bus.
+             * This can be cleared directly with clear_arbitration_lost() or by writing to the ADDR register.
+             * @return TRUE if arbitration was lost during last transmission
+             */
+            constexpr bool arbitration_lost() const noexcept {
+                return twi_status_byte & (1U<<3U);
+            }
+
+            /**
+             * An illegal bus condition occurs if a  repeated START or a STOP condition is detected, and the number
+             * of received or transmitted bits from the previous START condition is not a multiple of nine.
+             * This can be cleared directly with clear_bus_error() or by writing to the ADDR register.
+             * @return TRUE if an illegal bus condition has occurred
+             */
+            constexpr bool bus_error() const noexcept {
+                return twi_status_byte & (1U<<2U);
+            }
+
+            /// returns the current bus state
+            constexpr TWI::BUS_STATE state() const noexcept {
+                return static_cast<TWI::BUS_STATE>(twi_status_byte & 0x03U);
+            }
+
+            /// returns true if any write error occured
+            constexpr bool write_error() const noexcept {
+                return twi_status_byte & (0x1CU);    // mask for NACK, arbitration lost, or bus error
+            }
+        };
+
     } // namespace TWI
 
     template <typename TWI_INSTANCE, typename SDA_PIN, typename SCL_PIN>
-    class TWI_Basic {
-//        I2C_INSTANCE m_instance;
-//        SDA_PIN m_sda;
-//        SCL_PIN m_scl;
-        decltype(device::TWIC) m_instance;  // ERROR: remove this include!
-        decltype(device::PC2) m_sda;        // ERROR: remove this include!
-        decltype(device::PC3) m_scl;        // ERROR: remove this include!
+    class TWI_Master_Basic {
+        TWI_INSTANCE m_instance;
+        SDA_PIN m_sda;
+        SCL_PIN m_scl;
+//        decltype(device::TWIC) m_instance;  // ERROR: remove this include!
+//        decltype(device::PC2) m_sda;        // ERROR: remove this include!
+//        decltype(device::PC3) m_scl;        // ERROR: remove this include!
     public:
-        constexpr TWI_Basic(const TWI_INSTANCE instance, const SDA_PIN sdapin, const SCL_PIN sclpin)
+        constexpr TWI_Master_Basic(const TWI_INSTANCE instance, const SDA_PIN sdapin, const SCL_PIN sclpin)
             : m_instance(instance), m_sda(sdapin), m_scl(sclpin)
         {}
 
         template <uint32_t CpuFreq, uint32_t Baud = 100'000, uint32_t TRise = 0>
         constexpr void init() const noexcept {
-            // config pins for TWI master
-            m_sda.set_output();
-            m_sda.set_low();
-            m_sda.configure(GPIO::PinConfig::MODE_TOTEM);
-            m_scl.set_output();
-            m_scl.set_low();
-            m_scl.configure(GPIO::PinConfig::MODE_TOTEM);
-
             m_instance.CTRL = m_instance.CTRL.SDAHOLD.shift(TWI::SDA_HOLD::OFF)   // SDA Holdoff Time
                              | m_instance.CTRL.EDIEN.shift(false);    // External Driver Interface Enable
 
 
             m_instance.MASTER.CTRLB = m_instance.MASTER.CTRLB.TIMEOUT.shift(TWI::BUS_TIMEOUT::_200US)   // Bus Timeout Disabled
-                                    | m_instance.MASTER.CTRLB.QCEN.shift(true)      // Quick Command Enable: read/write ISR triggered at slave ack
+                                    | m_instance.MASTER.CTRLB.QCEN.shift(false)      // Quick Command Enable: read/write ISR triggered at slave ack
                                     | m_instance.MASTER.CTRLB.SMEN.shift(true);     // Smart Mode Enable: sent immediately after reading DATA register based on ACKACT mode
 
             // set bus state to unknown and clear RIF and WIF
@@ -71,12 +142,22 @@ namespace drivers {
 
         /// enables the twi module
         constexpr void start() const noexcept {
+            // config pins for TWI master
+            m_sda.set_output();
+            m_sda.configure(GPIO::PinConfig::MODE_TOTEM);
+            m_scl.set_output();
+            m_scl.configure(GPIO::PinConfig::MODE_TOTEM);
+            // enable peripheral
             m_instance.MASTER.CTRLA.ENABLE = true;
         }
 
         /// disables the twi module
         constexpr void stop() const noexcept {
+            // disable peripheral
             m_instance.MASTER.CTRLA.ENABLE = false;
+            // put pins in low power mode
+            m_sda.set_lowpower();
+            m_scl.set_lowpower();
         }
 
         /// enables TWI read and write interrupts at the given level
@@ -86,78 +167,28 @@ namespace drivers {
                                     |  m_instance.MASTER.CTRLA.WIEN.shift(write);
         }
 
-        /**
-         * This flag is set when a byte is successfully received in master read mode; i.e., no
-         * arbitration was lost or bus error occurred during the operation. Writing a one to
-         * this bit location will clear RIF. When this flag is set, the master forces the SCL line low,
-         * stretching the TWI clock period. Clearing the interrupt flags will release the SCL line.
-         *
-         * Flag is cleared automatically when: writing to ADDR, writing to DATA, reading DATA,
-         * or writing a valid CMD to CTRLC
-         * @return TRUE if the read complete flag is set
-         */
-        constexpr bool read_complete() const noexcept {
-            return m_instance.MASTER.STATUS.RIF;
+        constexpr TWI::MasterStatus get_status() const noexcept {
+            return {m_instance.MASTER.STATUS};
         }
 
-        /**
-         * This flag is set when a byte is transmitted in master write mode. The flag is set regardless
-         * of the occurrence of a bus error or an arbitration lost condition. WIF is also set if
-         * arbitration is lost during sending of a NACK in master read mode, and if issuing a START
-         * condition when the bus state is unknown. Writing a one to this bit location will clear WIF.
-         * When this flag is set, the master forces the SCL line low, stretching the TWI clock period.
-         * Clearing the interrupt flags will release the SCL line.
-         * @return TRUE if the Write complete flag is set
-         */
-        constexpr bool write_complete() const noexcept {
-            return m_instance.MASTER.STATUS.WIF;
-        }
-
-        /**
-         * This flag is set when the master is holding the SCL line low. This is a status flag and
-         * a read-only flag that is set when RIF or WIF is set.
-         */
-        constexpr bool clock_holding() const noexcept {
-            return m_instance.MASTER.STATUS.CLKHOLD;
-        }
-
-        /// Returns the most recent acknowledge bit from the slave, returning TRUE if that was an ACK
-        constexpr bool received_ack() const noexcept {
-            // in hardware a 1 means a NACK was received last
-            return !m_instance.MASTER.STATUS.RXACK;
-        }
-
-        /**
-         * This flag is set if arbitration is lost while transmitting a high data bit or a NACK bit,
-         * or while issuing a START or repeated START condition on the bus.
-         * This can be cleared directly with clear_arbitration_lost() or by writing to the ADDR register.
-         * @return TRUE if arbitration was lost during last transmission
-         */
-        constexpr bool arbitration_lost() const noexcept {
-            return m_instance.MASTER.STATUS.ARBLOST;
-        }
         /// clears the arbitration lost flag
         constexpr void clear_arbitration_lost() const noexcept {
             m_instance.MASTER.STATUS.ARBLOST = 1;
         }
 
-        /**
-         * An illegal bus condition occurs if a  repeated START or a STOP condition is detected, and the number
-         * of received or transmitted bits from the previous START condition is not a multiple of nine.
-         * This can be cleared directly with clear_bus_error() or by writing to the ADDR register.
-         * @return TRUE if an illegal bus condition has occurred
-         */
-        constexpr bool bus_error() const noexcept {
-            return m_instance.MASTER.STATUS.BUSERR;
-        }
         /// clears the bus error flag
         constexpr void clear_bus_error() const noexcept {
             m_instance.MASTER.STATUS.BUSERR = 1;
         }
 
-        /// returns the current bus state
-        constexpr TWI::BUS_STATE state() const noexcept {
-            return m_instance.MASTER.STATUS.BUSSTATE;
+        /// clears the write complete interrupt
+        constexpr void clear_write_interrupt() const noexcept {
+            m_instance.MASTER.STATUS.WIF = 1;
+        }
+
+        /// clears the read complete interrupt
+        constexpr void clear_read_interrupt() const noexcept {
+            m_instance.MASTER.STATUS.RIF = 1;
         }
 
         /**
@@ -182,10 +213,13 @@ namespace drivers {
          *
          * All TWI master flags are automatically cleared when ADDR is written. This includes BUSERR,
          * ARBLOST, RIF, and WIF.
-         * @return current address set in hardware
          */
-        constexpr void write_address(const uint8_t a) const noexcept {
-            return m_instance.MASTER.ADDR = a;
+        template<bool SevenBitAddress=false>
+        constexpr void write_address(uint8_t address, const bool read = false) const noexcept {
+            if constexpr (SevenBitAddress) {
+                address <<= 1U;
+            }
+            m_instance.MASTER.ADDR = (address | static_cast<uint8_t>(read));
         }
 
         /**
@@ -200,7 +234,8 @@ namespace drivers {
          * the ACKACT bit. If a bus error occurs during reception, WIF and BUSERR are set instead of RIF
          * @return byte from the data register
          */
-        constexpr uint8_t read_data() const noexcept {
+        constexpr uint8_t read_data(const bool NACK = false) const noexcept {
+            m_instance.MASTER.CTRLC.ACKACT = NACK;
             return m_instance.MASTER.DATA;
         }
 
@@ -217,47 +252,67 @@ namespace drivers {
          * @param d [IN] the data to send
          */
         constexpr void write_data(const uint8_t d) const noexcept {
-            return m_instance.MASTER.DATA = d;
+            m_instance.MASTER.DATA = d;
         }
 
-//        /**
-//         * @brief Read one character from USART_0
-//         * Function will block if a character is not available.
-//         * @return Data read from the USART_0 module
-//         */
-//        constexpr uint8_t get() const noexcept {
-//            while (!m_instance.STATUS.RXCIF) {}
-//            return m_instance.DATA;
-//        }
-//
-//        /**
-//         * \brief Write one character to USART_0
-//         * Function will block until a character can be accepted.
-//         * \param[in] data The character to write to the USART
-//         * \return Nothing
-//         */
-//        constexpr void put(const uint8_t data) const noexcept {
-//            while (!m_instance.STATUS.DREIF) {}
-//            m_instance.DATA = data;
-//        }
-//
-//        constexpr int32_t write(const char* data, const uint16_t len) const noexcept {
-//            uint16_t i = 0;
-//            for(; i < len; ++i) {
-//                put(data[i]);
-//            }
-//            return i;
-//        }
-//
-//        constexpr int32_t read(char* data, const uint16_t len) const noexcept {
-//            uint16_t i = 0;
-//            for(; i < len; ++i) {
-//                data[i] = get();
-//            }
-//            return i;
-//        }
+        /// set stop condition on the bus, with or without a NACK
+        constexpr void send_stop(const bool NACK = false) const noexcept {
+            m_instance.MASTER.CTRLC = m_instance.MASTER.CTRLC.ACKACT.shift(NACK)
+                                    | m_instance.MASTER.CTRLC.CMD.shift(TWI::MASTER_CMD::STOP);
+        }
+
+        /// send a buffer of data to the given address
+        template<bool SevenBitAddress=false>
+        constexpr uint16_t write(const uint8_t addr, const uint8_t* data, const uint16_t length, const bool stop = true) const noexcept {
+            write_address<SevenBitAddress>(addr);
+            while(!get_status().write_complete()){}
+            if(get_status().write_error()) {
+                send_stop();
+                return 0;
+            }
+            //clear_write_interrupt();
+
+            uint16_t count = 0;
+            while(count < length) {
+                write_data(data[count]);
+                while(!get_status().write_complete()) {}
+                if(get_status().write_error()) {
+                    return count;
+                }
+                //clear_write_interrupt();
+                ++count;
+            }
+
+            if(stop) {
+                send_stop();
+            }
+            return count;
+        }
+
+        /// read a buffer of data
+        template<bool SevenBitAddress=false>
+        constexpr uint16_t read(const uint8_t addr, uint8_t* data, const uint16_t length) const noexcept {
+            // start a read operation
+            write_address<SevenBitAddress>(addr, true);
+            uint16_t count = 0;
+
+            while(count < length) {
+                while(!get_status().read_complete()){}
+                if(get_status().write_error()) {
+                    send_stop(true);
+                    return 0;
+                }
+                const bool send_nack = (count == length-1);
+                data[count] = read_data(send_nack);
+                ++count;
+            }
+            send_stop();
+            return count;
+        }
 
     };
+
+
 
 } // namespace drivers
 #pragma clang diagnostic pop
