@@ -2,12 +2,10 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "readability-static-accessed-through-instance"
 
-#include "gpio.hpp"
 #include "peripherals/USART.hpp"
-#include <cstdint>
-
-// ERROR: remove this include!
+#include "gpio.hpp"
 #include "device.hpp"
+#include <cstdint>
 
 namespace drivers {
 
@@ -24,6 +22,7 @@ namespace drivers {
 
         enum class TWI_ERROR : uint8_t { NACK, ARBITRATION_LOST, BUS_ERROR };
 
+		// TODO: Improve this status class API
         struct MasterStatus {
             uint8_t twi_status_byte;
 
@@ -106,9 +105,9 @@ namespace drivers {
         TWI_INSTANCE m_instance;
         SDA_PIN m_sda;
         SCL_PIN m_scl;
-//        decltype(device::TWIC) m_instance;  // ERROR: remove this include!
-//        decltype(device::PC2) m_sda;        // ERROR: remove this include!
-//        decltype(device::PC3) m_scl;        // ERROR: remove this include!
+//        decltype(device::TWIC) m_instance;  // NOTE: This is only to assist in auto-complete. Comment out for compile.
+//        decltype(device::PC2) m_sda;        // NOTE: This is only to assist in auto-complete. Comment out for compile.
+//        decltype(device::PC3) m_scl;        // NOTE: This is only to assist in auto-complete. Comment out for compile.
     public:
         constexpr TWI_Master_Basic(const TWI_INSTANCE instance, const SDA_PIN sdapin, const SCL_PIN sclpin)
             : m_instance(instance), m_sda(sdapin), m_scl(sclpin)
@@ -122,7 +121,7 @@ namespace drivers {
 
             m_instance.MASTER.CTRLB = m_instance.MASTER.CTRLB.TIMEOUT.shift(TWI::BUS_TIMEOUT::_200US)   // Bus Timeout Disabled
                                     | m_instance.MASTER.CTRLB.QCEN.shift(false)      // Quick Command Enable: read/write ISR triggered at slave ack
-                                    | m_instance.MASTER.CTRLB.SMEN.shift(true);     // Smart Mode Enable: sent immediately after reading DATA register based on ACKACT mode
+                                    | m_instance.MASTER.CTRLB.SMEN.shift(false);     // Smart Mode Enable: sent immediately after reading DATA register based on ACKACT mode
 
             // set bus state to unknown and clear RIF and WIF
             m_instance.MASTER.STATUS = m_instance.MASTER.STATUS.BUSSTATE.shift(TWI::BUS_STATE::UNKNOWN)
@@ -232,11 +231,16 @@ namespace drivers {
          * In master read mode, RIF and CLKHOLD are set when one byte is received in the DATA register.
          * If smart mode is enabled, reading the DATA register will trigger the bus operation as set by
          * the ACKACT bit. If a bus error occurs during reception, WIF and BUSERR are set instead of RIF
+		 * @param last_byte [IN] If false then the read will be automatically ACKed and the next byte will be read. 
+		 *						 If TRUE then no action is taken, just a simple read
          * @return byte from the data register
          */
-        constexpr uint8_t read_data(const bool NACK = false) const noexcept {
-            m_instance.MASTER.CTRLC.ACKACT = NACK;
-            return m_instance.MASTER.DATA;
+        constexpr uint8_t read_data(const bool last_byte = false) const noexcept {
+			const uint8_t data = m_instance.MASTER.DATA;
+            if(!last_byte) {
+                m_instance.MASTER.CTRLC = m_instance.MASTER.CTRLC.CMD.shift(TWI::MASTER_CMD::RECVTRANS);
+            }
+            return data;
         }
 
         /**
@@ -255,11 +259,15 @@ namespace drivers {
             m_instance.MASTER.DATA = d;
         }
 
-        /// set stop condition on the bus, with or without a NACK
+        /// set stop condition on the bus, with or without a preceding NACK
         constexpr void send_stop(const bool NACK = false) const noexcept {
-            m_instance.MASTER.CTRLC = m_instance.MASTER.CTRLC.ACKACT.shift(NACK)
-                                    | m_instance.MASTER.CTRLC.CMD.shift(TWI::MASTER_CMD::STOP);
+            m_instance.MASTER.CTRLC = m_instance.MASTER.CTRLC.ACKACT.shift(NACK) | m_instance.MASTER.CTRLC.CMD.shift(TWI::MASTER_CMD::STOP);
         }
+		
+		/// set a repeated start condition on the bus. With or without a preceding NACK.
+		constexpr void send_restart(const bool NACK = false) const noexcept {
+			m_instance.MASTER.CTRLC = m_instance.MASTER.CTRLC.ACKACT.shift(NACK) | m_instance.MASTER.CTRLC.CMD.shift(TWI::MASTER_CMD::REPSTART);
+		}
 
         /// send a buffer of data to the given address
         template<bool SevenBitAddress=false>
@@ -267,19 +275,18 @@ namespace drivers {
             write_address<SevenBitAddress>(addr);
             while(!get_status().write_complete()){}
             if(get_status().write_error()) {
-                send_stop();
+                send_stop(true);
                 return 0;
             }
-            //clear_write_interrupt();
 
             uint16_t count = 0;
             while(count < length) {
                 write_data(data[count]);
                 while(!get_status().write_complete()) {}
                 if(get_status().write_error()) {
+                    send_stop(true);
                     return count;
                 }
-                //clear_write_interrupt();
                 ++count;
             }
 
@@ -302,17 +309,17 @@ namespace drivers {
                     send_stop(true);
                     return 0;
                 }
-                const bool send_nack = (count == length-1);
-                data[count] = read_data(send_nack);
+				
+                const bool last_byte = (count == length-1);
+                data[count] = read_data(last_byte);
                 ++count;
             }
-            send_stop();
+			send_stop(true);
+            while(get_status().state() != TWI::BUS_STATE::IDLE) {}
             return count;
         }
 
     };
-
-
 
 } // namespace drivers
 #pragma clang diagnostic pop
