@@ -52,11 +52,11 @@ static uint8_t crc8(void* inData, uint8_t len, uint8_t init){
 		const uint16_t temp_code = (buf[0] << 8U) | buf[1];
 
 		if( !(crc8(buf, 2, 0x00) == buf[2]) ) {
-            board::SerialC0.write("CRC doesn't match!", 19);
+            board::EDBG_VCOM.write("CRC doesn't match!", 19);
         }
 		else {
 			snprintf(buffer, BufferSize, "Read: 0x%02X 0x%02X 0x%02X --> %3.2f\n", buf[0], buf[1], buf[2], si705x_celsius(temp_code));
-			board::SerialC0.write(buffer, strlen(buffer));
+			board::EDBG_VCOM.write(buffer, strlen(buffer));
 		}
     }
 }
