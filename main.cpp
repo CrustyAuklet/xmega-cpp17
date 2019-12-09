@@ -58,5 +58,9 @@ static uint8_t crc8(void* inData, uint8_t len, uint8_t init){
 			snprintf(buffer, BufferSize, "Read: 0x%02X 0x%02X 0x%02X --> %3.2f\n", buf[0], buf[1], buf[2], si705x_celsius(temp_code));
 			board::EDBG_VCOM.write(buffer, strlen(buffer));
 		}
+
+		uint16_t acdreading = board::ADC.read(0);
+        snprintf(buffer, BufferSize, "ADC Read: 0x%02X 0x%02X --> %d\n", acdreading >> 8, acdreading & 0xFFU, acdreading);
+        board::EDBG_VCOM.write(buffer, strlen(buffer));
     }
 }

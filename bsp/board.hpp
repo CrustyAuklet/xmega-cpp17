@@ -16,6 +16,9 @@ namespace board {
     inline constexpr drivers::TWI_Master_Basic I2C_C(device::TWIC, device::PC0, device::PC1);
     inline constexpr drivers::LedInverted UserLED(device::PQ3);
 
+    inline constexpr drivers::ADC_SingleEnded_Basic ADC(device::ADCA);
+
+
     constexpr bool init() {
         SerialC0.init<CPUFreq, 9600, true>();
         SerialC0.start();
@@ -24,6 +27,10 @@ namespace board {
         I2C_C.init<CPUFreq, 100'000>();
         I2C_C.start();
         UserLED.init();
+
+        ADC.init(drivers::ADC::RESOLUTION::_12BIT);
+        ADC.start();
+        device::PA0.set_analog();
         return true;
     }
 

@@ -41,6 +41,12 @@ if(CMAKE_CROSSCOMPILING)
             "-fpack-struct"
             "-fshort-enums"
     )
+    target_link_options(${PROJECT_NAME}
+        INTERFACE
+            ${MCPU_FLAGS}
+            "-Wl,-u,vfprintf -lprintf_flt -lm"
+    )
+
 else()
     target_compile_options(${PROJECT_NAME}
         PUBLIC

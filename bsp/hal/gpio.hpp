@@ -90,6 +90,10 @@ public:
         configure(GPIO::PinConfig::MODE_PULLUP);
     }
 
+    constexpr void set_analog() const noexcept {
+        configure(GPIO::PinConfig::MODE_TOTEM | GPIO::PinConfig::SENSE_INPUT_DISABLE);
+    }
+
 };
 
 template < typename GPIO_PIN >
