@@ -22,6 +22,7 @@ target_sources(hal
         drivers/twi.hpp
         drivers/uart.hpp
         drivers/adc.hpp
+        drivers/clk.hpp
 
         # implementation files if this is a simulation run
         $<$<NOT:$<BOOL:${CMAKE_CROSSCOMPILING}>>:${CMAKE_CURRENT_LIST_DIR}/register.cpp>

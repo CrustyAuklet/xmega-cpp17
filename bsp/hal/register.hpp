@@ -37,7 +37,6 @@ void set(reg_t reg, bitfield_t... bitfields)
 {
     // TODO find a way to set many fields at once
     //static_assert((std::is_same_v<reg_t,decltype (bitfields)> & ...),"");
-
 }
 
 template <typename T>
@@ -74,7 +73,7 @@ struct reg_t
             return *reinterpret_cast<volatile T*>( sim::get_mem_address(address) );
         }
         else {
-            return *reinterpret_cast<volatile T*>(address);
+            return *reinterpret_cast<volatile T *>(address);
         }
     }
 
@@ -84,7 +83,13 @@ struct reg_t
             return sim::read<T>(address);
         }
         else {
-            return *reinterpret_cast<volatile T*>(address);
+            if constexpr (sizeof(T) == 1) {
+                return *reinterpret_cast<volatile T *>(address);
+            }
+            if constexpr (sizeof(T) == 2) {
+                // TODO: on XMEGA the high byte MUST be written before the high b
+                return *reinterpret_cast<volatile T *>(address);
+            }
         }
     }
 
@@ -95,7 +100,13 @@ struct reg_t
             sim::write(address, val);
         }
         else {
-            *reinterpret_cast<volatile T*>(address) = val;
+            if constexpr (sizeof(T) == 1) {
+                *reinterpret_cast<volatile T *>(address) = val;
+            }
+            if constexpr (sizeof(T) == 2) {
+                // TODO: on XMEGA the low byte MUST be written before the high byte
+                *reinterpret_cast<volatile T *>(address) = val;
+            }
         }
     }
 
