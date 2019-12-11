@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ARMmbed Binary Size Analysis</title>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+      href="https://fonts.googleapis.com/css?family=Open+Sans:400,600">
+    <link rel="stylesheet" type="text/css" href="sequences.css"/>
+  </head>
+  <body>
+    <div id="main">
+      <div id="sequence"></div>
+      <div id="chart">
+        <div id="explanation" style="visibility: hidden;">
+          <span id="percentage"></span><br/>
+          bytes in <span id="percentage_desc"></span>
+        </div>
+      </div>
+    </div>
+    <div id="sidebar">
+      <div id="legend"></div>
+      <p>Hover over element to see name and size.</p>
+      <p>Click on an element to zoom in.</p>
+      <p>Click on centre circle to zoom out.</p>
+    </div>
+    <div id="footer">
+      Create your own <a href="https://github.com/ARMmbed/mbed-os-linker-report">linker reports</a> using d3.js.
+    </div>
+    <script type="text/javascript" src="linker-report.js"></script>
+    <script type="text/javascript" src="sequences.js"></script>
+    <script type="text/javascript">
+      // Hack to make this example display correctly in an iframe on bl.ocks.org
+      d3.select(self.frameElement).style("height", "700px");
+    </script>
+  </body>
+</html>

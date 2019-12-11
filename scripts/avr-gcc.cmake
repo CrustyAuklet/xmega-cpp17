@@ -58,7 +58,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${AVR-NM}
-        -Crtd   #demangle, reverse sorted, use decimal numbers
+        -Cr   #demangle, reverse sorted, use decimal numbers
         -l
         --size-sort
         -f sysv

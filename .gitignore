@@ -27,3 +27,5 @@ desktop.ini
 [tT]humbs.db
 .DS_Store
 .idea/workspace.xml
+__pycache__/
+*venv*/
