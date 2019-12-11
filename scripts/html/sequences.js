@@ -9,15 +9,17 @@ var b = {
 };
 
 // Mapping of step names to colors.
-var colors = {
-  ".bss": "#5687d1",
-  ".data": "#7b615c",
-  ".uvisor.bss": "#de783b",
-  ".uvisor.secure": "#6ab975",
-  ".page_heap": "#a173d1",
-  ".text": "#bbbbbb",
-  "xmega": "#e0e0e0"
-};
+if (typeof colors === 'undefined') {
+  var colors = {
+    ".bss": "#5687d1",
+    ".data": "#7b615c",
+    ".uvisor.bss": "#de783b",
+    ".uvisor.secure": "#6ab975",
+    ".page_heap": "#a173d1",
+    ".text": "#bbbbbb",
+    "xmega": "#e0e0e0"
+  };
+}
 
 var x = d3.scale.linear()
     .range([0, 2 * Math.PI]);
@@ -87,7 +89,7 @@ var arc = d3.svg.arc()
   setPercentage(topLevel.value, topLevel.name);
 
   updateBreadcrumbs([rootNode], "100%");
-})(null, mbed_map);
+})(null, linker_report);
 
 function getPercentageString(val, tol) {
   var percentage = (100 * val / tol).toPrecision(3);
@@ -147,8 +149,8 @@ function mouseleave(d) {
 
 function setPercentage(size, name) {
   d3.select("#percentage").text(size);
-  d3.select("#percentage_desc") .text(name);
-  d3.select("#explanation") .style("visibility", "");
+  d3.select("#percentage_desc").text(name);
+  d3.select("#explanation").style("visibility", "");
 }
 
 function getRoot(node) {
