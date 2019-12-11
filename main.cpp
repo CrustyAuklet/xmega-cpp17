@@ -1,6 +1,5 @@
 #include "board.hpp"
-#include <cstdio>
-#include <cstring>
+#include "printf.h"
 #include <util/delay.h>
 
 static inline float si705x_celsius(const uint16_t READING) { return ((175.72 * READING) / 65536) - 46.85; }
@@ -33,16 +32,17 @@ static uint8_t crc8(void* inData, uint8_t len, uint8_t init){
     return bitswap(crc);
 }
 
+void _putchar(char character) {
+    board::EDBG_VCOM.put(character);
+}
+
 [[gnu::OS_main]] int main() {
     board::init();
-	constexpr int BufferSize = 100;
-	char buffer[BufferSize];
 	uint16_t counter = 0;
 
     while(1) {
         _delay_ms(1000);  // Wait for 1/2 second
-		snprintf(buffer, BufferSize, "Hello World! %d\n", counter);
-        board::SerialC0.write(buffer, strlen(buffer));
+        printf("Hello World! %d\n", counter);
 		board::UserLED.toggle();
 		counter++;
 		
@@ -52,15 +52,13 @@ static uint8_t crc8(void* inData, uint8_t len, uint8_t init){
 		const uint16_t temp_code = (buf[0] << 8U) | buf[1];
 
 		if( !(crc8(buf, 2, 0x00) == buf[2]) ) {
-            board::EDBG_VCOM.write("CRC doesn't match!", 19);
+            printf("CRC doesn't match!");
         }
 		else {
-			snprintf(buffer, BufferSize, "Read: 0x%02X 0x%02X 0x%02X --> %3.2f\n", buf[0], buf[1], buf[2], si705x_celsius(temp_code));
-			board::EDBG_VCOM.write(buffer, strlen(buffer));
+		    printf("Read: 0x%02X 0x%02X 0x%02X --> %3.2f\n", buf[0], buf[1], buf[2], si705x_celsius(temp_code));
 		}
 
-		uint16_t acdreading = board::ADC.read(0);
-        snprintf(buffer, BufferSize, "ADC Read: 0x%02X 0x%02X --> %d\n", acdreading >> 8, acdreading & 0xFFU, acdreading);
-        board::EDBG_VCOM.write(buffer, strlen(buffer));
+		uint16_t adc_reading = board::ADC.read(0);
+		printf("ADC Read: 0x%02X 0x%02X --> %d\n", adc_reading >> 8, adc_reading & 0xFFU, adc_reading);
     }
 }

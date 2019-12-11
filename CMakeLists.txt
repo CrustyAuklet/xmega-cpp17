@@ -31,6 +31,8 @@ target_compile_options(${PROJECT_NAME}
         "-Wall"
 )
 
+#set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+
 if(CMAKE_CROSSCOMPILING)
     # all post build steps in a generic file. Include after add_executable!
     include(scripts/avr-gcc.cmake)
@@ -44,7 +46,7 @@ if(CMAKE_CROSSCOMPILING)
     target_link_options(${PROJECT_NAME}
         INTERFACE
             ${MCPU_FLAGS}
-            "-Wl,-u,vfprintf -lprintf_flt -lm"
+            #"-Wl,-u,vfprintf -lprintf_flt -lm"
     )
 
 else()
