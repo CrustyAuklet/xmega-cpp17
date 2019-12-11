@@ -41,6 +41,13 @@ if(CMAKE_CROSSCOMPILING)
     target_compile_options(hal
         INTERFACE
             ${MCPU_FLAGS}
+            # size optomization flags: https://www.avrfreaks.net/forum/code-size-gets-bigger-each-new-version-gcc
+            "-fdata-sections"
+            "-ffunction-sections"
+            "-fno-inline-small-functions"
+            "-fno-split-wide-types"
+            "-fno-tree-scev-cprop"
+            "-g3"
     )
 
     target_link_options(hal
@@ -48,6 +55,6 @@ if(CMAKE_CROSSCOMPILING)
             ${MCPU_FLAGS}
             "-Wl,--gc-sections"
             "-Wl,-Map=xmega-hal.map"
-            "-mrelax"
+            "-Wl,--relax"               # replace CALL statements with RCALL when possible
     )
 endif()

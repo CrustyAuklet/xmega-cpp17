@@ -26,8 +26,6 @@ target_compile_options(${PROJECT_NAME}
         "-fno-rtti"
         "-funsigned-char"
         "-funsigned-bitfields"
-        "-fdata-sections"
-        "-ffunction-sections"
         "-Wall"
 )
 

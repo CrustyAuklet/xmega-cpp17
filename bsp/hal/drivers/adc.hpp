@@ -32,12 +32,10 @@ namespace drivers {
 
     template <typename ADC_INSTANCE>
     class ADC_SingleEnded_Basic {
-//        ADC_INSTANCE m_instance;
-//        PIN m_input;
-        decltype(device::ADCA) m_instance;  // NOTE: This is only to assist in auto-complete. Comment out for compile.
-        decltype(device::PA0) m_input;      // NOTE: This is only to assist in auto-complete. Comment out for compile.
+        ADC_INSTANCE m_instance;
+//        decltype(device::ADCA) m_instance;  // NOTE: This is only to assist in auto-complete. Comment out for compile.
     public:
-        constexpr ADC_SingleEnded_Basic(const ADC_INSTANCE instance, const PIN input)
+        constexpr ADC_SingleEnded_Basic(const ADC_INSTANCE instance)
             : m_instance(instance)
         {}
 
