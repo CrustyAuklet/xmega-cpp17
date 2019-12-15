@@ -1,6 +1,5 @@
 #include "board.hpp"
 #include "printf.h"
-#include <util/delay.h>
 
 static inline float si705x_celsius(const uint16_t READING) { return ((175.72 * READING) / 65536) - 46.85; }
 	
@@ -32,16 +31,12 @@ static uint8_t crc8(void* inData, uint8_t len, uint8_t init){
     return bitswap(crc);
 }
 
-void _putchar(char character) {
-    board::EDBG_VCOM.put(character);
-}
-
 [[gnu::OS_main]] int main() {
     board::init();
 	uint16_t counter = 0;
 
     while(1) {
-        _delay_ms(1000);  // Wait for 1/2 second
+        board::delay_ms(1000); // delay 1 second
         printf("Hello World! %d\n", counter);
 		board::UserLED.toggle();
 		counter++;
@@ -55,7 +50,7 @@ void _putchar(char character) {
             printf("CRC doesn't match!");
         }
 		else {
-		    printf("Read: 0x%02X 0x%02X 0x%02X --> %3.2f\n", buf[0], buf[1], buf[2], si705x_celsius(temp_code));
+		    printf("Read: 0x%02X 0x%02X 0x%02X --> %3.2f\n", buf[0], buf[1], buf[2], static_cast<double>(si705x_celsius(temp_code)) );
 		}
 
 		uint16_t adc_reading = board::ADC.read(0);

@@ -28,12 +28,13 @@ target_include_directories(bsp
 target_sources(bsp
     INTERFACE
         board.hpp
+        board.cpp
 )
 
-if(CMAKE_CROSSCOMPILING)
-    add_subdirectory(avr-libstdcpp)
-    target_link_libraries(bsp
-        INTERFACE
-            avr::libstdcpp
-    )
-endif()
+#if(CMAKE_CROSSCOMPILING)
+#    add_subdirectory(avr-libstdcpp)
+#    target_link_libraries(bsp
+#        INTERFACE
+#            avr::libstdcpp
+#    )
+#endif()

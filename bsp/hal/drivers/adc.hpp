@@ -7,8 +7,6 @@
 #include "device.hpp"
 #include <cstdint>
 
-#include "device.hpp"	// NOTE: This is only to assist in auto-complete. Comment out for compile.
-
 namespace drivers {
 
     namespace ADC {

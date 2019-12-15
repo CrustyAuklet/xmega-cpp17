@@ -21,8 +21,8 @@ namespace GPIO {
         SLEW_RATE_LIMIT     = 0x01 << 7  //< Slew rate limiting
     };
 
-    PinConfig operator|(PinConfig a, PinConfig b) { return PinConfig(int(a) | int(b)); }
-    PinConfig operator&(PinConfig a, PinConfig b) { return PinConfig(int(a) & int(b)); }
+    constexpr PinConfig operator|(PinConfig a, PinConfig b) { return PinConfig(int(a) | int(b)); }
+    constexpr PinConfig operator&(PinConfig a, PinConfig b) { return PinConfig(int(a) & int(b)); }
 } // namespace GPIO
 
 template <class PORT, uint8_t PIN>

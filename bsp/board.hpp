@@ -18,20 +18,17 @@ namespace board {
 
     inline constexpr drivers::ADC_SingleEnded_Basic ADC(device::ADCA);
 
+    /**
+     * Initialize the board.
+     * When this function returns the system clocks should be initialized,
+     * and peripherals should have gone through initialization and left in a low power state.
+     * @return True if the initialization succeeds, False if there is a failure.
+     */
+    bool init() noexcept;
 
-    constexpr bool init() {
-        SerialC0.init<CPUFreq, 9600, true>();
-        SerialC0.start();
-		EDBG_VCOM.init<CPUFreq, 9600, true>();
-		EDBG_VCOM.start();
-        I2C_C.init<CPUFreq, 100'000>();
-        I2C_C.start();
-        UserLED.init();
-
-        ADC.init(drivers::ADC::RESOLUTION::_12BIT);
-        ADC.start();
-        device::PA0.set_analog();
-        return true;
-    }
+    /// delay AT MOST us microseconds
+    void delay_us(uint16_t us) noexcept;
+    /// delay AT MOST ms milliseconds
+    void delay_ms(uint16_t ms) noexcept;
 
 }   // namespace board

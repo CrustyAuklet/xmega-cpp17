@@ -1,7 +1,7 @@
 #pragma once
 #pragma GCC diagnostic ignored "-Wreturn-local-addr"
 
-#include <stdint.h>
+#include <cstdint>
 #include <utility>
 #include <algorithm>
 
