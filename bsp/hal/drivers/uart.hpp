@@ -1,6 +1,8 @@
 #pragma once
+#if __clang__
 #pragma clang diagnostic push
-#pragma ide diagnostic ignored "readability-static-accessed-through-instance"
+#pragma clang diagnostic ignored "readability-static-accessed-through-instance"
+#endif
 
 #include "gpio.hpp"
 #include "device.hpp"
@@ -148,3 +150,7 @@ namespace drivers {
     };
 
 }   // namesapce device
+
+#if __clang__
+#pragma clang diagnostic pop
+#endif
