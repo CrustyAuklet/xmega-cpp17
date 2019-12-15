@@ -2,11 +2,8 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "readability-static-accessed-through-instance"
 
-#include "peripherals/CLK.hpp"
 #include "gpio.hpp"
 #include "device.hpp"
-#include "../peripherals/CLK.hpp"
-#include "../device.hpp"
 #include <cstdint>
 
 namespace drivers {

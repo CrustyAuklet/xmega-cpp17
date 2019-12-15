@@ -2,7 +2,6 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "readability-static-accessed-through-instance"
 
-#include "peripherals/ADC.hpp"
 #include "gpio.hpp"
 #include "device.hpp"
 #include <cstdint>

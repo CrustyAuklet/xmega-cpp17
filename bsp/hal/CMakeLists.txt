@@ -16,7 +16,6 @@ target_include_directories(hal
 target_sources(hal
     INTERFACE
         register.hpp
-        device.hpp
         gpio.hpp
         drivers/led.hpp
         drivers/twi.hpp
