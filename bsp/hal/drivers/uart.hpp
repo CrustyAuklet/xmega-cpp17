@@ -4,8 +4,8 @@
 #pragma clang diagnostic ignored "readability-static-accessed-through-instance"
 #endif
 
-#include "gpio.hpp"
-#include "device.hpp"
+#include "device.hpp"       // need this to forward the enum definitions
+#include "pin_types.hpp"    // for pin type static checks
 #include <cstdint>
 
 namespace drivers {
@@ -84,26 +84,17 @@ namespace drivers {
         {}
 
         template <uint32_t CpuFreq, uint32_t Baud = 9600, bool DoubleSpeed = false>
-        constexpr void init(const USART::CHAR_SIZE CharSize = USART::CHAR_SIZE::_8BIT, const USART::PARITY_MODE ParityMode = USART::PARITY_MODE::DISABLED, const bool TwoStopBits = false) const noexcept {
+        constexpr void start(const USART::CHAR_SIZE CharSize = USART::CHAR_SIZE::_8BIT, const USART::PARITY_MODE ParityMode = USART::PARITY_MODE::DISABLED, const bool TwoStopBits = false) const noexcept {
             static_assert(!USART::buad_too_high(CpuFreq, Baud, DoubleSpeed), "Chosen baud rate is too high!");
             static_assert(!USART::buad_too_low(CpuFreq, Baud, DoubleSpeed), "Chosen baud rate is too low!");
-
-            m_rx.set_input();
-            m_rx.configure(GPIO::PinConfig::MODE_TOTEM);
-            m_tx.set_output();
-            m_tx.set_low();
-
             m_instance.BAUDCTRLA = USART::get_baud(CpuFreq, Baud) >> 8;
             m_instance.BAUDCTRLB = USART::get_baud(CpuFreq, Baud) & 0xFF;
             m_instance.CTRLB.CLK2X = DoubleSpeed;
 
             m_instance.CTRLC = m_instance.CTRLC.PMODE.shift(ParityMode)
-                              | m_instance.CTRLC.SBMODE.shift(TwoStopBits)
-                              | m_instance.CTRLC.CHSIZE.shift(CharSize)
-                              | m_instance.CTRLC.CMODE.shift(sfr::USART::CMODEv::ASYNCHRONOUS);
-        }
-
-        constexpr void start() const noexcept {
+                               | m_instance.CTRLC.SBMODE.shift(TwoStopBits)
+                               | m_instance.CTRLC.CHSIZE.shift(CharSize)
+                               | m_instance.CTRLC.CMODE.shift(sfr::USART::CMODEv::ASYNCHRONOUS);
             m_instance.CTRLB |= m_instance.CTRLB.TXEN.shift(true) | m_instance.CTRLB.RXEN.shift(true);
         }
 

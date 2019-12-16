@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 project(xmega-hal
+        DESCRIPTION "Demo project for generic c++17 hal/bsp"
         LANGUAGES C CXX )
 
 add_executable(${PROJECT_NAME} main.cpp)
@@ -30,8 +31,9 @@ target_compile_options(${PROJECT_NAME}
 )
 
 #set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if(CMAKE_CROSSCOMPILING)
+if(NOT SIMULATION_BUILD)
     # all post build steps in a generic file. Include after add_executable!
     include(scripts/avr-gcc.cmake)
 
@@ -43,8 +45,7 @@ if(CMAKE_CROSSCOMPILING)
     )
     target_link_options(${PROJECT_NAME}
         INTERFACE
-            ${MCPU_FLAGS}
-            #"-Wl,-u,vfprintf -lprintf_flt -lm"
+            #"-Wl,-u,vfprintf -lprintf_flt -lm"     # if we want flaoting point support from avr-libc
     )
 
 else()

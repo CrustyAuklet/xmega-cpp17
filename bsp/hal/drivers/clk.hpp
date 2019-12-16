@@ -4,7 +4,7 @@
 #pragma clang diagnostic ignored "readability-static-accessed-through-instance"
 #endif
 
-#include "gpio.hpp"
+#include "pin_types.hpp"
 #include "device.hpp"
 #include <cstdint>
 
