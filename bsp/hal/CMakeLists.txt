@@ -16,26 +16,19 @@ target_include_directories(hal
 target_sources(hal
     INTERFACE
         register.hpp
-        gpio.hpp
-        drivers/led.hpp
+        pin_types.hpp
         drivers/twi.hpp
         drivers/uart.hpp
+        drivers/spi.hpp
         drivers/adc.hpp
         drivers/clk.hpp
-
-        # implementation files if this is a simulation run
-        $<$<NOT:$<BOOL:${CMAKE_CROSSCOMPILING}>>:${CMAKE_CURRENT_LIST_DIR}/register.cpp>
 )
 
-target_compile_definitions(hal
-    INTERFACE
-        __${CMAKE_SYSTEM_PROCESSOR}__           # system processor
-        __${CMAKE_SYSTEM_PROCESSOR_FAMILY}__    # system processor family (for different register layouts)
-        SIMULATION_BUILD=$<IF:$<BOOL:${CMAKE_CROSSCOMPILING}>,0,1>
-)
-
-if(CMAKE_CROSSCOMPILING)
-    set(MCPU_FLAGS "-mmcu=${CMAKE_SYSTEM_PROCESSOR}")
+if(SIMULATION_BUILD)
+    # implementation files if this is a simulation run
+    target_sources(hal INTERFACE register.cpp)
+else()
+    set(MCPU_FLAGS "-mmcu=${SEAL_SYSTEM_PROCESSOR}")
 
     target_compile_options(hal
         INTERFACE

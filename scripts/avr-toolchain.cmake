@@ -1,11 +1,9 @@
 # Name and architecture of the target
 set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_PROCESSOR atxmega128a1u)
-set(CMAKE_SYSTEM_PROCESSOR_FAMILY XMEGAA)
 
 set(CMAKE_C_COMPILER    avr-gcc)
 set(CMAKE_CXX_COMPILER  avr-g++)
-set(AS                  avr--gcc)
+set(AS                  avr-gcc)
 set(AR                  avr-ar)
 set(OBJCOPY             avr-objcopy)
 set(OBJDUMP             avr-objdump)

@@ -4,8 +4,8 @@
 #pragma clang diagnostic ignored "readability-static-accessed-through-instance"
 #endif
 
-#include "gpio.hpp"
-#include "device.hpp"
+#include "device.hpp"       // need this to forward the enum definitions
+#include "pin_types.hpp"    // for pin type static checks
 #include <cstdint>
 
 namespace drivers {
@@ -115,7 +115,7 @@ namespace drivers {
         {}
 
         template <uint32_t CpuFreq, uint32_t Baud = 100'000, uint32_t TRise = 0>
-        constexpr void init() const noexcept {
+        constexpr void start() const noexcept {
             m_instance.CTRL = m_instance.CTRL.SDAHOLD.shift(TWI::SDA_HOLD::OFF)   // SDA Holdoff Time
                              | m_instance.CTRL.EDIEN.shift(false);    // External Driver Interface Enable
 
@@ -130,24 +130,6 @@ namespace drivers {
                                      | m_instance.MASTER.STATUS.RIF.shift(true);
 
             m_instance.MASTER.BAUD = TWI::get_baud(CpuFreq, Baud, TRise);
-        }
-
-        /// sets bus state to idle and clears read and write interrupt flags
-        constexpr void set_idle() const noexcept {
-            const uint8_t state = m_instance.MASTER.STATUS;
-            m_instance.MASTER.STATUS = m_instance.MASTER.STATUS.BUSSTATE.shift(TWI::BUS_STATE::IDLE)
-                                     | m_instance.MASTER.STATUS.WIF.shift(true)
-                                     | m_instance.MASTER.STATUS.RIF.shift(true);
-        }
-
-        /// enables the twi module
-        constexpr void start() const noexcept {
-            // config pins for TWI master
-            m_sda.set_output();
-            m_sda.configure(GPIO::PinConfig::MODE_TOTEM);
-            m_scl.set_output();
-            m_scl.configure(GPIO::PinConfig::MODE_TOTEM);
-            // enable peripheral
             m_instance.MASTER.CTRLA.ENABLE = true;
         }
 
@@ -155,9 +137,14 @@ namespace drivers {
         constexpr void stop() const noexcept {
             // disable peripheral
             m_instance.MASTER.CTRLA.ENABLE = false;
-            // put pins in low power mode
-            m_sda.set_lowpower();
-            m_scl.set_lowpower();
+        }
+
+        /// sets bus state to idle and clears read and write interrupt flags
+        constexpr void set_idle() const noexcept {
+            const uint8_t state = m_instance.MASTER.STATUS;
+            m_instance.MASTER.STATUS = m_instance.MASTER.STATUS.BUSSTATE.shift(TWI::BUS_STATE::IDLE)
+                                       | m_instance.MASTER.STATUS.WIF.shift(true)
+                                       | m_instance.MASTER.STATUS.RIF.shift(true);
         }
 
         /// enables TWI read and write interrupts at the given level
@@ -274,8 +261,9 @@ namespace drivers {
         template<bool SevenBitAddress=false>
         constexpr uint16_t write(const uint8_t addr, const uint8_t* data, const uint16_t length, const bool stop = true) const noexcept {
             write_address<SevenBitAddress>(addr);
-            while(!get_status().write_complete()){}
-            if(get_status().write_error()) {
+            uint16_t timeout = 1000;
+            while(!get_status().write_complete() && --timeout){}
+            if(get_status().write_error() || !timeout) {
                 send_stop(true);
                 return 0;
             }
@@ -283,8 +271,9 @@ namespace drivers {
             uint16_t count = 0;
             while(count < length) {
                 write_data(data[count]);
-                while(!get_status().write_complete()) {}
-                if(get_status().write_error()) {
+                timeout = 1000;
+                while(!get_status().write_complete() && --timeout) {}
+                if(get_status().write_error() || !timeout) {
                     send_stop(true);
                     return count;
                 }
@@ -303,10 +292,11 @@ namespace drivers {
             // start a read operation
             write_address<SevenBitAddress>(addr, true);
             uint16_t count = 0;
+            uint16_t timeout = 1000;
 
             while(count < length) {
-                while(!get_status().read_complete()){}
-                if(get_status().write_error()) {
+                while(!get_status().read_complete() && --timeout){}
+                if(get_status().write_error() || !timeout) {
                     send_stop(true);
                     return 0;
                 }
@@ -316,8 +306,31 @@ namespace drivers {
                 ++count;
             }
 			send_stop(true);
-            while(get_status().state() != TWI::BUS_STATE::IDLE) {}
+            timeout = 1000;
+            while(get_status().state() != TWI::BUS_STATE::IDLE  && --timeout) {}
+            if(!timeout) {
+                set_idle();
+            }
             return count;
+        }
+
+        template<bool SevenBitAddress=false>
+        constexpr uint8_t read_reg8(const uint8_t addr, const uint8_t reg_addr) const noexcept {
+            const uint8_t c1 = write(addr, &reg_addr, 1, false);
+            if(c1 != 1) {
+                return 0;
+            }
+
+            uint8_t retVal = 0;
+            const uint8_t c2 = read(addr, &retVal, 1);
+            return c2 != 1 ? 0 : retVal;
+        }
+
+        template<bool SevenBitAddress=false>
+        constexpr bool write_reg8(const uint8_t addr, const uint8_t reg_addr, const uint8_t data) const noexcept {
+            const uint8_t buf[2] = {reg_addr, data};
+            const uint8_t c = write(addr, buf, 2);
+            return c == 2;
         }
 
     };

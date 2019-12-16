@@ -10,7 +10,6 @@
 #include "DAC.hpp"
 #include "DFLL.hpp"
 #include "DMA.hpp"
-#include "EBI.hpp"
 #include "EVSYS.hpp"
 #include "FUSE.hpp"
 #include "GPIO.hpp"
@@ -37,9 +36,21 @@
 #include "VPORT.hpp"
 #include "WDT.hpp"
 #include "XOCD.hpp"
-#include "gpio.hpp"
+#include "pin_types.hpp"
 
 namespace device {
+    struct memory_section { uint32_t start; uint32_t size; };
+
+    inline constexpr auto device_name = "ATXMega256A3U";
+    // flash memory addresses
+    inline constexpr memory_section app_section{ 0x000000, 0x40000 };
+    inline constexpr memory_section apptable_section{ 0x03E000, 0x002000 };
+    inline constexpr memory_section boot_section{ 0x040000, 0x002000 };
+    // data memory addresses
+    inline constexpr memory_section io_section{ 0x0000, 0x1000 };
+    inline constexpr memory_section eeprom_section{ 0x1000, 0x1000 };
+    inline constexpr memory_section sram_section{ 0x2000, 0x4000 };
+
     /********** Peripheral Instances. Mapped to memory. **********/
     inline constexpr sfr::GPIO_t< 0x0000 > GPIO = {};       //  General Purpose IO Registers
     inline constexpr sfr::VPORT_t< 0x0010 > VPORT0 = {};    //  Virtual Port 0
@@ -66,16 +77,12 @@ namespace device {
     inline constexpr sfr::NVM_t< 0x01C0 > NVM = {};         //  Non-volatile Memory Controller
     inline constexpr sfr::ADC_t< 0x0200 > ADCA = {};        //  Analog-to-Digital Converter A
     inline constexpr sfr::ADC_t< 0x0240 > ADCB = {};        //  Analog-to-Digital Converter B
-    inline constexpr sfr::DAC_t< 0x0300 > DACA = {};        //  Digital-to-Analog Converter A
     inline constexpr sfr::DAC_t< 0x0320 > DACB = {};        //  Digital-to-Analog Converter B
     inline constexpr sfr::AC_t< 0x0380 > ACA = {};          //  Analog Comparator A
     inline constexpr sfr::AC_t< 0x0390 > ACB = {};          //  Analog Comparator B
     inline constexpr sfr::RTC_t< 0x0400 > RTC = {};         //  Real-Time Counter
-    inline constexpr sfr::EBI_t< 0x0440 > EBI = {};         //  External Bus Interface
     inline constexpr sfr::TWI_t< 0x0480 > TWIC = {};        //  Two-Wire Interface C
-    inline constexpr sfr::TWI_t< 0x0490 > TWID = {};        //  Two-Wire Interface D
     inline constexpr sfr::TWI_t< 0x04A0 > TWIE = {};        //  Two-Wire Interface E
-    inline constexpr sfr::TWI_t< 0x04B0 > TWIF = {};        //  Two-Wire Interface F
     inline constexpr sfr::USB_t< 0x04C0 > USB = {};         //  Universal Serial Bus
     inline constexpr sfr::PORT_t< 0x0600 > PORTA = {};      //  I/O Ports A
     inline constexpr sfr::PORT_t< 0x0620 > PORTB = {};      //  I/O Ports B
@@ -83,10 +90,6 @@ namespace device {
     inline constexpr sfr::PORT_t< 0x0660 > PORTD = {};      //  I/O Ports D
     inline constexpr sfr::PORT_t< 0x0680 > PORTE = {};      //  I/O Ports E
     inline constexpr sfr::PORT_t< 0x06A0 > PORTF = {};      //  I/O Ports F
-    inline constexpr sfr::PORT_t< 0x06E0 > PORTH = {};      //  I/O Ports H
-    inline constexpr sfr::PORT_t< 0x0700 > PORTJ = {};      //  I/O Ports J
-    inline constexpr sfr::PORT_t< 0x0720 > PORTK = {};      //  I/O Ports K
-    inline constexpr sfr::PORT_t< 0x07C0 > PORTQ = {};      //  I/O Ports Q
     inline constexpr sfr::PORT_t< 0x07E0 > PORTR = {};      //  I/O Ports R
     inline constexpr sfr::TC0_t< 0x0800 > TCC0 = {};        //  16-bit Timer/Counter 0 C0
     inline constexpr sfr::TC2_t< 0x0800 > TCC2 = {};        //  16-bit Timer/Counter type 2 C2
@@ -114,11 +117,8 @@ namespace device {
     inline constexpr sfr::SPI_t< 0x0AC0 > SPIE = {};        //  Serial Peripheral Interface E
     inline constexpr sfr::TC0_t< 0x0B00 > TCF0 = {};        //  16-bit Timer/Counter 0 F0
     inline constexpr sfr::TC2_t< 0x0B00 > TCF2 = {};        //  16-bit Timer/Counter type 2 F2
-    inline constexpr sfr::TC1_t< 0x0B40 > TCF1 = {};        //  16-bit Timer/Counter 1 F1
     inline constexpr sfr::HIRES_t< 0x0B90 > HIRESF = {};    //  High-Resolution Extension F
     inline constexpr sfr::USART_t< 0x0BA0 > USARTF0 = {};   //  Universal Synchronous/Asynchronous Receiver/Transmitter F0
-    inline constexpr sfr::USART_t< 0x0BB0 > USARTF1 = {};   //  Universal Synchronous/Asynchronous Receiver/Transmitter F1
-    inline constexpr sfr::SPI_t< 0x0BC0 > SPIF = {};        //  Serial Peripheral Interface F
 
     /********** GPIO PINS **********/
     inline constexpr GPIO::pin< decltype(PORTA), 0 > PA0 = {};
@@ -174,38 +174,6 @@ namespace device {
     inline constexpr GPIO::pin< decltype(PORTF), 5 > PF5 = {};
     inline constexpr GPIO::pin< decltype(PORTF), 6 > PF6 = {};
     inline constexpr GPIO::pin< decltype(PORTF), 7 > PF7 = {};
-
-    inline constexpr GPIO::pin< decltype(PORTH), 0 > PH0 = {};
-    inline constexpr GPIO::pin< decltype(PORTH), 1 > PH1 = {};
-    inline constexpr GPIO::pin< decltype(PORTH), 2 > PH2 = {};
-    inline constexpr GPIO::pin< decltype(PORTH), 3 > PH3 = {};
-    inline constexpr GPIO::pin< decltype(PORTH), 4 > PH4 = {};
-    inline constexpr GPIO::pin< decltype(PORTH), 5 > PH5 = {};
-    inline constexpr GPIO::pin< decltype(PORTH), 6 > PH6 = {};
-    inline constexpr GPIO::pin< decltype(PORTH), 7 > PH7 = {};
-
-    inline constexpr GPIO::pin< decltype(PORTJ), 0 > PJ0 = {};
-    inline constexpr GPIO::pin< decltype(PORTJ), 1 > PJ1 = {};
-    inline constexpr GPIO::pin< decltype(PORTJ), 2 > PJ2 = {};
-    inline constexpr GPIO::pin< decltype(PORTJ), 3 > PJ3 = {};
-    inline constexpr GPIO::pin< decltype(PORTJ), 4 > PJ4 = {};
-    inline constexpr GPIO::pin< decltype(PORTJ), 5 > PJ5 = {};
-    inline constexpr GPIO::pin< decltype(PORTJ), 6 > PJ6 = {};
-    inline constexpr GPIO::pin< decltype(PORTJ), 7 > PJ7 = {};
-
-    inline constexpr GPIO::pin< decltype(PORTK), 0 > PK0 = {};
-    inline constexpr GPIO::pin< decltype(PORTK), 1 > PK1 = {};
-    inline constexpr GPIO::pin< decltype(PORTK), 2 > PK2 = {};
-    inline constexpr GPIO::pin< decltype(PORTK), 3 > PK3 = {};
-    inline constexpr GPIO::pin< decltype(PORTK), 4 > PK4 = {};
-    inline constexpr GPIO::pin< decltype(PORTK), 5 > PK5 = {};
-    inline constexpr GPIO::pin< decltype(PORTK), 6 > PK6 = {};
-    inline constexpr GPIO::pin< decltype(PORTK), 7 > PK7 = {};
-
-    inline constexpr GPIO::pin< decltype(PORTQ), 0 > PQ0 = {};
-    inline constexpr GPIO::pin< decltype(PORTQ), 1 > PQ1 = {};
-    inline constexpr GPIO::pin< decltype(PORTQ), 2 > PQ2 = {};
-    inline constexpr GPIO::pin< decltype(PORTQ), 3 > PQ3 = {};
 
     inline constexpr GPIO::pin< decltype(PORTR), 0 > PR0 = {};
     inline constexpr GPIO::pin< decltype(PORTR), 1 > PR1 = {};
