@@ -12,7 +12,8 @@
         board::LED.off();
 		counter++;
 
-		const uint8_t chipid = board::I2C_Isolated.read_reg8(0x18<<1, 0x00);
-        printf("BMA250 ID: 0x%02X\n", chipid);
+		if( const auto chipid = board::I2C_Isolated.read_reg8(0x18<<1, 0x00); chipid ) {
+            printf("BMA250 ID: 0x%02X\n", chipid.value());
+		}
     }
 }

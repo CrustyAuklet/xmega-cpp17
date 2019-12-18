@@ -6,11 +6,25 @@
 
 #include "device.hpp"       // need this to forward the enum definitions
 #include "pin_types.hpp"    // for pin type static checks
+#include "ArrayWrapper.hpp" // for type/size safe array parameters
 #include <cstdint>
+
+#include "expected.hpp"  // std::expected implementation for safe return value
+namespace nonstd = tl;
 
 namespace drivers {
 
+    // namespace for helper functions, enums, etc that are used across instances.
+    // anything in the driver class gets specialized for each instance because of the template parameters.
     namespace TWI {
+        /**
+         * calculate the TWI buad rate based on CPU frequency, buad rate, and any desired rise time setting.
+         * @note direct translation of macro from the microchip HAL
+         * @param CpuFreq [IN] CPU frequency in hertz
+         * @param Baud [IN] desired baud rate
+         * @param TRise [IN] rise time setting. Usually 0.
+         * @return the TWI baud register setting.
+         */
         constexpr uint8_t get_baud(const uint32_t CpuFreq, const uint32_t Baud, const uint32_t TRise) {
             return ((((((float)CpuFreq / (float)Baud)) - 10 - ((float)CpuFreq * TRise / 1'000'000))) / 2);
         }
@@ -21,9 +35,22 @@ namespace drivers {
         using INT_LVL = sfr::TWI::MASTER_INTLVLv;
         using MASTER_CMD = sfr::TWI::MASTER_CMDv;
 
-        enum class TWI_ERROR : uint8_t { NACK, ARBITRATION_LOST, BUS_ERROR };
+        /// list of TWI errors for external consumers.
+        /// Internal implementation (numbers) are NOT stable
+        enum class error : uint8_t {
+            TIMEOUT = (1U<<6U),
+            BUS_BUSY = (1U<<5U),
+            NACK = (1U<<4U),
+            ARBITRATION_LOST = (1U<<3U),
+            BUS_ERROR = (1U<<2U)
+        };
 
-		// TODO: Improve this status class API
+		/**
+		 * struct to wrap the status register, and provide helper methods for interpreting
+		 * the bytes. This helps write expressive error checking codes without reading the
+		 * status register many times. This class should probably NOT leak too high in the abstraction stack.
+		 * TODO: review code more thoroughly
+		 */
         struct MasterStatus {
             uint8_t twi_status_byte;
 
@@ -141,7 +168,6 @@ namespace drivers {
 
         /// sets bus state to idle and clears read and write interrupt flags
         constexpr void set_idle() const noexcept {
-            const uint8_t state = m_instance.MASTER.STATUS;
             m_instance.MASTER.STATUS = m_instance.MASTER.STATUS.BUSSTATE.shift(TWI::BUS_STATE::IDLE)
                                        | m_instance.MASTER.STATUS.WIF.shift(true)
                                        | m_instance.MASTER.STATUS.RIF.shift(true);
@@ -257,80 +283,100 @@ namespace drivers {
 			m_instance.MASTER.CTRLC = m_instance.MASTER.CTRLC.ACKACT.shift(NACK) | m_instance.MASTER.CTRLC.CMD.shift(TWI::MASTER_CMD::REPSTART);
 		}
 
-        /// send a buffer of data to the given address
-        template<bool SevenBitAddress=false>
-        constexpr uint16_t write(const uint8_t addr, const uint8_t* data, const uint16_t length, const bool stop = true) const noexcept {
-            write_address<SevenBitAddress>(addr);
-            uint16_t timeout = 1000;
-            while(!get_status().write_complete() && --timeout){}
-            if(get_status().write_error() || !timeout) {
-                send_stop(true);
-                return 0;
+		/******************************** Basic blocking driver. Minimal functionality below **************************/
+
+		struct better_status : TWI::MasterStatus {
+		    uint16_t countdown;
+
+            explicit constexpr better_status(const uint16_t timeout, const TWI::MasterStatus s={}) noexcept
+                : countdown(timeout)
+            {
+                TWI::MasterStatus::twi_status_byte = 0;
             }
 
-            uint16_t count = 0;
-            while(count < length) {
-                write_data(data[count]);
-                timeout = 1000;
-                while(!get_status().write_complete() && --timeout) {}
-                if(get_status().write_error() || !timeout) {
-                    send_stop(true);
-                    return count;
+            constexpr void update(const TWI::MasterStatus s) noexcept {
+                TWI::MasterStatus::twi_status_byte = s.twi_status_byte;
+                if(countdown > 0) { --countdown; }
+            }
+
+            constexpr bool write_error() const noexcept {
+                return TWI::MasterStatus::write_error() || countdown == 0;
+            }
+
+            /// precondition: There is an actual error! write_error() must have returned true.
+            /// TODO: make no precondition to this function.
+            constexpr TWI::error make_error() const noexcept {
+                if(countdown == 0) { return TWI::error::TIMEOUT; }
+                return static_cast<TWI::error>(twi_status_byte & (0x1CU));
+            }
+		};
+
+        /// send a buffer of data to the given address
+        template<bool SevenBitAddress=false>
+        [[nodiscard]] constexpr nonstd::expected<uint8_t, TWI::error>
+        write(const uint8_t addr, const seal::ArrayWrapper& data, const bool stop = true) const noexcept {
+            write_address<SevenBitAddress>(addr);
+
+            for(const uint8_t& d : data) {
+                for(auto s = better_status(1000, get_status()); !s.write_complete(); s.update(get_status()) ) {
+                    if(s.write_error()) {
+                        send_stop(true);
+                        return nonstd::make_unexpected(s.make_error());
+                    }
                 }
-                ++count;
+                write_data(d);
             }
 
             if(stop) {
                 send_stop();
             }
-            return count;
+            return data.size();
         }
 
         /// read a buffer of data
         template<bool SevenBitAddress=false>
-        constexpr uint16_t read(const uint8_t addr, uint8_t* data, const uint16_t length) const noexcept {
+        [[nodiscard]] constexpr nonstd::expected<uint8_t, TWI::error>
+        read(const uint8_t addr, seal::ArrayWrapper& buffer) const noexcept {
             // start a read operation
             write_address<SevenBitAddress>(addr, true);
-            uint16_t count = 0;
-            uint16_t timeout = 1000;
 
-            while(count < length) {
-                while(!get_status().read_complete() && --timeout){}
-                if(get_status().write_error() || !timeout) {
-                    send_stop(true);
-                    return 0;
+            for(auto itr = buffer.begin(); itr != buffer.end(); ++itr) {
+                for(auto s = better_status(1000, get_status()); !s.read_complete(); s.update(get_status()) ) {
+                    if(s.write_error()) {
+                        send_stop(true);
+                        return nonstd::make_unexpected(s.make_error());
+                    }
                 }
-				
-                const bool last_byte = (count == length-1);
-                data[count] = read_data(last_byte);
-                ++count;
+                const bool last_byte = (itr == buffer.end()-1);
+                *itr = read_data(last_byte);
             }
-			send_stop(true);
-            timeout = 1000;
-            while(get_status().state() != TWI::BUS_STATE::IDLE  && --timeout) {}
-            if(!timeout) {
-                set_idle();
+            send_stop(true);
+            for(auto s = better_status(1000, get_status()); s.state() != TWI::BUS_STATE::IDLE; s.update(get_status()) ) {
+                if(s.countdown == 0) {
+                    set_idle();
+                    return nonstd::make_unexpected(TWI::error::TIMEOUT);
+                }
             }
-            return count;
+            return buffer.size();
         }
 
         template<bool SevenBitAddress=false>
-        constexpr uint8_t read_reg8(const uint8_t addr, const uint8_t reg_addr) const noexcept {
-            const uint8_t c1 = write(addr, &reg_addr, 1, false);
-            if(c1 != 1) {
-                return 0;
-            }
+        [[nodiscard]] nonstd::expected<uint8_t, TWI::error> read_reg8(const uint8_t addr, const uint8_t reg_addr) const noexcept {
+            const auto status = write(addr, seal::Array{reg_addr}, false);
+            if(!status) { return status; }
 
-            uint8_t retVal = 0;
-            const uint8_t c2 = read(addr, &retVal, 1);
-            return c2 != 1 ? 0 : retVal;
+            seal::Array retVal{0x00};
+            const auto status2 = read(addr, retVal);
+            if(!status2) { return status2; }
+            return retVal[0];
         }
 
         template<bool SevenBitAddress=false>
-        constexpr bool write_reg8(const uint8_t addr, const uint8_t reg_addr, const uint8_t data) const noexcept {
-            const uint8_t buf[2] = {reg_addr, data};
-            const uint8_t c = write(addr, buf, 2);
-            return c == 2;
+        constexpr nonstd::expected<bool, TWI::error> write_reg8(const uint8_t addr, const uint8_t reg_addr, const uint8_t data) const noexcept {
+            //const uint8_t buf[2] = {reg_addr, data};
+            const auto status = write(addr, seal::Array{reg_addr, data});
+            if(!status) { return status; }
+            return true;
         }
 
     };
