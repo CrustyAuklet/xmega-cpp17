@@ -1,9 +1,6 @@
 #build results
 *[Dd]ebug*/
-*[Dd]ebugPublic*/
 *[Rr]elease*/
-*[Rr]eleases*/
-[nN]ON*/
 *[Bb]uild*/
 *[Oo]ut*/
 .*/

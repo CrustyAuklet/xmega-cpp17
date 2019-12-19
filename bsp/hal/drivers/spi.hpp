@@ -7,6 +7,9 @@
 
 #include "device.hpp"       // need this to forward the enum definitions
 #include "pin_types.hpp"    // for pin type static checks
+#include "nonstd/expected.hpp"     // std::expected implementation for safe return value
+#include "nonstd/span.hpp"         // span for non-owning range based read/write functions
+#include <initializer_list>
 #include <cstdint>
 
 namespace drivers {
@@ -50,6 +53,14 @@ namespace drivers {
             constexpr bool write_collision() const noexcept {
                 return spi_status_byte & (1U<<6U);;
             }
+        };
+
+        /// list of SPI errors for external consumers.
+        /// Internal implementation (numbers) are NOT stable
+        enum class error : uint8_t {
+            TIMEOUT = (1U<<7U),
+            COLLISION = (1U<<6U),
+            NONE = (1U<<0U)
         };
     } // namespace SPI
 
@@ -95,41 +106,54 @@ namespace drivers {
             return {m_instance.STATUS};
         }
 
+        constexpr void write(const uint8_t data) const noexcept {
+            m_instance.DATA = data;
+        }
+
+        constexpr uint8_t read() const noexcept {
+            return m_instance.DATA;
+        }
+
         constexpr uint8_t transfer(const uint8_t data) const noexcept {
             m_instance.DATA = data;
             while(get_status().interrupt_flag()){}
             return m_instance.DATA;
         }
 
-        constexpr uint16_t transfer(uint8_t* data, const uint16_t len) const noexcept {
-            uint16_t i = 0;
-            while(i < len) {
-                m_instance.DATA = data[i];
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, SPI::error>
+        transfer(nonstd::span<uint8_t> buffer) const noexcept {
+            for(uint8_t& d : buffer) {
+                m_instance.DATA = d;
                 while(get_status().interrupt_flag()){}
-                data[i++] = m_instance.DATA;
+                d = m_instance.DATA;
             }
-            return i;
+            return buffer.size();
         }
 
-        constexpr uint16_t write(const uint8_t* data, const uint16_t len) const noexcept {
-            uint16_t i = 0;
-            while(i < len) {
-                m_instance.DATA = data[i];
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, SPI::error>
+        write(nonstd::span<const uint8_t> buffer) const noexcept {
+            for(const uint8_t& d : buffer) {
+                m_instance.DATA = d;
                 while(get_status().interrupt_flag()){}
-                ++i;
             }
-            return i;
+            return buffer.size();
         }
 
-        constexpr uint16_t read(const uint8_t* data, const uint16_t len) const noexcept {
-            uint16_t i = 0;
-            while(i < len) {
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, SPI::error>
+        write(std::initializer_list<const uint8_t> data) const noexcept {
+            return write(nonstd::span<const uint8_t>(data.begin(), data.end()) );
+        }
+
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, SPI::error>
+        read(nonstd::span<uint8_t> buffer) const noexcept {
+            for(uint8_t& d : buffer) {
                 m_instance.DATA = 0;
                 while(get_status().interrupt_flag()){}
-                data[i++] = m_instance.DATA;
+                d = m_instance.DATA;
             }
-            return i;
+            return buffer.size();
         }
+
     };
 
 } // namespace drivers

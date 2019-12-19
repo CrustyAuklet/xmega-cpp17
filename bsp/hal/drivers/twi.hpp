@@ -6,11 +6,10 @@
 
 #include "device.hpp"       // need this to forward the enum definitions
 #include "pin_types.hpp"    // for pin type static checks
-#include "ArrayWrapper.hpp" // for type/size safe array parameters
+#include "nonstd/expected.hpp"     // std::expected implementation for safe return value
+#include "nonstd/span.hpp"         // span for non-owning range based read/write functions
+#include <initializer_list>
 #include <cstdint>
-
-#include "expected.hpp"  // std::expected implementation for safe return value
-namespace nonstd = tl;
 
 namespace drivers {
 
@@ -38,11 +37,12 @@ namespace drivers {
         /// list of TWI errors for external consumers.
         /// Internal implementation (numbers) are NOT stable
         enum class error : uint8_t {
-            TIMEOUT = (1U<<6U),
+            TIMEOUT = (1U<<7U),
             BUS_BUSY = (1U<<5U),
             NACK = (1U<<4U),
             ARBITRATION_LOST = (1U<<3U),
-            BUS_ERROR = (1U<<2U)
+            BUS_ERROR = (1U<<2U),
+            NONE = (1U<<0U)
         };
 
 		/**
@@ -313,8 +313,8 @@ namespace drivers {
 
         /// send a buffer of data to the given address
         template<bool SevenBitAddress=false>
-        [[nodiscard]] constexpr nonstd::expected<uint8_t, TWI::error>
-        write(const uint8_t addr, const seal::ArrayWrapper& data, const bool stop = true) const noexcept {
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, TWI::error>
+        write(const uint8_t addr, nonstd::span<const uint8_t> data, const bool stop = true) const noexcept {
             write_address<SevenBitAddress>(addr);
 
             for(const uint8_t& d : data) {
@@ -333,10 +333,16 @@ namespace drivers {
             return data.size();
         }
 
+        template<bool SevenBitAddress=false>
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, TWI::error>
+        write(const uint8_t addr, std::initializer_list<const uint8_t> data, const bool stop = true) const noexcept {
+            return write(addr, nonstd::span<const uint8_t>(data.begin(), data.end()) );
+        }
+
         /// read a buffer of data
         template<bool SevenBitAddress=false>
-        [[nodiscard]] constexpr nonstd::expected<uint8_t, TWI::error>
-        read(const uint8_t addr, seal::ArrayWrapper& buffer) const noexcept {
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, TWI::error>
+        read(const uint8_t addr, nonstd::span<uint8_t> buffer) const noexcept {
             // start a read operation
             write_address<SevenBitAddress>(addr, true);
 
@@ -362,10 +368,10 @@ namespace drivers {
 
         template<bool SevenBitAddress=false>
         [[nodiscard]] nonstd::expected<uint8_t, TWI::error> read_reg8(const uint8_t addr, const uint8_t reg_addr) const noexcept {
-            const auto status = write(addr, seal::Array{reg_addr}, false);
+            const auto status = write(addr, {reg_addr}, false);
             if(!status) { return status; }
 
-            seal::Array retVal{0x00};
+            std::array<uint8_t, 1> retVal{0x00};
             const auto status2 = read(addr, retVal);
             if(!status2) { return status2; }
             return retVal[0];
@@ -374,7 +380,7 @@ namespace drivers {
         template<bool SevenBitAddress=false>
         constexpr nonstd::expected<bool, TWI::error> write_reg8(const uint8_t addr, const uint8_t reg_addr, const uint8_t data) const noexcept {
             //const uint8_t buf[2] = {reg_addr, data};
-            const auto status = write(addr, seal::Array{reg_addr, data});
+            const auto status = write(addr, {reg_addr, data});
             if(!status) { return status; }
             return true;
         }

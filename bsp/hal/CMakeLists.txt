@@ -15,8 +15,6 @@ target_include_directories(hal
 
 target_sources(hal
     INTERFACE
-        expected.hpp
-        ArrayWrapper.hpp
         register.hpp
         pin_types.hpp
         drivers/twi.hpp
@@ -24,6 +22,9 @@ target_sources(hal
         drivers/spi.hpp
         drivers/adc.hpp
         drivers/clk.hpp
+
+        nonstd/span.hpp
+        nonstd/expected.hpp
 )
 
 if(SIMULATION_BUILD)

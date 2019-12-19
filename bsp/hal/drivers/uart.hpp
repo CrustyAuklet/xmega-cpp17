@@ -6,6 +6,9 @@
 
 #include "device.hpp"       // need this to forward the enum definitions
 #include "pin_types.hpp"    // for pin type static checks
+#include "nonstd/expected.hpp"     // std::expected implementation for safe return value
+#include "nonstd/span.hpp"         // span for non-owning range based read/write functions
+#include <initializer_list>
 #include <cstdint>
 
 namespace drivers {
@@ -71,6 +74,16 @@ namespace drivers {
 
         using CHAR_SIZE = sfr::USART::CHSIZEv;
         using PARITY_MODE = sfr::USART::PMODEv;
+
+        /// list of UART errors for external consumers.
+        /// Internal implementation (numbers) are NOT stable
+        enum class error : uint8_t {
+            TIMEOUT = (1U<<7U),
+            FRAME_ERROR = (1U<<4U),
+            BUFFER_OVERFLOW = (1U<<3U),
+            PARITY_ERROR = (1U<<2U),
+            NONE = (1U<<0U)
+        };
     }   // namespace USART
 
     template <typename UART_INSTANCE, typename RXD_PIN, typename TXD_PIN>
@@ -123,20 +136,20 @@ namespace drivers {
             m_instance.DATA = data;
         }
 
-        constexpr int32_t write(const char* data, const uint16_t len) const noexcept {
-            uint16_t i = 0;
-            for(; i < len; ++i) {
-                put(data[i]);
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, USART::error>
+        write(std::initializer_list<const uint8_t> data) const noexcept {
+            for(const uint8_t& d : data) {
+                put(d);
             }
-            return i;
+            return data.size();
         }
 
-        constexpr int32_t read(char* data, const uint16_t len) const noexcept {
-            uint16_t i = 0;
-            for(; i < len; ++i) {
-                data[i] = get();
+        [[nodiscard]] constexpr nonstd::expected<uint16_t, USART::error>
+        read(nonstd::span<uint8_t> buffer) const noexcept {
+            for(uint8_t& d : buffer) {
+                d = get();
             }
-            return i;
+            return buffer.size();
         }
     };
 
