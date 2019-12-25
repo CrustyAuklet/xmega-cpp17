@@ -13,6 +13,7 @@ namespace peripheral {
         enum class error { DATA_NOT_READY, FIFO_OVERFLOW, COMMUNICATION_ERROR };
 
         struct Acceleration : ThreeAxis {
+            explicit Acceleration(const int16_t x, const int16_t y, const int16_t z) : ThreeAxis{x,y,z} {}
         };
 
     }
