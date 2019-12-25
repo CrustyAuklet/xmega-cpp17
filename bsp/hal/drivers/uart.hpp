@@ -100,8 +100,8 @@ namespace drivers {
         constexpr void start(const USART::CHAR_SIZE CharSize = USART::CHAR_SIZE::_8BIT, const USART::PARITY_MODE ParityMode = USART::PARITY_MODE::DISABLED, const bool TwoStopBits = false) const noexcept {
             static_assert(!USART::buad_too_high(CpuFreq, Baud, DoubleSpeed), "Chosen baud rate is too high!");
             static_assert(!USART::buad_too_low(CpuFreq, Baud, DoubleSpeed), "Chosen baud rate is too low!");
-            m_instance.BAUDCTRLA = USART::get_baud(CpuFreq, Baud) >> 8;
-            m_instance.BAUDCTRLB = USART::get_baud(CpuFreq, Baud) & 0xFF;
+            m_instance.BAUDCTRLA = USART::get_baud(CpuFreq, Baud) >> 8U;
+            m_instance.BAUDCTRLB = USART::get_baud(CpuFreq, Baud) & 0xFFU;
             m_instance.CTRLB.CLK2X = DoubleSpeed;
 
             m_instance.CTRLC = m_instance.CTRLC.PMODE.shift(ParityMode)

@@ -4,11 +4,11 @@
 
 namespace GPIO {
     enum class PinConfig : uint8_t {
-        SENSE_BOTHEDGES     = 0x00U << 0U, //< IOPORT sense both rising and falling edges
-        SENSE_RISING        = 0x01U << 0U, //< IOPORT sense rising edges
-        SENSE_FALLING       = 0x02U << 0U, //< IOPORT sense falling edges
-        SENSE_LEVEL_LOW     = 0x03U << 0U, //< IOPORT sense low level
-        SENSE_INPUT_DISABLE = 0x07U << 0U, //< Digital Input Buffer Disable (ex: for ADC)
+        SENSE_BOTHEDGES     = 0x00U << 0U, ///< IOPORT sense both rising and falling edges
+        SENSE_RISING        = 0x01U << 0U, ///< IOPORT sense rising edges
+        SENSE_FALLING       = 0x02U << 0U, ///< IOPORT sense falling edges
+        SENSE_LEVEL_LOW     = 0x03U << 0U, ///< IOPORT sense low level
+        SENSE_INPUT_DISABLE = 0x07U << 0U, ///< Digital Input Buffer Disable (ex: for ADC)
         MODE_TOTEM          = 0x00U << 3U, ///< push-pull on output, floating on input
         MODE_BUSKEEPER      = 0x01U << 3U, ///< push-pull on output, keeps last input
         MODE_PULLDOWN       = 0x02U << 3U, ///< push-pull on output, pull-down on input
@@ -17,12 +17,12 @@ namespace GPIO {
         MODE_WIREDAND       = 0x05U << 3U, ///< pin is driven low on output, externally pulled down or floating on input
         MODE_WIREDORPULL    = 0x06U << 3U, ///< pin is driven high on output, internally pulled down on input
         MODE_WIREDANDPULL   = 0x07U << 3U, ///< pin is driven low on output, internally pulled high on input
-        INVERT_PIN          = 0x01U << 6U, //< Invert output and input
-        SLEW_RATE_LIMIT     = 0x01U << 7U  //< Slew rate limiting
+        INVERT_PIN          = 0x01U << 6U, ///< Invert output and input
+        SLEW_RATE_LIMIT     = 0x01U << 7U  ///< Slew rate limiting
     };
 
-    constexpr PinConfig operator|(PinConfig a, PinConfig b) { return PinConfig(int(a) | int(b)); }
-    constexpr PinConfig operator&(PinConfig a, PinConfig b) { return PinConfig(int(a) & int(b)); }
+    constexpr PinConfig operator|(PinConfig a, PinConfig b) { return PinConfig(static_cast<uint8_t>(a) | static_cast<uint8_t>(b)); }
+    constexpr PinConfig operator&(PinConfig a, PinConfig b) { return PinConfig(static_cast<uint8_t>(a) & static_cast<uint8_t>(b)); }
 
     template <class PORT, uint8_t PIN>
     class pin {
@@ -174,14 +174,18 @@ namespace GPIO {
         }
     };
 
+    /***************************************  PERIPHERAL SPECIFIC PIN TYPES  ******************************************/
+
     template <typename PIN_INSTANCE>
-    struct SDA : public output_low<PIN_INSTANCE> {
-        explicit constexpr SDA(const PIN_INSTANCE pin) : output_low<PIN_INSTANCE>(pin) { }
+    struct SDA : public no_init<PIN_INSTANCE> {
+        /// NOTE: for some reason initializing TWI pins causes the first few transmissions to fail. Override with empty init()
+        explicit constexpr SDA(const PIN_INSTANCE pin) : no_init<PIN_INSTANCE>(pin) { }
     };
 
     template <typename PIN_INSTANCE>
-    struct SCL : public output_low<PIN_INSTANCE> {
-        explicit constexpr SCL(const PIN_INSTANCE pin) : output_low<PIN_INSTANCE>(pin) { }
+    struct SCL : public no_init<PIN_INSTANCE> {
+        /// NOTE: for some reason initializing TWI pins causes the first few transmissions to fail. Override with empty init()
+        explicit constexpr SCL(const PIN_INSTANCE pin) : no_init<PIN_INSTANCE>(pin) { }
     };
 
     template <typename PIN_INSTANCE>

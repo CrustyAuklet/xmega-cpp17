@@ -381,7 +381,7 @@ namespace drivers {
         constexpr nonstd::expected<bool, TWI::error> write_reg8(const uint8_t addr, const uint8_t reg_addr, const uint8_t data) const noexcept {
             //const uint8_t buf[2] = {reg_addr, data};
             const auto status = write(addr, {reg_addr, data});
-            if(!status) { return status; }
+            if(!status) { return nonstd::make_unexpected(status.error()); }
             return true;
         }
 

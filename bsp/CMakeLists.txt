@@ -57,4 +57,9 @@ target_link_libraries(bsp
 
 add_dependencies(bsp avr::hal)
 
+target_include_directories(bsp
+    INTERFACE
+        ${CMAKE_CURRENT_LIST_DIR}
+)
+
 include(${BOARD_NAME}/CMakeLists.txt)
