@@ -39,7 +39,6 @@ add_library(bsp INTERFACE)
 add_library(avr::bsp ALIAS bsp)
 
 add_subdirectory(hal)
-add_subdirectory(printf)
 
 target_compile_definitions(bsp
     INTERFACE
@@ -52,7 +51,6 @@ target_compile_definitions(bsp
 target_link_libraries(bsp
     INTERFACE
         avr::hal
-        #mpaland::printf
 )
 
 add_dependencies(bsp avr::hal)
@@ -60,6 +58,14 @@ add_dependencies(bsp avr::hal)
 target_include_directories(bsp
     INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}
+)
+
+target_sources(bsp
+    INTERFACE
+        nonstd/cstdio.hpp
+
+        peripherals/peripheral_types.hpp
+        peripherals/motion/BMA250X.hpp
 )
 
 include(${BOARD_NAME}/CMakeLists.txt)
