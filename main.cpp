@@ -15,7 +15,7 @@ using namespace flash::flash_literals;
 // 4206	     14	     26	   4246 constexpr std::array in FLASH using auto and factory function
 
 constexpr auto make_table_impl() noexcept {
-    constexpr int size = 100;
+    constexpr int size = 50;
     std::experimental::fixed_capacity_vector<uint8_t, 1024> v{};
     for(int i = 0; i < size; ++i) {
         v.push_back(i*2);
@@ -50,6 +50,7 @@ constexpr auto make_table() noexcept {
     for(const auto& n : test) {
         printf_P("%d, "_fstr, flash::read(n));
     }
+    printf_P("\n\n"_fstr);
 
     for(;;) {
         board::delay_ms(750); // delay 1 second
@@ -57,7 +58,15 @@ constexpr auto make_table() noexcept {
         board::delay_ms(250);
         board::LED.off();
 
-		const auto r = board::accelerometer.FIFO_Status();
-		printf_P("FIFO count: %d (overflow: %d)\n"_fstr, r.first, r.second);
+		const auto r1 = board::accelerometer.FIFO_Status();
+		printf_P("FIFO count: %d (overflow: %d)\n"_fstr, r1.first, r1.second);
+		std::array<peripheral::accel::Acceleration, 32> buf{};
+        const auto r2 = board::accelerometer.readFIFO(buf, r1.first);
+		for(uint8_t i = 0; r2.has_value() && i < r2.value(); ++i) {
+		    printf_P("  %d %d %d\n"_fstr,
+		            board::accelerometer.scale_reading(buf[i].x, peripheral::accel::BMA250X::RANGE::R_2G),
+		            board::accelerometer.scale_reading(buf[i].y, peripheral::accel::BMA250X::RANGE::R_2G),
+		            board::accelerometer.scale_reading(buf[i].z, peripheral::accel::BMA250X::RANGE::R_2G));
+		}
     }
 }

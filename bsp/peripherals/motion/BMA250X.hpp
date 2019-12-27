@@ -4,11 +4,10 @@
 #include <tuple>
 #include <UTH/board.hpp>
 #include "peripherals/peripheral_types.hpp"
-#include "nonstd/expected.hpp"
+#include "nonstd/expected.hpp"      // for error return values
+#include "nonstd/span.hpp"          // span for non-owning range based read/write functions
 
-#include "board.hpp"
-
-#include <stdio.h>
+//#include "board.hpp"
 
 namespace peripheral::accel {
 
@@ -192,7 +191,7 @@ namespace peripheral::accel {
             bool success = set_mode(BMA250X::MODE::NORMAL, interval);
             //board::delay_ms(2);
             // enable I2C 50ms watchdog timer
-            success &= m_i2c.write_reg8(BMA250X_I2C_ADDRESS, REG::INTERFACE_CONFIG, ACC_WDT_50MS).has_value();
+            success &= m_i2c.write_reg8(BMA250X_I2C_ADDRESS, REG::INTERFACE_CONFIG, static_cast<uint8_t>(WDT::WDT_50MS)).has_value();
 
             if (success) {
                 // disable temperature sensor as per errata #2:
@@ -238,89 +237,6 @@ namespace peripheral::accel {
             return nonstd::make_unexpected( error::DATA_NOT_READY );
         }
 
-#if 0   // not implemented - ported
-        /**
-        * @brief get a single acceleration sample
-        *
-        * @param a pointer to a single Accelerometer sample
-        * @return true if successful, false otherwise
-        */
-        int8_t read(C_ThreeAxis& a) noexcept {
-            bool success = false;
-            if (ACC_FIFO_STARTED == m_state) {
-                a = m_lastSample;
-                success = true;
-            }
-            else {
-
-                success = m_i2c.WriteReg8(BMA250X_I2C_ADDRESS, PMU_LPW, 0x00);
-
-                if (success) {
-                    Sleep(2);
-                    success = m_i2c.WriteReg8(BMA250X_I2C_ADDRESS, INTERFACE_CONFIG, ACC_WDT_50MS);
-                }
-
-                if (success) {
-                    //            uint8_t haveReadSincePowerOn = 0;   // tracks if we have tried to read yet
-                    for (uint16_t count = 10; count; --count) {
-                        if (!i2cShim::readContinous(BMA250X_I2C_ADDRESS, XAXIS_LSB, (uint8_t*)& a, sizeof(C_ThreeAxis))) {
-                            break;
-                        }
-
-                        // Check each channel for valid data.  Done when all three have data
-                        if (newData(a)) {
-                            // if( !haveReadSincePowerOn ) {
-                            //     haveReadSincePowerOn = 1;
-                            //     if(!is250e) { delay_us(500); }  // update period of .5ms at default bandwidth on BMA250, no need to waste time polling
-                            //     continue;
-                            // }
-
-                            // transform the data to the minipat reference frame
-                            transform(a);
-                            break;
-                        }
-                    }
-                    deepSleep();    // turn chip fully off
-                }
-            }
-            return success;
-        }
-
-#define	bit_test( val, bitno )		(((val) & ((uint32_t)1 << (bitno))) ? 1 : 0)
-#define bit_set( val, bitno )		((val) |= ((uint32_t)1<<(bitno)) )
-#define bit_clear( val, bitno )		((val) &= ~((uint32_t)1<<(bitno)) )
-#define max(a,b)					(((a) > (b)) ? (a) : (b))
-#define min(a,b)					(((a) < (b)) ? (a) : (b))
-#define ACCEL_BIT_WIDTH         (10)
-#define ACCEL_RAW_MIDPOINT      (1<<(ACCEL_BIT_WIDTH-1))
-
-        // Scale the two's-complement (10 bit) result to a positive 10 bit value
-        // scaled from 0 -> 1023 Resulting gain is 2/512, offset 2
-        uint16_t scale(uint16_t value) noexcept {
-            if (bit_test(value, 9)) {
-                value = ACCEL_RAW_MIDPOINT - ((~value + 1) & 0x1FF);
-            }
-            else {
-                bit_set(value, 9);
-            }
-
-            return value;
-        }
-
-        void BMA250X::transform(C_ThreeAxis& a) noexcept {
-            int16_t rawZ = (a.x >> BMA250_VALUE_SHIFT);
-
-            a.x = scale(a.z >> BMA250_VALUE_SHIFT);
-            a.y = scale(a.y >> BMA250_VALUE_SHIFT);
-
-            if (bit_test(rawZ, 9)) { rawZ |= 0xFC00; }
-            a.z = scale(-rawZ);
-        }
-
-        bool BMA250X::newData(C_ThreeAxis& a) noexcept {
-            return (a.x & BMA250_NEWDATA) && (a.y & BMA250_NEWDATA) && (a.z & BMA250_NEWDATA);
-        }
-
         /**
         * @brief Reads data from the FIFO, up to the size of the buffer passed in.
         * There may be more data available so this function can be called until it
@@ -332,53 +248,49 @@ namespace peripheral::accel {
         * @param[IN] LEN length of accBuf
         * @return int8_t the number of samples read into accBuf, otherwise an error code
         */
-        int8_t readFIFO(C_ThreeAxis accBuf[], const uint8_t LEN) noexcept {
-            uint8_t i;                                // the return value and loop control variable
+        [[nodiscard]] nonstd::expected<uint8_t, accel::error>
+        readFIFO(nonstd::span<Acceleration> buf, uint8_t count) const noexcept {
+            constexpr uint16_t NewDataFlag = 0x0001u;
+            constexpr uint16_t DataShift = 6u;
+            //ASSERT(is_250e());
+            //uint8_t count = i2cShim::readReg8(BMA250X_I2C_ADDRESS, FIFO_STATUS);
+            //BMA250X_DEBUG("readFIFO(): FIFO_STATUS   = %02X\n", count);
+            //count = min((count & 0x7F), LEN);
 
-            //ASSERT(hasFIFO());
-            uint8_t count = i2cShim::readReg8(BMA250X_I2C_ADDRESS, FIFO_STATUS);
-            BMA250X_DEBUG("readFIFO(): FIFO_STATUS   = %02X\n", count);
-            count = min((count & 0x7F), LEN);
-
-            // read out the fifo into the provided buffer
-            i2cShim::readContinous(BMA250X_I2C_ADDRESS, FIFO_DATA, (uint8_t*)accBuf, sizeof(C_ThreeAxis) * count);
-
-            // proccess each frame read out in place
-            for (i = 0; i < count; ++i) {
-                // bail if the next sample is not new data.
-                if (!newData(accBuf[i])) {
-                    count = 0;
-                    break;
+            /*** read out the fifo into the provided buffer ***/
+            // write the register we want to read with no stop condition
+            auto r = m_i2c.write(BMA250X_I2C_ADDRESS, {REG::FIFO_DATA}, false);
+            if(!r) { return nonstd::make_unexpected( error::COMMUNICATION_ERROR ); }
+            // read into the provided span-buffer
+            r = m_i2c.read(BMA250X_I2C_ADDRESS, nonstd::span<uint8_t>{ reinterpret_cast<uint8_t*>(buf.begin()), reinterpret_cast<uint8_t*>(buf.begin()) + (sizeof(Acceleration) * count) } );
+            if(!r) { return nonstd::make_unexpected( error::COMMUNICATION_ERROR ); }
+            // post process all samples to ensure they are valid and shifted
+            for(uint8_t i = 0; i < buf.size(); ++i) {
+                if( buf[i].x&NewDataFlag && buf[i].y&NewDataFlag && buf[i].z&NewDataFlag ) {
+                    buf[i].x >>= DataShift;
+                    buf[i].y >>= DataShift;
+                    buf[i].z >>= DataShift;
+                    count = i+1;
                 }
-
-                // transform the data to the minipat reference frame
-                transform(accBuf[i]);
+                else {
+                    buf[i] = Acceleration{};
+                }
             }
-
-            m_lastSample = accBuf[count - 1];
-            return i;
+            return count;
         }
-#endif // not implemented - ported
+
+        static int16_t scale_reading(const int16_t v, const BMA250X::RANGE range) noexcept {
+            switch(range) {
+                default:
+                case BMA250X::RANGE::R_2G  : return static_cast<int16_t>(v * 3.91f);
+                case BMA250X::RANGE::R_4G  : return static_cast<int16_t>(v * 7.81f);
+                case BMA250X::RANGE::R_8G  : return static_cast<int16_t>(v * 15.63f);
+                case BMA250X::RANGE::R_16G : return static_cast<int16_t>(v * 31.25f);
+            }
+        }
+
     protected:
         /***************** REGISTER ENUM DEFINITIONS ************************************/
-
-        /* the format of a single axis reading from the Accelerometer. */
-        typedef union {
-            struct {
-                uint16_t newDataFlag : 1;   // bit to indicate this reading is new data
-                uint16_t padBits : 5;   // unused/reserved padding
-                uint16_t value : 10;  // signed value in 2's complement
-            };
-            uint16_t all;
-        } accelAxis;
-
-        /* the format of a single frame from the Accelerometer FIFO. */
-        struct accelFrame {
-            accelAxis x;    // The x-axis on the chip
-            accelAxis y;    // The y-axis on the chip
-            accelAxis z;    // The z-axis on the chip
-        };
-
         static constexpr uint8_t BMA250X_I2C_ADDRESS     = 0x18u<<1u;   // default address, SDO pulled to GND
         static constexpr uint8_t BMA250X_I2C_ADDRESS_ALT = 0x19u<<1u;  // alternate address, SDO pulled to VCC
 
@@ -443,12 +355,6 @@ namespace peripheral::accel {
             ACC_TEMP_CONTROL = 0x4F  // secret register to control the temperature sensor
         };
 
-        enum BMA250_DATA_t {
-            BMA250_NEWDATA = 0x0001,
-            BMA250_VALUE_MASK = 0xFFC0,
-            BMA250_VALUE_SHIFT = 6
-        };
-
         enum class LP : uint8_t {
             MODE1 = 0x00, // Put the chip into LP mode 1
             MODE2 = 0x40, // Put the chip into LP mode 2
@@ -456,10 +362,10 @@ namespace peripheral::accel {
             EQUAL_TIME = 0x20, // Use equidistant sampling time mode in Low Power
         };
 
-        enum BMA250_WDT_t {
-            ACC_WDT_OFF = 0x00, // disable the watchdog timer
-            ACC_WDT_1MS = 0x04, // 1ms watchdog timer
-            ACC_WDT_50MS = 0x06, // 50ms watchdog timer
+        enum class WDT : uint8_t {
+            WDT_OFF = 0x00, // disable the watchdog timer
+            WDT_1MS = 0x04, // 1ms watchdog timer
+            WDT_50MS = 0x06, // 50ms watchdog timer
         };
     };
 
