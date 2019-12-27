@@ -80,7 +80,8 @@ namespace peripheral::accel {
 
         /// ensures the I2C interface is active and enabled
         bool start() noexcept  {
-            if(!present()) {
+            // the first present() read often fails if this is called right after system startup.
+            if(! (present()||present()) ) {
                 return false;
             }
             m_is250e = is_250e();
