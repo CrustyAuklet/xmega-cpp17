@@ -73,6 +73,8 @@ namespace peripheral::accel {
         I2C_Instance m_i2c;
         //decltype(board::I2C_Isolated) m_i2c;
         bool m_is250e;
+        [[gnu::progmem]] static constexpr char name_250[]  = "BMA250";
+        [[gnu::progmem]] static constexpr char name_250e[] = "BMA250E";
     public:
         constexpr BMA250X_simple(const I2C_Instance i2c) noexcept : m_i2c(i2c) {}
 
@@ -98,6 +100,10 @@ namespace peripheral::accel {
                 return id.value() == BMA250E_ID_VALUE || id.value() == BMA250_ID_VALUE;
             }
             return false;
+        }
+
+        const char* name() const noexcept {
+            return is_250e() ? name_250e : name_250;
         }
 
         /// returns true if the attached device is a 250E

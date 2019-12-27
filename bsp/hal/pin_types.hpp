@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <tuple>
+#include <type_traits>
+#include <algorithm>
 
 namespace GPIO {
     enum class PinConfig : uint8_t {
@@ -25,11 +28,14 @@ namespace GPIO {
     constexpr PinConfig operator&(PinConfig a, PinConfig b) { return PinConfig(static_cast<uint8_t>(a) & static_cast<uint8_t>(b)); }
 
     template <class PORT, uint8_t PIN>
-    class pin {
+    struct pin {
         static_assert(PIN < 8, "PIN value in gpio_pin must be a number 0-7");
-        static constexpr uint8_t PIN_MASK = 1 << PIN;   // Pin mask for use in all the functions
-        static constexpr PORT Port = {};
-    public:
+        static constexpr uint8_t PIN_NUM = PIN;              // Pin number for shifts or counts
+        static constexpr uint8_t PIN_MASK = 1u << PIN_NUM;   // Pin mask for use in all functions
+        static constexpr PORT Port{};                        // port this pin is using
+
+        /// sets the pin to the expected startup state. Base class version does nothing.
+        constexpr void init() const noexcept {}
         /// Set the pin as an output
         constexpr void set_output() const noexcept { Port.DIRSET = PIN_MASK; }
         /// Set the pin as in input
@@ -51,7 +57,7 @@ namespace GPIO {
         constexpr operator volatile bool&() noexcept { return get_value(); }
         constexpr operator const volatile bool&() const noexcept { return get_value(); }
 
-        // configure the GPIO pin with some OR value of flags in device::io::PinConfig
+        /// configure the GPIO pin with some OR value of flags in device::io::PinConfig
         constexpr void configure(const GPIO::PinConfig config) const noexcept {
             if constexpr(PIN == 0)      { Port.PIN0CTRL = static_cast<uint8_t>(config); }
             else if constexpr(PIN == 1) { Port.PIN1CTRL = static_cast<uint8_t>(config); }
@@ -92,9 +98,51 @@ namespace GPIO {
         constexpr void set_analog() const noexcept {
             configure(GPIO::PinConfig::MODE_TOTEM | GPIO::PinConfig::SENSE_INPUT_DISABLE);
         }
-
-        constexpr void init() const noexcept {}
     };
+
+    namespace {
+        template<typename T, typename... Ts>
+        constexpr bool all_same_type(T, Ts...) { return std::conjunction_v<std::is_same<T, Ts>...>; }
+    }
+
+    template <typename... Pins>
+    struct PinGroup {
+        static constexpr std::tuple<Pins...> m_pins{};
+        static constexpr decltype( std::tuple_element_t<0, decltype(m_pins)>::Port ) m_port{};
+        static constexpr uint8_t m_shift = [](){ return std::min( {Pins::PIN_NUM...} ); }();
+        static constexpr uint8_t m_mask  = [](){ return std::apply([](auto&&... args){ return ((args.PIN_MASK) | ...); }, m_pins); }();
+        static constexpr bool    same_port = all_same_type(Pins::Port...);
+        static constexpr uint8_t pin_count = std::tuple_size_v<decltype(m_pins)>;
+
+        static_assert(same_port, "All pins in a pin group must be on the same port!");
+        static_assert(pin_count <= 8, "Only 8 or less pins can be in a pin group");
+        static_assert(pin_count > 1, "Only use a pin group for GROUPS of pins please!");
+
+        /// constructor mainly to allow CTAD
+        constexpr PinGroup(Pins... p) {};
+
+        /// sets all pins to the expected startup state. Base class version does nothing.
+        constexpr void init() const noexcept {
+            std::apply([](auto&&... args){((args.init()), ...);}, m_pins);
+        }
+        /// configure all the pins with some OR value of flags in device::io::PinConfig
+        constexpr void configure(const GPIO::PinConfig config) const noexcept {
+            std::apply([config](auto&&... args){((args.configure(config)), ...);}, m_pins);
+        }
+        /// Set all pins as output
+        constexpr void set_output() const noexcept { m_port.DIRSET = m_mask; }
+        /// Set all pins as input
+        constexpr void set_input() const noexcept { m_port.DIRCLR = m_mask; }
+        /// reads the value of the pin set. The value is masked and shifted to be left aligned. No consideration is taken for non-contiguous pins.
+        [[nodiscard]] constexpr volatile uint8_t read() const noexcept { return (m_port.IN & m_mask) >> m_shift; }
+        /// writes the given value to the pin set. Input value is masked and shifted. No consideration is taken for non-contiguous pins.
+        constexpr void write(const uint8_t v) const noexcept {
+            const uint8_t temp = m_port.OUT;
+            m_port.OUT = (temp & ~m_mask) | ((v << m_shift) & m_mask);
+        }
+    };
+
+    /***************************************  PIN TYPE BUILDING BLOCKS  ******************************************/
 
     template <typename PIN_INSTANCE>
     struct no_init {
@@ -243,6 +291,27 @@ namespace GPIO {
         constexpr void init() const noexcept {
             Led<PIN_INSTANCE>::m_pin.set_output();
             Led<PIN_INSTANCE>::m_pin.configure(GPIO::PinConfig::INVERT_PIN | GPIO::PinConfig::MODE_TOTEM);
+        }
+    };
+
+    template<typename... Pins>
+    class BoardVersion : private PinGroup<Pins...> {
+        using base = PinGroup<Pins...>;
+    public:
+        /// CTAD constructor
+        constexpr BoardVersion(Pins... p) : base(p...) {};
+        /// default init to pulldown inputs
+        constexpr void init() const noexcept {
+            base::set_input();
+            base::configure(GPIO::PinConfig::MODE_PULLDOWN);
+        }
+
+        /// read the board version by enabling pullups and reading the pins, then returning the pins to pulldown state
+        constexpr operator uint8_t() const noexcept {
+            base::configure(GPIO::PinConfig::MODE_PULLUP);
+            const uint8_t temp = base::read();
+            base::configure(GPIO::PinConfig::MODE_PULLDOWN);
+            return temp;
         }
     };
 
