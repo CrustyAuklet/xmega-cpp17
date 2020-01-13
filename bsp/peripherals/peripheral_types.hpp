@@ -10,12 +10,16 @@ namespace peripheral {
 
     namespace accel {
 
-        enum class error { DATA_NOT_READY, FIFO_OVERFLOW, COMMUNICATION_ERROR };
+        enum class error { NO_ERROR, DATA_NOT_READY, FIFO_OVERFLOW, COMMUNICATION_ERROR };
 
         struct Acceleration : ThreeAxis {
             Acceleration() = default;
             explicit Acceleration(const int16_t x, const int16_t y, const int16_t z) : ThreeAxis{x,y,z} {}
         };
 
+    }
+
+    namespace rtc {
+        enum class error { NO_ERROR, OSCILLATOR_ERROR, BAD_TIME_VALUE, COMMUNICATION_ERROR };
     }
 }

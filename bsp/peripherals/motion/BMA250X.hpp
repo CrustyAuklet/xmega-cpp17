@@ -1,11 +1,9 @@
 #pragma once
 
-#include <cstdint>
-#include <tuple>
-#include <UTH/board.hpp>
 #include "peripherals/peripheral_types.hpp"
 #include "nonstd/expected.hpp"      // for error return values
 #include "nonstd/span.hpp"          // span for non-owning range based read/write functions
+#include <cstdint>
 
 //#include "board.hpp"
 
@@ -75,7 +73,7 @@ namespace peripheral::accel {
         [[gnu::progmem]] static constexpr char name_250[]  = "BMA250";
         [[gnu::progmem]] static constexpr char name_250e[] = "BMA250E";
     public:
-        constexpr BMA250X_simple(const I2C_Instance i2c) noexcept : m_i2c(i2c) {}
+        explicit constexpr BMA250X_simple(const I2C_Instance i2c) noexcept : m_i2c(i2c) {}
 
         /// ensures the I2C interface is active and enabled
         bool start() noexcept  {
@@ -289,7 +287,7 @@ namespace peripheral::accel {
             }
         }
 
-    protected:
+    private:
         /***************** REGISTER ENUM DEFINITIONS ************************************/
         static constexpr uint8_t BMA250X_I2C_ADDRESS     = 0x18u<<1u;   // default address, SDO pulled to GND
         static constexpr uint8_t BMA250X_I2C_ADDRESS_ALT = 0x19u<<1u;  // alternate address, SDO pulled to VCC

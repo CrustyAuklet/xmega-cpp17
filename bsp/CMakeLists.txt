@@ -66,6 +66,7 @@ target_sources(bsp
 
         peripherals/peripheral_types.hpp
         peripherals/motion/BMA250X.hpp
+        peripherals/rtc/PCF85063.hpp
 )
 
 include(${BOARD_NAME}/CMakeLists.txt)
