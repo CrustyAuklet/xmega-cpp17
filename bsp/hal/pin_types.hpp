@@ -144,6 +144,10 @@ namespace GPIO {
 
     /***************************************  PIN TYPE BUILDING BLOCKS  ******************************************/
 
+    struct no_pin {
+        constexpr void init() const noexcept { }
+    };
+
     template <typename PIN_INSTANCE>
     struct no_init {
         PIN_INSTANCE m_pin;
