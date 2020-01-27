@@ -7,6 +7,11 @@ The board support layer should only depend on the device layer, and mainly inter
 It is also the lowest layer that should generate any code, or use resources. The board layer API will be used by any
 operating system, upper level framework, or application code to access board resources.
 
+# Board Support Layer API
+
+The specific implementation of the four parts of this layer creates the *BSP API* that any OS, Framework, or application
+will rely on. The design decisions and implementation of this layer should be documented for use by higher layers.
+
 ## The board support layer consists of 4 parts:
 
 - **Hardware Abstraction Layer** : The HAL layer as a subproject for the appropriate device used on this board.
@@ -23,5 +28,5 @@ a board are wired together. This described the boards API to all higher layers.
 - `/hal` *Hardware Abstraction Layer*
 - `/nonstd` *Board Libraries*
 - `/peripherals` *External Peripheral Drivers*
-- `/XPLAINA1U` *Board Description Files for a specific board*
+- `/some-board-name` *Board Description Files for a specific board*
 - `board.hpp` *board include file*
