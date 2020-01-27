@@ -2,7 +2,7 @@
 
 # Board Support Layer
 
-The board support layer is an abstraction for a specific device. 
+The board support layer is an abstraction for a specific product or board. 
 A device could be a development board, product, or specific breadboard layout.
 The board support layer should only depend on the device layer, and mainly interacts with the device description file.
 It is also the lowest layer that should generate any code, or use resources.
